@@ -1,0 +1,5 @@
+build/*
+bin/*
+public/*
+apidoc/*
+test/*
