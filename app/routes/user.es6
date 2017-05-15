@@ -44,6 +44,7 @@ router.get('/signin', (req, res, next) => {
           salt: crypto.randomBytes(16).toString('hex')
         }
       });
+      console.log(created);
       let token = jwt.encode({
         uid: user.id,
         itriId: user.itriId,
