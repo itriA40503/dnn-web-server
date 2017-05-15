@@ -17,11 +17,24 @@ let getAllMachines = () => {
   return Machine.findAll({ attributes: ['id'], raw: true });
 };
 
+router.get('/', async (req, res, next) => {
+  try {
+    let machines = await Machine.scope('normal').findAll();
+    res.json({ machines: machines });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/remain', async (req, res, next) => {
   try {
+    let startQuery = (req.query && req.query.start) || (req.body && req.body.start);
+    let endQuery = (req.query && req.query.end) || (req.body && req.body.end);
 
-    let start = moment(req.query && req.query.start);
-    let end = moment(req.query && req.query.end);
+    if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
+
+    let start = moment(startQuery);
+    let end = moment(endQuery);
 
     if (!start.isValid() || !end.isValid()) throw new CdError(401, 'date parameter error', 0);
     start.startOf('d');
@@ -44,7 +57,7 @@ router.get('/remain', async (req, res, next) => {
     }, machineSet);
 
     res.json({
-      avalableNumber: resultSet.size,
+      availableNumber: resultSet.size,
       machines: [...resultSet]
     });
   } catch (err) {

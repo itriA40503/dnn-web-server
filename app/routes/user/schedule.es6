@@ -275,7 +275,7 @@ router.delete('/:schedule_id', async (req, res, next) => {
       await schedule.destroy({ transaction: t });
       await instance.destroy({ transaction: t });
       await t.commit();
-      res.json({});
+      res.json('success');
     } catch (err) {
       t.rollback();
       throw err;
