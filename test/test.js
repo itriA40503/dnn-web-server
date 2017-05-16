@@ -35,7 +35,7 @@ describe('server', () => {
   before( done => {
     (async () => {
       await User.create({
-        id: 99999999,
+        id: userSetting.id,
         itriId: userSetting.itriId
       });
       done();
@@ -107,12 +107,12 @@ describe('server', () => {
         .set('x-username', userSetting.itriId)
         .set('x-password', userSetting.password)
         .end( (err, res) => {
+          console.log(res.body)
           res.should.have.status(200);
           res.should.to.be.json;
           res.should.have.body;
           res.body.should.have.property('token');
           userSetting.token = res.body.token;
-          console.log(res.body)
           done();
         });
     });

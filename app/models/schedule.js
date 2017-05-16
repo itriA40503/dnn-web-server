@@ -1,9 +1,5 @@
-'use strict';
-
-/* jshint indent: 2 */
-
-module.exports = function (sequelize, DataTypes) {
-  var Schedule = sequelize.define('schedule', {
+module.exports = (sequelize, DataTypes) => {
+  let Schedule = sequelize.define('schedule', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -64,13 +60,13 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'schedule',
     paranoid: true,
     classMethods: {
-      associate: function (models) {
+      associate: (models) => {
         Schedule.belongsTo(models.instance, { foreignKey: 'instanceId' });
       }
     },
     scopes: {
-      normal: function (options) {
-        var where = {};
+      normal: (options) => {
+        let where = {};
         if (options && options.start && options.end) {
           where.startedAt = {
             $lte: options.end
@@ -79,7 +75,7 @@ module.exports = function (sequelize, DataTypes) {
             $gte: options.start
           };
         }
-        var result = {
+        let result = {
           where: where,
           include: [
             { model: sequelize.models.instance.scope({ method: ['normal', options] }), paranoid: false }
@@ -96,9 +92,8 @@ module.exports = function (sequelize, DataTypes) {
         };
         return result;
       },
-      detail: function (parameter) {
-
-        var result = {
+      detail: (parameter) => {
+        let result = {
           include: [
             { model: sequelize.models.instance.scope('detail'), paranoid: false }
           ],
@@ -110,6 +105,30 @@ module.exports = function (sequelize, DataTypes) {
             'createdAt',
             'updatedAt',
             'userId'
+          ]
+        };
+        return result;
+      },
+      timeOverlap: (options) => {
+        let where = {};
+        if (options && (options.start || options.end)) {
+          where.startedAt = {
+            $lte: options.end || options.start
+          };
+          where.endedAt = {
+            $gte: options.start || options.end
+          };
+        }
+        let result = {
+          where: where
+        };
+        return result;
+      },
+      instanceStatusWhere: (options) => {
+        let result = {
+          include: [
+            { model: sequelize.models.instance.scope({ method: ['statusWhere', options] }),
+              paranoid: false }
           ]
         };
         return result;
