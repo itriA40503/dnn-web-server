@@ -18,7 +18,12 @@ router.get('/signin', (req, res, next) => {
   let username = (req.body && req.body.username) || (req.query && req.query.username) || req.headers['x-username'];
   let password = (req.body && req.body.password) || (req.query && req.query.password) || req.headers['x-password'];
 
-  if (!(username && password)) throw new CdError(401, 'missing parameter', 40000);
+  if ((!username || !password)) throw new CdError(401, 'missing username or password', 40000);
+
+  let reg = /^[A-Za-z0-9]+$/;
+  console.log(reg.test(username) );
+  console.log(reg.test(password) );
+  if (!reg.test(username) || !reg.test(password)) throw new CdError(401, 'username or password format error');
 
   username = username.replace(/[^\w]+/g, '');
   password = password.replace(/[^\w]+/g, '');

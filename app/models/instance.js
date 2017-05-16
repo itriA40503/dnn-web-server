@@ -139,6 +139,17 @@ module.exports = function (sequelize, DataTypes) {
           ]
         };
         return result;
+      },
+      statusWhere: function(options) {
+        console.log('instanceStatue');
+        var where = {};
+        if (options && options.statusId) {
+          where.statusId = options.statusId;
+        }
+        var result = {
+          where: where
+        };
+        return result;
       }
     }
   });
