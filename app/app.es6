@@ -15,12 +15,9 @@ import timeout from 'connect-timeout';
 import CdError from './util/CdError';
 
 import jwtAuth from './middleware/jwtAuth'
-import index from './routes/index';
-import user from './routes/user';
-import test from './routes/test';
-import schedule from './routes/schedule';
-import machine from './routes/machine';
-import imageRouter from './routes/image';
+
+import setupRouters from './routes';
+
 
 const app = express();
 
@@ -53,12 +50,10 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(timeout(12000));
 
-app.use('/', index);
-app.use('/user', user);
-app.use('/schedule', schedule);
-app.use('/machine', machine);
-app.use('/image', imageRouter);
-app.use('/test', jwtAuth, test);
+app.get('/', (req, res) => {
+  res.render('index', { title: 'Express' });
+});
+setupRouters(app);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
 
 // catch 404 and forward to error handler

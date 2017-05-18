@@ -1,45 +1,44 @@
-var fs        = require("fs");
-var path      = require("path");
-var Sequelize = require("sequelize");
-var env       = process.env.NODE_ENV || "development";
-//var config    = require(path.join(__dirname, '..', 'config', 'config.json'))[env];
-var sequelize = new Sequelize('dnn','postgres','cditripost',{
-    host: '54.249.32.121',
-    dialect: 'postgres',
-    timezone : "+08:00",
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000
-    },
-    logging:  true
-  }
-);
-var db        = {};
+import fs from 'fs';
+import path from 'path';
+import Sequelize from 'sequelize';
 
+const env = process.env.NODE_ENV || 'development';
+const sequelize = new Sequelize('dnn', 'postgres', 'cditripost', {
+  host: '54.249.32.121',
+  dialect: 'postgres',
+  timezone: '+08:00',
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000
+  },
+  logging: true
+}
+);
+
+const db = {};
 
 sequelize
   .authenticate()
-  .then(function(err) {
+  .then((err) => {
     console.log('Connection has been established successfully.');
   })
-  .catch(function (err) {
+  .catch((err) => {
     console.log('Unable to connect to the database:', err);
   });
 
 fs
   .readdirSync(__dirname)
-  .filter(function(file) {
-    return (file.indexOf(".") !== 0) && (file !== "index.js");
+  .filter((file) => {
+    return (file.indexOf('.') !== 0) && (file !== 'index.js');
   })
-  .forEach(function(file) {
-    var model = sequelize.import(path.join(__dirname, file));
+  .forEach((file) => {
+    let model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
-    //  console.log('load '+model.name);
   });
 
-Object.keys(db).forEach(function(modelName) {
-  if ("associate" in db[modelName]) {
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
