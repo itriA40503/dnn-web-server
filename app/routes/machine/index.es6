@@ -1,7 +1,7 @@
 import express from 'express';
 import moment from 'moment';
-import CdError from '../util/CdError';
-import { schedule as Schedule, machine as Machine } from '../models';
+import CdError from '../../util/CdError';
+import { schedule as Schedule, machine as Machine } from '../../models/index';
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import { schedule as Schedule } from '../models';
+import { schedule as Schedule } from '../../models/index';
 
 const router = express.Router();
 

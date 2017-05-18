@@ -1,15 +1,12 @@
 import express from 'express';
 import moment from 'moment';
-import jwtAuth from '../../middleware/jwtAuth';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models';
+import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models';
 
-const sequelize = User.sequelize;
-const router = express.Router();
+const schedule = {};
 
-
-router.get('/', async (req, res, next) => {
+schedule.get = async (req, res, next) => {
   try {
 
     let mode = (req.query && req.query.mode) || 'all';
@@ -55,9 +52,9 @@ router.get('/', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
 
-router.post('/', async (req, res, next) => {
+schedule.create = async (req, res, next) => {
   try {
     let userId = req.user.id;
     let startQuery = req.query.start || (req.body && req.body.start);
@@ -175,14 +172,12 @@ router.post('/', async (req, res, next) => {
 
     res.json(resSchedule);
 
-
-
   } catch (err) {
     next(err);
   }
-});
+};
 
-router.put('/:schedule_id', async (req, res, next) => {
+schedule.update = async (req, res, next) => {
   try {
     let userId = req.user.id;
     let scheduleId = req.params.schedule_id;
@@ -254,9 +249,9 @@ router.put('/:schedule_id', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
 
-router.delete('/:schedule_id', async (req, res, next) => {
+schedule.delete = async (req, res, next) => {
   try {
     let userId = req.user.id;
     let scheduleId = req.params.schedule_id;
@@ -284,9 +279,10 @@ router.delete('/:schedule_id', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
 
-router.get('/:schedule_id/extendable', async (req, res, next) => {
+
+schedule.getExtendableDate = async (req, res, next) => {
   try {
     let userId = req.user.id;
     let scheduleId = req.params.schedule_id;
@@ -336,6 +332,6 @@ router.get('/:schedule_id/extendable', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
 
-export default router;
+export default schedule;
