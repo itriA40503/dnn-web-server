@@ -98,11 +98,11 @@ schedule.create = async (req, res, next) => {
 
     let getSchedulesOverlapPeriod = (start, end, other) => {
       let date = new Date();
-      let parameter = {
+      let options = {
         start: start,
         end: end
       };
-      return Schedule.scope({ method: ['normal', parameter] }).findAll(other);
+      return Schedule.scope('normal', { method: ['timeOverlap', options] }).findAll(other);
     };
 
     let start = startDate.format();
@@ -197,7 +197,7 @@ schedule.update = async (req, res, next) => {
         end: end,
         machineId: machineId
       };
-      return Schedule.scope({ method: ['normal', options] });
+      return Schedule.scope('normal', { method: ['timeOverlap', options] }, );
     };
 
     let schedule = await getScheduleById(scheduleId);
@@ -293,10 +293,12 @@ schedule.getExtendableDate = async (req, res, next) => {
     let machineInPeriod = (start, end, machineId) => {
       let options = {
         start: start,
-        end: end,
-        machineId: machineId
+        end: end
       };
-      return Schedule.scope({ method: ['normal', options] });
+      return Schedule.scope('onlyTime',
+        { method: ['timeOverlap', options] },
+        { method: ['instanceScope', ['id', { method: ['whichMachine', machineId] }]] }
+      );
     };
 
     let schedule = await getScheduleById(scheduleId);
@@ -310,7 +312,8 @@ schedule.getExtendableDate = async (req, res, next) => {
    // let reducibleEndDate = moment.max(oldStartDate.add(1, 'days').startOf('day'),
     // moment().add(1, 'days').startOf('day'));
     let schedules = await machineInPeriod(oldEndDate.format(),
-      extendableEndDate.format(), machineId)
+      extendableEndDate.format(),
+      machineId)
       .findAll({
         where: {
           id: {
@@ -318,6 +321,7 @@ schedule.getExtendableDate = async (req, res, next) => {
           }
         }
       });
+
     let ended = await schedules.reduce((minDate, schedule) => {
       let maxableEndDate = moment(schedule.startedAt).subtract(1, 'days').endOf('day');
       return moment.min(minDate, maxableEndDate);
