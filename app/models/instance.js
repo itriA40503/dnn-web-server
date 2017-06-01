@@ -1,9 +1,5 @@
-'use strict';
-
-/* jshint indent: 2 */
-
-module.exports = function (sequelize, DataTypes) {
-  var Instance = sequelize.define('instance', {
+module.exports = (sequelize, DataTypes) => {
+  let Instance = sequelize.define('instance', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -98,15 +94,20 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'instance',
     paranoid: true,
     classMethods: {
-      associate: function (models) {
+      associate: (models) => {
         Instance.belongsTo(models.machine, { foreignKey: 'machineId' });
         Instance.belongsTo(models.image, { foreignKey: 'imageId' });
         Instance.hasMany(models.schedule);
       }
     },
     scopes: {
-      normal: function (options) {
-        var result = {
+      id: () => {
+        return {
+          attributes: ['id']
+        };
+      },
+      normal: (options) => {
+        return {
           include: [
             { model: sequelize.models.machine.scope({ method: ['normal', options] }) }
           ],
@@ -118,10 +119,16 @@ module.exports = function (sequelize, DataTypes) {
             'imageId'
           ]
         };
-        return result;
       },
-      detail: function () {
-        var result = {
+      machineScope: (scope) => {
+        return {
+          include: [
+            { model: sequelize.models.machine.scope(scope) }
+          ]
+        };
+      },
+      detail: () => {
+        return {
           include: [
             { model: sequelize.models.machine.scope('normal') },
             { model: sequelize.models.image.scope('normal') }
@@ -138,18 +145,13 @@ module.exports = function (sequelize, DataTypes) {
             'statusId'
           ]
         };
-        return result;
       },
-      statusWhere: function(options) {
-        console.log('instanceStatue');
-        var where = {};
-        if (options && options.statusId) {
-          where.statusId = options.statusId;
-        }
-        var result = {
-          where: where
+      whichMachine: (machineId) => {
+        return {
+          include: [
+            { model: sequelize.models.machine.scope('normal'), where: { id: machineId } }
+          ]
         };
-        return result;
       }
     }
   });

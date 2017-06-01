@@ -65,20 +65,24 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     scopes: {
-      normal: (options) => {
-        let where = {};
-        if (options && options.start && options.end) {
-          where.startedAt = {
-            $lte: options.end
-          };
-          where.endedAt = {
-            $gte: options.start
-          };
-        }
-        let result = {
-          where: where,
+      id: () => {
+        return {
+          attributes: ['id']
+        };
+      },
+      onlyTime: () => {
+        return {
+          attributes: [
+            'id',
+            'startedAt',
+            'endedAt'
+          ],
+        };
+      },
+      normal: () => {
+        return {
           include: [
-            { model: sequelize.models.instance.scope({ method: ['normal', options] }), paranoid: false }
+            { model: sequelize.models.instance.scope('normal'), paranoid: false }
           ],
           attributes: [
             'id',
@@ -90,10 +94,9 @@ module.exports = (sequelize, DataTypes) => {
             'userId'
           ]
         };
-        return result;
       },
-      detail: (parameter) => {
-        let result = {
+      detail: () => {
+        return {
           include: [
             { model: sequelize.models.instance.scope('detail'), paranoid: false }
           ],
@@ -107,7 +110,31 @@ module.exports = (sequelize, DataTypes) => {
             'userId'
           ]
         };
+      },
+      instanceScope: (scope) => {
+        return {
+          include: [
+            { model: sequelize.models.instance.scope(scope), paranoid: false }
+          ]
+        };
+      },
+      instanceStatusWhere: (statusId) => {
+        let result = {
+          include: [
+            { model: sequelize.models.instance,
+              where: { statusId: statusId },
+              paranoid: false }
+          ]
+        };
         return result;
+      },
+      whichMachine: (machineId) => {
+        console.log(machineId);
+        return {
+          include: [
+            { model: sequelize.models.instance.scope({ method: ['whichMachine', machineId] }) }
+          ]
+        };
       },
       timeOverlap: (options) => {
         let where = {};
@@ -121,15 +148,6 @@ module.exports = (sequelize, DataTypes) => {
         }
         let result = {
           where: where
-        };
-        return result;
-      },
-      instanceStatusWhere: (options) => {
-        let result = {
-          include: [
-            { model: sequelize.models.instance.scope({ method: ['statusWhere', options] }),
-              paranoid: false }
-          ]
         };
         return result;
       }

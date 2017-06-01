@@ -6,16 +6,13 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import sassMiddleware from 'node-sass-middleware';
-import passport from 'passport';
-import LdapStrategy from 'passport-ldapauth';
-import session from 'express-session';
-import flash from 'connect-flash';
+// import passport from 'passport';
+// import session from 'express-session';
+// import flash from 'connect-flash';
 import timeout from 'connect-timeout';
 
 import CdError from './util/CdError';
-
 import jwtAuth from './middleware/jwtAuth'
-
 import setupRouters from './routes';
 
 
@@ -42,10 +39,10 @@ app.use(sassMiddleware({
 }));
 
 // passport
-app.use(session({ secret: 'KemonoFriends', resave: true, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
+// app.use(session({ secret: 'KemonoFriends', resave: true, saveUninitialized: true }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use(flash());
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(timeout(12000));
@@ -53,8 +50,9 @@ app.use(timeout(12000));
 app.get('/', (req, res) => {
   res.render('index', { title: 'Express' });
 });
-setupRouters(app);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
+
+setupRouters(app);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -6,7 +6,7 @@
 
 var app = require('../app');
 var debug = require('debug')('dnnserver:server');
-var ssl =require('../sslCert');
+var ssl = require('../sslCert');
 var http = require('http');
 var https = require('https');
 
@@ -24,7 +24,7 @@ app.set('httpsport',ports);
  */
 
 var server = http.createServer(app);
-var servers = https.createServer(ssl.options,app);
+var servers = https.createServer(ssl.options, app);
 /**
  * Listen on provided port, on all network interfaces.
  */

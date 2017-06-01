@@ -10,7 +10,7 @@ let getSchedulesOverlapPeriod = (start, end) => {
     start: start,
     end: end
   };
-  return Schedule.scope({ method: ['normal', options] }).findAll();
+  return Schedule.scope('normal', { method: ['timeOverlap', options] }).findAll();
 };
 
 let getAllMachines = () => {
