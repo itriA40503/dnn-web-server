@@ -110,7 +110,6 @@ describe('server', () => {
           console.log(res.body)
           res.should.have.status(200);
           res.should.to.be.json;
-          res.should.have.body;
           res.body.should.have.property('token');
           userSetting.token = res.body.token;
           done();

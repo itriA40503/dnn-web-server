@@ -3,6 +3,6 @@ import schedule from './schedule';
 
 const router = express.Router();
 
-router.get('', schedule.getAllSchedule);
+router.get('/', schedule.getAllSchedule);
 
 export default router;

@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-// import favicon from 'serve-favicon'
+import favicon from 'serve-favicon';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -19,13 +19,11 @@ import setupRouters from './routes';
 const app = express();
 
 app.set('jwtsecretkey', 'KemonoFriends');
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.set('json spaces', 2);
 
-// uncomment after placing your favicon in /public
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(logger('dev'));
 app.use(cors({ origin: '*', optionsSuccessStatus: 200 }));
 app.use(bodyParser.json());
@@ -37,12 +35,6 @@ app.use(sassMiddleware({
   indentedSyntax: true, // true = .sass and false = .scss
   sourceMap: true
 }));
-
-// passport
-// app.use(session({ secret: 'KemonoFriends', resave: true, saveUninitialized: true }));
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use(flash());
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(timeout(12000));

@@ -1,18 +1,8 @@
 import express from 'express';
-import CdError from '../../util/CdError';
-import { image as Image } from '../../models/index';
+import image from './image';
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-  try {
-    let images = await Image.scope('normal').findAll();
-    res.json({
-      images: images
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+router.get('/', image);
 
 export default router;
