@@ -11,6 +11,7 @@ scheduleRouter.post('/', schedule.create);
 scheduleRouter.put('/:schedule_id', schedule.update);
 scheduleRouter.delete('/:schedule_id', schedule.delete);
 scheduleRouter.get('/:schedule_id/extendable', schedule.getExtendableDate);
+
 router.get('/signin', login);
 router.use('/schedule', jwtAuth, scheduleRouter);
 

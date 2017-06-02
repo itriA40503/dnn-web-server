@@ -11,7 +11,7 @@ let startInstanceJob = new CronJob({
       };
 
       let schedules = await Schedule.scope(
-        'normal',
+        'detail',
         { method: ['timeOverlap', timeOptions] },
         { method: ['instanceStatusWhere', { statusId: 1 }] }
       ).findAll();
