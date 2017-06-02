@@ -1,4 +1,10 @@
-
+/**
+ * @constructor
+ * @param {int} status
+ * @param {string} message
+ * @param {int} errorCode
+ *
+ */
 class CdError extends Error {
   constructor(status, message, errorCode) {
     super(message);
