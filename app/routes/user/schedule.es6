@@ -53,7 +53,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
   let startQuery = req.query.start || (req.body && req.body.start);
   let endQuery = req.query.end || (req.body && req.body.end);
-  let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 666;
+  let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 1;
 
   if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
 
