@@ -42,6 +42,9 @@
     "passport-strategy": "^1.0.0",
     "pg": "^6.2.3",
     "pg-hstore": "^2.3.2",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "request-promise-native": "^1.0.4",
     "sequelize": "^3.30.4",
     "serve-favicon": "^2.4.3",
     "sha1": "^1.1.1"

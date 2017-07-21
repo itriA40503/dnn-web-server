@@ -23,26 +23,33 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.set('json spaces', 2);
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
-app.use(logger('dev'));
+// app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
+logger.format('detailed', (token, req, res) =>{
+  return req.method + ': ' + req.path + JSON.stringify(req.body) +' -> ' + res.statusCode + ': ' + res.body + '\n';
+});
+
+// register logging middleware and use custom logging format
+app.use(logger('detailed'));
+
+// app.use(logger('dev'));
 app.use(cors({ origin: '*', optionsSuccessStatus: 200 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(sassMiddleware({
-  src: path.join(__dirname, 'public'),
-  dest: path.join(__dirname, 'public'),
+  src: path.join(__dirname, '../public'),
+  dest: path.join(__dirname, '../public'),
   indentedSyntax: true, // true = .sass and false = .scss
   sourceMap: true
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(timeout(12000));
 
 app.get('/', (req, res) => {
   res.render('index', { title: 'Express' });
 });
-app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
+app.use('/apidoc', express.static(path.join(__dirname, '../apidoc')));
 
 setupRouters(app);
 

@@ -7,6 +7,25 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       field: 'id'
     },
+    statusId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'schedule_status',
+        key: 'id'
+      },
+      defaultValue: 1,
+      field: 'status_id'
+    },
+    projectCodeId: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      references: {
+        model: 'project_code',
+        key: 'id'
+      },
+      field: 'project_code_id'
+    },
     projectCode: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -116,6 +135,13 @@ module.exports = (sequelize, DataTypes) => {
           include: [
             { model: sequelize.models.instance.scope(scope), paranoid: false }
           ]
+        };
+      },
+      scheduleStatusWhere: (statusId) => {
+        return {
+          where: {
+            statusId: statusId
+          }
         };
       },
       instanceStatusWhere: (statusId) => {

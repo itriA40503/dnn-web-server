@@ -1,13 +1,18 @@
 /* jshint indent: 2 */
 
-module.exports = function(sequelize, DataTypes) {
-  var machine = sequelize.define('machine', {
+module.exports = (sequelize, DataTypes) => {
+  let machine = sequelize.define('machine', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
       field: 'id'
+    },
+    label: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'label'
     },
     name: {
       type: DataTypes.STRING,
@@ -36,6 +41,7 @@ module.exports = function(sequelize, DataTypes) {
         model: 'machine_status',
         key: 'id'
       },
+      defaultValue: 1,
       field: 'status_id'
     },
     createdAt: {
@@ -57,17 +63,17 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'machine',
     classMethods: {
-      associate: function (models) {
+      associate: (models) => {
       }
     },
     scopes: {
-      normal: function (options) {
-        var where = {};
-        if(options && options.machineId){
+      normal: (options) => {
+        let where = {};
+        if (options && options.machineId) {
           where.id = options.machineId;
         }
 
-        var result = {
+        let result = {
           where: where,
           attributes: [
             'id',

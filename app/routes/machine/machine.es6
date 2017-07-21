@@ -14,13 +14,31 @@ let getSchedulesOverlapPeriod = (start, end) => {
   return Schedule.scope('normal', { method: ['timeOverlap', options] }).findAll();
 };
 
-let getAllMachines = () => {
+let getAllMachinesId = () => {
   return Machine.findAll({ attributes: ['id'], raw: true });
 };
 
+let getAllMachines = () => {
+  return Machine.scope('normal').findAll();
+};
+
 machine.getMachines = asyncWrap(async (req, res, next) => {
-  let machines = await Machine.scope('normal').findAll();
-  res.json({ machines: machines });
+
+  let [machines, schedules] = await Promise.all([
+    getAllMachines(),
+    getSchedulesOverlapPeriod(moment().toDate(), moment().toDate())
+  ]);
+  let machineList = await machines.map((machine) => {
+    let scheduleInMachineCurrent = schedules.filter((schedule) => {
+      return schedule.instance.machine.id === machine.id;
+    }).map((schedule) => {
+      return schedule.get({ plain: true });
+    });
+    let machinePlain = machine.get({ plain: true });
+    machinePlain.currentSchedules = scheduleInMachineCurrent;
+    return machinePlain;
+  });
+  res.json({ machines: machineList });
 });
 
 
@@ -39,7 +57,7 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   if (start > end) throw new CdError(401, 'end date should greater than start date');
 
   let [machines, schedules] = await Promise.all([
-    getAllMachines(),
+    getAllMachinesId(),
     getSchedulesOverlapPeriod(start.toDate(), end.toDate())
   ]);
 
@@ -65,7 +83,7 @@ machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
   date.setHours(0,0,0,0);
 
   let [machines, schedules] = await Promise.all([
-    getAllMachines(),
+    getAllMachinesId(),
     getSchedulesOverlapPeriod(date, new Date(date.getTime() + (1000 * 86400 * PERIOD)))
   ]);
 
@@ -98,5 +116,6 @@ machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
   res.json({ availableCalendar: calendar });
 
 });
+
 
 export default machine;
