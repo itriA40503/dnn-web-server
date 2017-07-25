@@ -51,6 +51,7 @@ schedule.get = asyncWrap(async (req, res, next) => {
 
 schedule.create = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
+  let username = req.user.itriId;
   let startQuery = req.query.start || (req.body && req.body.start);
   let endQuery = req.query.end || (req.body && req.body.end);
   let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 1;
@@ -132,7 +133,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
     throw new CdError('401', 'no machine');
   }
 
-  let username = `user${userId}`;
+ // let username = `user${userId}`;
   let randomPassword = Math.random().toString(36).slice(-8);
   let machineArray = [...machineSet];
 

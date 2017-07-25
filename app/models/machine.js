@@ -77,6 +77,7 @@ module.exports = (sequelize, DataTypes) => {
           where: where,
           attributes: [
             'id',
+            'label',
             'name',
             'description',
             'gpuAmount',

@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   return sequelize.define('image', {
     id: {
       type: DataTypes.BIGINT,
@@ -48,11 +48,12 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'image',
     scopes: {
-      normal: function () {
-        var result = {
+      normal: () => {
+        let result = {
           where: {},
           attributes: [
             'id',
+            'label',
             'name',
             'path',
             'description'
