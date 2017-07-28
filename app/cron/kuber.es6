@@ -1,140 +1,135 @@
 import request from 'request-promise-native';
-import asyncWrap from '../util/asyncWrap';
 import moment from 'moment';
+import asyncWrap from '../util/asyncWrap';
 import { schedule as Schedule, instance as Instance, machine as Machine } from '../models';
 
-const startSchedule = async () => {
+const createContainerFromSchedule = async (schedule) => {
   try {
-    console.log('start schedule');
-    let timeOptions = {
-      start: moment().format()
+
+    let scheduleP = await schedule.get({ plain: true });
+    let id = scheduleP.instance.id;
+    let options = {
+      method: 'POST',
+      url: 'http://100.86.2.12:30554/kubeGpu/container',
+      body: {
+        machineId: scheduleP.instance.machine.label,
+        gpuType: scheduleP.instance.machine.gpuType,
+        imgTag: scheduleP.instance.image.label,
+        account: schedule.instance.username,
+        pwd: schedule.instance.password
+      },
+      timeout: 5000,
+      json: true,
+      resolveWithFullResponse: true
     };
-    console.log('schedule get');
-    let schedules = await Schedule.scope(
-      'detail',
-      { method: ['timeOverlap', timeOptions] },
-      { method: ['scheduleStatusWhere', 1] }
-    ).findAll();
+    let response = await request(options);
 
-    let instancesUpdate = await schedules.map(async (schedule) => {
-      let scheduleP = await schedule.get({ plain: true });
-      let id = scheduleP.instance.id;
-      let machineId = scheduleP.instance.machine.id;
-      let options = {
-        method: 'POST',
-        url: 'http://100.86.2.12:30554/kubeGpu/container',
-        body: {
-          machineId: scheduleP.instance.machine.label,
-          gpuType: scheduleP.instance.machine.gpuType,
-          imgTag: scheduleP.instance.image.label,
-          account: schedule.instance.username,
-          pwd: schedule.instance.password
-        },
-        json: true,
-        resolveWithFullResponse: true
-      };
-      let response = await request(options);
-
-      if (response.statusCode === 200) {
-        let pod = response.body[0];
-        let service = response.body[1];
-
-        await schedule.instance.update({
-          ip: pod.status.hostIP,
-          port: service.spec.ports[0].nodePort
-        });
-        return schedule.update({ statusId: 2 });
-      }
-      console.log(' fail');
-      return true;
-    });
-
-    await Promise.all(instancesUpdate);
-
-    return;
-
+    if (response.statusCode === 200) {
+      let sch = await schedule.updateAttributes({ statusId: 2 });
+      return (sch) ? true : false;
+    }
   } catch (err) {
     console.log(err);
   }
+
+  return false;
 };
 
-
-const updateSchedule = async () => {
+const updateContainerFromSchedule = async (schedule) => {
   try {
-    console.log('update schedule');
-    let schedules = await Schedule.scope(
-      'detail',
-      { method: ['scheduleStatusWhere', 2] }
-    ).findAll();
+    let scheduleP = await schedule.get({ plain: true });
+    let options = {
+      method: 'GET',
+      url: `http://100.86.2.12:30554/kubeGpu/container/${scheduleP.instance.machine.label}`,
+      json: true,
+      resolveWithFullResponse: true
+    };
 
-    let instancesUpdate = await schedules.map(async (schedule) => {
-      let scheduleP = await schedule.get({ plain: true });
-      let id = scheduleP.instance.id;
-      let machineId = scheduleP.instance.machine.id;
-      let options = {
-        method: 'GET',
-        url: `http://100.86.2.12:30554/kubeGpu/container/${scheduleP.instance.machine.label}`,
-        json: true,
-        resolveWithFullResponse: true
-      };
-      let response = await request(options);
-      if (response.statusCode === 200) {
-        let pod = response.body[0];
-        let service = response.body[1];
-        if (pod.status.phase === 'Running') {
-          return schedule.update({ statusId: 3 });
-        }
+    let response = await request(options);
+    if (response.statusCode === 200) {
+      let pod = response.body[0];
+      let service = response.body[1];
+      if (pod.status.phase !== 'Running') return false;
 
-        console.log('status pending');
-        return true;
+      let instanceN = await schedule.instance.updateAttributes({
+        ip: pod.status.hostIP,
+        port: service.spec.ports[0].nodePort
+      });
 
-      }
-      console.log(' fail');
-      return true;
-    });
+      if (!instanceN) return false;
+      let scheduleN = await schedule.updateAttributes({ statusId: 3 });
+      return (scheduleN) ? true : false;
 
-    await Promise.all(instancesUpdate);
-
-    return;
-
+    }
   } catch (err) {
-    console.log(err);
+    console.log(`schedule${schedule.id}: update fail`);
   }
+  return false;
 };
 
-const deleteSchedule = async () => {
+const deleteContainerFromSchedule = async (schedule) => {
   try {
-    console.log('delete schedule');
-    let schedules = await Schedule.scope(
-      'detail',
-      { method: ['scheduleStatusWhere', 3] }
-    ).findAll();
-
-    let instancesUpdate = await schedules.map(async (schedule) => {
-      let scheduleP = await schedule.get({ plain: true });
-      let id = scheduleP.instance.id;
-      let machineId = scheduleP.instance.machine.id;
-      let options = {
-        method: 'DELETE',
-        url: `http://100.86.2.12:30554/kubeGpu/container/${scheduleP.instance.machine.label}`,
-        resolveWithFullResponse: true
-      };
-      let response = await request(options);
-      if (response.statusCode === 200) {
-        console.log('delete success');
-        return schedule.destroy();
-      }
-      console.log(' fail');
-      return false;
-    });
-
-    await Promise.all(instancesUpdate);
-
-    return;
-
+    let scheduleP = await schedule.get({ plain: true });
+    let id = scheduleP.instance.id;
+    let options = {
+      method: 'DELETE',
+      url: `http://100.86.2.12:30554/kubeGpu/container/${scheduleP.instance.machine.label}`,
+      resolveWithFullResponse: true
+    };
+    let response = await request(options);
+    if (response.statusCode === 200) {
+      console.log('delete success');
+      await schedule.updateAttributes({ statusId: 5 });
+      return true;
+    }
   } catch (err) {
-    console.log(err);
+    console.log(`schedule${schedule.id}: delete fail`);
   }
+  return false;
 };
 
-export { startSchedule, updateSchedule, deleteSchedule };
+
+const startSchedule = () => {
+  console.log('start schedule');
+  let timeOptions = {
+    start: moment().format()
+  };
+  let schedules = Schedule.scope(
+    'detail',
+    { method: ['timeOverlap', timeOptions] },
+    { method: ['scheduleStatusWhere', 1] }
+  ).findAll();
+
+  let instancesUpdate = schedules.map(createContainerFromSchedule);
+
+ // let result = Promise.all(instancesUpdate);
+ // console.log(result);
+  return true;
+};
+
+
+const updateSchedule = () => {
+  console.log('update schedule');
+  let schedules = Schedule.scope(
+    'detail',
+    { method: ['scheduleStatusWhere', 2] }
+  ).findAll();
+
+  let instancesUpdate = schedules.map(updateContainerFromSchedule);
+  //Promise.all(instancesUpdate);
+  return true;
+};
+
+const deleteSchedule = () => {
+  let schedules = Schedule.scope(
+    'detail',
+    'scheduleShouldDelete'
+  ).findAll();
+
+  let instancesUpdate = schedules.map(deleteContainerFromSchedule);
+  // await Promise.all(instancesUpdate);
+
+  return true;
+};
+
+export { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule, startSchedule, updateSchedule, deleteSchedule };
