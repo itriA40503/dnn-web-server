@@ -105,6 +105,7 @@ module.exports = (sequelize, DataTypes) => {
           ],
           attributes: [
             'id',
+            'statusId',
             'projectCode',
             'startedAt',
             'endedAt',
@@ -121,6 +122,7 @@ module.exports = (sequelize, DataTypes) => {
           ],
           attributes: [
             'id',
+            'statusId',
             'projectCode',
             'startedAt',
             'endedAt',
@@ -135,6 +137,33 @@ module.exports = (sequelize, DataTypes) => {
           include: [
             { model: sequelize.models.instance.scope(scope), paranoid: false }
           ]
+        };
+      },
+      scheduleStatusNormal: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1, 2, 3, 4]
+            }
+          }
+        };
+      },
+      scheduleShouldDelete: () => {
+        return {
+          where: {
+            $or: [
+              {
+                statusId: {
+                  $in: [4, 7]
+                }
+              },
+              {
+                endedAt: {
+                  $lt: new Date()
+                }
+              }
+            ]
+          }
         };
       },
       scheduleStatusWhere: (statusId) => {
