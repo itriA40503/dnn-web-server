@@ -79,7 +79,7 @@ const deleteContainerFromSchedule = async (schedule) => {
     let response = await request(options);
     if (response.statusCode === 200) {
       console.log('delete success');
-      await schedule.updateAttributes({ statusId: 5 });
+      await schedule.updateAttributes({ statusId: 5, endedAt: moment().format() });
       return true;
     }
   } catch (err) {
