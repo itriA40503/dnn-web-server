@@ -273,12 +273,11 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   let options = {
     statusId: newStatus,
   };
+
   if (newStatus === 6) {
     options.endedAt = moment().format();
   }
-  else {
 
-  }
   let scheduleU = await schedule.updateAttributes(options);
 
   if (!scheduleU) throw new CdError(401, 'update schedule fail');
