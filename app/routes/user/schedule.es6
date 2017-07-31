@@ -3,7 +3,7 @@ import moment from 'moment';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { createContainerFromSchedule, updateContainerFromSchedule } from '../../cron/kuber';
+import { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule } from '../../cron/kuber';
 import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models';
 
 const schedule = {};
@@ -54,8 +54,10 @@ const instantCreateContainer = async (schedule) => {
   console.log('instance create!');
   let result = await createContainerFromSchedule(schedule);
   console.log(`instance create result${result}`);
-  await setTimeout(x => x, 5000);
-  if (result) await updateContainerFromSchedule(schedule);
+  setTimeout(() => {
+    console.log('instance update!');
+    updateContainerFromSchedule(schedule);
+  }, 10000);
 };
 
 schedule.create = asyncWrap(async (req, res, next) => {
@@ -172,7 +174,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let resSchedule = await Schedule.scope('detail').findById(schedule.id);
 
   if (startDate <= moment()) {
-    setTimeout(() => { instantCreateContainer(resSchedule); }, 0);
+    instantCreateContainer(resSchedule);
   }
   
   res.json(resSchedule);
@@ -268,10 +270,22 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   console.log(`delete schedule's status:${schedule.statusId}`);
   // let t = await sequelize.transaction();
   let newStatus = (schedule.statusId == 2 || schedule.statusId == 3) ? 4 : 6;
-  let scheduleU = await schedule.updateAttributes({ statusId: newStatus });
+  let options = {
+    statusId: newStatus,
+  };
+  if (newStatus === 6) {
+    options.endedAt = moment().format();
+  }
+  else {
+
+  }
+  let scheduleU = await schedule.updateAttributes(options);
 
   if (!scheduleU) throw new CdError(401, 'update schedule fail');
 
+  if (newStatus === 4) {
+    deleteContainerFromSchedule(schedule);
+  }
  // let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
   res.json(scheduleU);
 
