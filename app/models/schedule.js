@@ -139,7 +139,14 @@ module.exports = (sequelize, DataTypes) => {
           ]
         };
       },
-      scheduleStatusNormal: () => {
+      user: (userId) => {
+        return {
+          where: {
+            userId: userId
+          }
+        };
+      },
+      statusNormal: () => {
         return {
           where: {
             statusId: {
@@ -148,7 +155,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
-      scheduleShouldDelete: () => {
+      statusShouldDelete: () => {
         return {
           where: {
             $or: [
@@ -166,24 +173,14 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
-      scheduleStatusWhere: (statusId) => {
+      status: (statusId) => {
         return {
           where: {
             statusId: statusId
           }
         };
       },
-      instanceStatusWhere: (statusId) => {
-        let result = {
-          include: [
-            { model: sequelize.models.instance,
-              where: { statusId: statusId },
-              paranoid: false }
-          ]
-        };
-        return result;
-      },
-      whichMachine: (machineId) => {
+      machine: (machineId) => {
         console.log(machineId);
         return {
           include: [
