@@ -1,5 +1,6 @@
 import express from 'express';
 import moment from 'moment';
+import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
@@ -33,7 +34,7 @@ schedule.get = asyncWrap(async (req, res, next) => {
     delete resJson.schedules;
   }
 
-  let schedules = await Schedule.scope('detail').findAll({
+  let schedules = await db.getDetailSchedules().findAll({
     where: where
   });
 
@@ -66,6 +67,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let startQuery = req.query.start || (req.body && req.body.start);
   let endQuery = req.query.end || (req.body && req.body.end);
   let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 1;
+  let customMachineId = req.query.machineId || (req.body && req.body.machineId);
 
   if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
 
@@ -81,7 +83,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   else if (startDate < moment().startOf('day')) throw new CdError(401, 'start date must greater then today');
   else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(401, 'period must smaller then 30 days');
 
-  let getUserBookedSchedules = () => {
+  /* let getUserBookedSchedules = () => {
     return Schedule.findAll({
       where: {
         statusId: {
@@ -95,34 +97,22 @@ schedule.create = asyncWrap(async (req, res, next) => {
       attributes: ['id'],
       raw: true
     });
-  };
-
-  let getAllMachines = () => {
-    return Machine.findAll({ attributes: ['id'], raw: true });
-  };
-
-  let getAllImages = () => {
-    return Image.findAll({ attributes: ['id'], raw: true });
-  };
-
-  let getSchedulesOverlapPeriod = (start, end, other) => {
-    let date = new Date();
-    let options = {
-      start: start,
-      end: end
-    };
-    return Schedule.scope('normal', 'scheduleStatusNormal', { method: ['timeOverlap', options] }).findAll(other);
-  };
-
+  };*/
   let start = startDate.format();
   let end = endDate.format();
 
+  /* let getUserBookedSchedules = db.getUserBookedSchedule(userId).findAll();
+  let getAllMachines = db.getAllMachineIds().findAll();
+  let getAllImages = db.getAllImageIds().findAll();
+  let getAllRunningSchedules = db.getAllRunningSchedules(start, end).findAll();
+
+*/
   let [bookedSchedules, machines, images, overlapSchedules] =
     await Promise.all([
-      getUserBookedSchedules(),
-      getAllMachines(),
-      getAllImages(),
-      getSchedulesOverlapPeriod(start, end)
+      db.getUserBookedSchedule(userId).findAll(),
+      db.getAllMachineIds().findAll(),
+      db.getAllImageIds().findAll(),
+      db.getAllRunningSchedules(start, end).findAll()
     ]);
 
   if (bookedSchedules.length > 100) {
@@ -143,9 +133,8 @@ schedule.create = asyncWrap(async (req, res, next) => {
     return set;
   }, machineSet);
 
-  if (availableSet.size === 0) {
-    throw new CdError('401', 'no machine');
-  }
+  if (availableSet.size === 0) throw new CdError('401', 'no machine');
+  if (customMachineId && !customMachineId.has(customMachineId)) throw new CdError('401', 'no specific machine');
 
  // let username = `user${userId}`;
   let randomPassword = Math.random().toString(36).slice(-8);
@@ -156,7 +145,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
     endedAt: end,
     statusId: 1,
     instance: {
-      machineId: machineArray[Math.floor(Math.random() * machineArray.length)],
+      machineId: customMachineId || machineArray[Math.floor(Math.random() * machineArray.length)],
       ip: '',
       port: undefined,
       username: username,
@@ -193,18 +182,18 @@ schedule.update = asyncWrap(async (req, res, next) => {
     projectCode: req.query.project_code
   };
 
-  let getScheduleById = id => Schedule.scope('normal').findOne({ where: { id: id } });
-  let machineInPeriod = (start, end, machineId) => {
+  let getScheduleById = id => Schedule.scope('detail').findOne({ where: { id: id } });
+  /* let machineInPeriod = (start, end, machineId) => {
     let options = {
       start: start,
       end: end
     };
     return Schedule.scope('onlyTime',
-      'scheduleStatusNormal',
+      'statusNormal',
       { method: ['timeOverlap', options] },
       { method: ['instanceScope', ['id', { method: ['whichMachine', machineId] }]] }
     );
-  };
+  };*/
 
   let schedule = await getScheduleById(scheduleId);
   if (!schedule) throw new CdError('401', 'no such schedule');
@@ -223,7 +212,9 @@ schedule.update = asyncWrap(async (req, res, next) => {
     else if (newEndedAt < oldStartDate) throw new CdError(401, 'end date should greater then start date');
     else if (newEndedAt > extendableEndDate) throw new CdError(401, 'end date exceeds quota');
 
-    let schedules = await machineInPeriod(oldEndDate.format(), newEndedAt.format(), machineId)
+    let schedules = await db.getScheduleOfMachineId(machineId,
+      oldEndDate.format(),
+      newEndedAt.format())
       .findAll({
         where: {
           id: {
@@ -308,7 +299,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   if (!scheduleId) throw new CdError('401', 'without schedule id');
 
   let getScheduleById = id => Schedule.scope('normal').findOne({ where: { id: id } });
-  let machineInPeriod = (start, end, machineId) => {
+  /* let machineInPeriod = (start, end, machineId) => {
     let options = {
       start: start,
       end: end
@@ -318,7 +309,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
       { method: ['timeOverlap', options] },
       { method: ['instanceScope', ['id', { method: ['whichMachine', machineId] }]] }
     );
-  };
+  }; */
 
   let schedule = await getScheduleById(scheduleId);
   if (!schedule) throw new CdError('401', 'no such schedule');
@@ -330,9 +321,10 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');
  // let reducibleEndDate = moment.max(oldStartDate.add(1, 'days').startOf('day'),
   // moment().add(1, 'days').startOf('day'));
-  let schedules = await machineInPeriod(oldEndDate.format(),
-    extendableEndDate.format(),
-    machineId)
+  let schedules = await db.getScheduleOfMachineId(
+    machineId,
+    oldEndDate.format(),
+    extendableEndDate.format())
     .findAll({
       where: {
         id: {

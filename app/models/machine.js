@@ -67,6 +67,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     scopes: {
+      id: () => {
+        return {
+          attributes: ['id'],
+          raw: true
+        };
+      },
       normal: (options) => {
         let where = {};
         if (options && options.machineId) {

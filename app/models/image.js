@@ -48,6 +48,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'image',
     scopes: {
+      id: () => {
+        return {
+          attributes: ['id'],
+          raw: true
+        };
+      },
       normal: () => {
         let result = {
           where: {},
