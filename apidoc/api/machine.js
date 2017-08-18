@@ -4,14 +4,14 @@
  * @apiName  checkMachineRemain
  * @apiGroup Machine
  *
- * @apiParam {String} start
- * @apiParam {String} end
+ * @apiParam {String} start start date
+ * @apiParam {String} end end date
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *        avalableNumber: 2,
- *        machines:[ 123, 456]
+ *        machines:[ 1, 2]
  *     }
  *
  * @apiError  0 Parameter error.
@@ -32,9 +32,33 @@
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
- *     {
-
- *     }
+       {
+         "availableCalendar": [
+           {
+             "date": "2017-08-17T16:00:00.000Z",
+             "available": [],
+             "availableNum": 0
+           },
+           {
+             "date": "2017-08-18T16:00:00.000Z",
+             "available": [],
+             "availableNum": 0
+           },
+                  .......
+           {
+             "date": "2017-09-15T16:00:00.000Z",
+             "available": [
+               "1",
+               "2",
+               "3",
+               "5",
+               "4",
+               "6"
+             ],
+             "availableNum": 6
+           }
+         ]
+       }
  *
  * @apiError  0 Parameter error.
  *
@@ -42,6 +66,6 @@
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 401
  *     {
- *       "code":  0
+ *       "message":  ""
  *     }
  */

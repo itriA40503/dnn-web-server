@@ -13,15 +13,10 @@
  *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIzIn0.xi1PUUhCfJLcX-YwUj-FtvBhcdD8FKwBZxZO9OeBNZg"
  *     }
  *
- * @apiError  0 Parameter error.
- *
- * @apiError  1 The User doesn't exists or wrong username/password.
-  *
-* @apiError  2 Other error.
  *
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 401
  *     {
- *       "code":  0
+ *               message: ""
  *     }
  */

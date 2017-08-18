@@ -9,16 +9,56 @@
 *
 * @apiSuccessExample Success-Response:
 *     HTTP/1.1 200 OK
-*     {
-  *     }
+       {
+         "schedules": [
+           {
+             "id": "175",
+             "statusId": "3",           // 1: waiting   2: loading  3: running 4: deleting 5: deleted 6: canceled 7: error
+             "projectCode": null,
+             "startedAt": "2017-08-17T16:00:00.000Z",
+             "endedAt": "2017-08-19T15:59:59.000Z",
+             "createdAt": "2017-08-18T01:45:30.408Z",
+             "updatedAt": "2017-08-18T01:45:40.190Z",
+             "userId": "6",
+             "instance": {
+               "id": "176",
+               "ip": "100.86.2.10",
+               "port": 31786,
+               "username": "Axxxxx",
+               "password": "jpipxqei",
+               "datasetPath": null,
+               "datasetUsername": null,
+               "datasetPassword": null,
+               "statusId": 1,
+               "image": {
+                 "id": "7",
+                 "label": "all_cpu:demo",
+                 "name": "all_cpu:demo",
+                 "path": null,
+                 "description": "all_cpu"
+               },
+               "machine": {
+                 "id": "1",
+                 "label": "m1",
+                 "name": "Machine1",
+                 "description": "JAPARIPARK",
+                 "gpuAmount": 1,
+                 "gpuType": "v100",
+                 "statusId": 1
+               }
+             }
+           }
+         ]
+       }
 *
 * @apiError  0 Parameter error.
 *
 *
 * @apiErrorExample Error-Response:
-*     HTTP/1.1 401
-*     {
-  *     }
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
 *
 **/
 /**
@@ -28,8 +68,9 @@
 * @apiGroup User/schedule
 *
 * @apiHeader {String} x-access-token Token
-* @apiParam {String} start start date
+* @apiParam {String} start start date ( ISO-8601)
 * @apiParam {String} end end date
+ * @apiParam {int} image_id which image to use
 *
 * @apiSuccessExample Success-Response:
 *     HTTP/1.1 200 OK
@@ -40,9 +81,10 @@
 *
 *
 * @apiErrorExample Error-Response:
-*     HTTP/1.1 401
-*     {
-  *     }
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
 *
 **/
 /**
@@ -63,9 +105,10 @@
 *
 *
 * @apiErrorExample Error-Response:
-*     HTTP/1.1 401
-*     {
-  *     }
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
 **/
 /**
  * @api {delete} /user/schedule/:id Delete schedule
@@ -86,7 +129,8 @@
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 401
  *     {
-  *     }
+ *        "message": ""
+ *     }
  **/
 
 /**
@@ -99,8 +143,9 @@
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
- *     {
-  *     }
+       {
+         "extendableLatestDate": "2017-09-17T15:59:59.999Z"
+       }
  *
  * @apiError  0 Parameter error.
  *
@@ -108,5 +153,6 @@
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 401
  *     {
-  *     }
+ *        "message": ""
+ *     }
  **/
