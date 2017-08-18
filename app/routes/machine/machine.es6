@@ -1,4 +1,5 @@
 import moment from 'moment';
+import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import { schedule as Schedule, machine as Machine } from '../../models/index';
@@ -23,11 +24,11 @@ let getAllMachines = () => {
 };
 
 machine.getMachines = asyncWrap(async (req, res, next) => {
-
   let [machines, schedules] = await Promise.all([
     getAllMachines(),
     getSchedulesOverlapPeriod(moment().toDate(), moment().toDate())
   ]);
+
   let machineList = await machines.map((machine) => {
     let scheduleInMachineCurrent = schedules.filter((schedule) => {
       return schedule.instance.machine.id === machine.id;
@@ -45,6 +46,7 @@ machine.getMachines = asyncWrap(async (req, res, next) => {
 machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   let startQuery = (req.query && req.query.start) || (req.body && req.body.start);
   let endQuery = (req.query && req.query.end) || (req.body && req.body.end);
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
 
   if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
 
@@ -56,10 +58,15 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   end.endOf('d');
   if (start > end) throw new CdError(401, 'end date should greater than start date');
 
+
   let [machines, schedules] = await Promise.all([
+    db.getAllMachineNormal().findAll({ where: { gpuType: customGpu } }),
+    db.getAllRunningSchedules(start.format(), end.format())
+  ]);
+  /* let [machines, schedules] = await Promise.all([
     getAllMachinesId(),
     getSchedulesOverlapPeriod(start.toDate(), end.toDate())
-  ]);
+  ]);*/
 
   let machineSet = await new Set(
     machines.map(machine => machine.id)
@@ -79,12 +86,13 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
 
 machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
 
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
   let date = new Date();
-  date.setHours(0,0,0,0);
+  date.setHours(0, 0, 0, 0);
 
   let [machines, schedules] = await Promise.all([
-    getAllMachinesId(),
-    getSchedulesOverlapPeriod(date, new Date(date.getTime() + (1000 * 86400 * PERIOD)))
+    db.getAllMachineNormal().findAll({ where: { gpuType: customGpu } }),
+    db.getAllRunningSchedules(date, new Date(date.getTime() + (1000 * 86400 * PERIOD)))
   ]);
 
   let machineSet = await machines.reduce((set, machine) => {

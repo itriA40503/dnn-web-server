@@ -5,7 +5,7 @@ import { dnnUser as User } from '../models';
 
 const sequelize = User.sequelize;
 
-const jwtAuth = async (req, res, next) => {
+const jwtAuth = asyncWrap(async (req, res, next) => {
   let token = req.body.access_token || req.query.access_token || req.headers['x-access-token'];
 
   if (!token) {
@@ -33,6 +33,6 @@ const jwtAuth = async (req, res, next) => {
     throw new CdError(401, 'cant find user', 40102);
   }
 
-};
+});
 
 export default jwtAuth;

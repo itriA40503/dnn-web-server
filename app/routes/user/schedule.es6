@@ -51,23 +51,41 @@ schedule.get = asyncWrap(async (req, res, next) => {
   return;
 });
 
+const instantUpdateContainer = async (schedule, times) => {
+  let tryTimes = times || 1;
+  if (tryTimes <= 0) return;
+
+  let result = await updateContainerFromSchedule(schedule);
+  if (!result) {
+    setTimeout(() => {
+      instantUpdateContainer(schedule, tryTimes - 1);
+    }, 10000);
+  }
+
+  return;
+
+};
+
 const instantCreateContainer = async (schedule) => {
   console.log('instance create!');
   let result = await createContainerFromSchedule(schedule);
   console.log(`instance create result${result}`);
+
   setTimeout(() => {
-    console.log('instance update!');
-    updateContainerFromSchedule(schedule);
+    instantUpdateContainer(schedule, 3);
   }, 10000);
+  return result;
 };
+
 
 schedule.create = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
-  let username = req.user.itriId;
+  let username = req.query.username || (req.body && req.body.username) || req.user.itriId;
   let startQuery = req.query.start || (req.body && req.body.start);
   let endQuery = req.query.end || (req.body && req.body.end);
   let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 1;
-  let customMachineId = req.query.machineId || (req.body && req.body.machineId);
+  let customMachineId = req.query.machine_id || (req.body && req.body.machine_id);
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
 
   if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
 
@@ -83,34 +101,17 @@ schedule.create = asyncWrap(async (req, res, next) => {
   else if (startDate < moment().startOf('day')) throw new CdError(401, 'start date must greater then today');
   else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(401, 'period must smaller then 30 days');
 
-  /* let getUserBookedSchedules = () => {
-    return Schedule.findAll({
-      where: {
-        statusId: {
-          $in: [1, 2, 3, 4]
-        },
-        userId: req.user.id,
-        endedAt: {
-          $gte: new Date()
-        }
-      },
-      attributes: ['id'],
-      raw: true
-    });
-  };*/
   let start = startDate.format();
   let end = endDate.format();
 
-  /* let getUserBookedSchedules = db.getUserBookedSchedule(userId).findAll();
-  let getAllMachines = db.getAllMachineIds().findAll();
-  let getAllImages = db.getAllImageIds().findAll();
-  let getAllRunningSchedules = db.getAllRunningSchedules(start, end).findAll();
-
-*/
   let [bookedSchedules, machines, images, overlapSchedules] =
     await Promise.all([
       db.getUserBookedSchedule(userId).findAll(),
-      db.getAllMachineIds().findAll(),
+      db.getAllMachineIds().findAll({
+        where: {
+          gpuType: customGpu
+        }
+      }),
       db.getAllImageIds().findAll(),
       db.getAllRunningSchedules(start, end).findAll()
     ]);
@@ -163,10 +164,13 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let resSchedule = await Schedule.scope('detail').findById(schedule.id);
 
   if (startDate <= moment()) {
-    instantCreateContainer(resSchedule);
+    let createResult = instantCreateContainer(resSchedule);
+    if (!createResult) {
+      schedule.updateAttributes({ statusId: 7 });
+    }
   }
   
-  res.json(resSchedule);
+  return res.json(resSchedule);
 
 });
 
@@ -183,17 +187,6 @@ schedule.update = asyncWrap(async (req, res, next) => {
   };
 
   let getScheduleById = id => Schedule.scope('detail').findOne({ where: { id: id } });
-  /* let machineInPeriod = (start, end, machineId) => {
-    let options = {
-      start: start,
-      end: end
-    };
-    return Schedule.scope('onlyTime',
-      'statusNormal',
-      { method: ['timeOverlap', options] },
-      { method: ['instanceScope', ['id', { method: ['whichMachine', machineId] }]] }
-    );
-  };*/
 
   let schedule = await getScheduleById(scheduleId);
   if (!schedule) throw new CdError('401', 'no such schedule');
@@ -254,7 +247,7 @@ schedule.delete = asyncWrap(async (req, res, next) => {
 
   if (!schedule) throw new CdError(401, 'schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'have no auth');
-  else if (schedule.statusId == 2) throw new CdError(401, 'schedule can\'t be delete in current moment!');
+ // else if (schedule.statusId == 2) throw new CdError(401, 'schedule can\'t be delete in current moment!');
   else if (schedule.statusId == 4 || schedule.statusId == 5) throw new CdError(401, 'schedule have been deleted');
   else if (schedule.statusId == 6) throw new CdError(401, 'schedule have been canceled');
 
@@ -299,17 +292,6 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   if (!scheduleId) throw new CdError('401', 'without schedule id');
 
   let getScheduleById = id => Schedule.scope('normal').findOne({ where: { id: id } });
-  /* let machineInPeriod = (start, end, machineId) => {
-    let options = {
-      start: start,
-      end: end
-    };
-    return Schedule.scope('onlyTime',
-      'scheduleStatusNormal',
-      { method: ['timeOverlap', options] },
-      { method: ['instanceScope', ['id', { method: ['whichMachine', machineId] }]] }
-    );
-  }; */
 
   let schedule = await getScheduleById(scheduleId);
   if (!schedule) throw new CdError('401', 'no such schedule');

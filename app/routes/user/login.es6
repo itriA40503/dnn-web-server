@@ -44,7 +44,8 @@ export default asyncWrap(async (req, res, next) => {
       let token = jwt.encode({
         uid: user.id,
         itriId: user.itriId,
-        expires: ((new Date()).getTime() / 1000) + ( 86400 * 100 )
+        expires: ((new Date()).getTime() / 1000) + ( 86400 * 100 ),
+        authority: user.typeId
       }, req.app.get('jwtsecretkey'));
 
       res.json({

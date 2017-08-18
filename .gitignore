@@ -2,3 +2,4 @@ apidoc/build/
 .idea/
 build/
 node_modules/
+portal/
