@@ -3,6 +3,10 @@ import moment from 'moment';
 import asyncWrap from '../util/asyncWrap';
 import { schedule as Schedule, instance as Instance, machine as Machine } from '../models';
 
+const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
+const conAPI = `${kubeUrl}/container`;
+const consAPI = `${kubeUrl}/containers`;
+
 const createContainerFromSchedule = async (schedule) => {
   try {
 
@@ -10,7 +14,7 @@ const createContainerFromSchedule = async (schedule) => {
     let id = scheduleP.instance.id;
     let options = {
       method: 'POST',
-      url: 'http://100.86.2.12:30554/kubeGpu/container',
+      url: conAPI,
       body: {
         machineId: scheduleP.instance.machine.label,
         gpuType: scheduleP.instance.machine.gpuType,
@@ -40,7 +44,7 @@ const updateContainerFromSchedule = async (schedule) => {
     let scheduleP = await schedule.get({ plain: true });
     let options = {
       method: 'GET',
-      url: `http://100.86.2.12:30554/kubeGpu/container/${scheduleP.instance.machine.label}`,
+      url: `${conAPI}/${scheduleP.instance.machine.label}`,
       json: true,
       resolveWithFullResponse: true
     };
@@ -73,7 +77,7 @@ const deleteContainerFromSchedule = async (schedule) => {
     let id = scheduleP.instance.id;
     let options = {
       method: 'DELETE',
-      url: `http://100.86.2.12:30554/kubeGpu/container/${scheduleP.instance.machine.label}`,
+      url: `${conAPI}/${scheduleP.instance.machine.label}`,
       resolveWithFullResponse: true
     };
     let response = await request(options);
@@ -87,7 +91,26 @@ const deleteContainerFromSchedule = async (schedule) => {
   }
   return false;
 };
-
+const removeAllContainers = async () => {
+  try {
+    let options = {
+      method: 'DELETE',
+      url: consAPI,
+      resolveWithFullResponse: true
+    };
+    let response = await request(options);
+    if (response.statusCode === 200) {
+      await Schedule.destroy({
+        force: true });
+      await Instance.destroy({
+        force: true });
+      return true;
+    }
+  } catch (err) {
+    console.log('removeAll fail');
+  }
+  return false;
+};
 
 const startSchedule = () => {
   console.log('start schedule');
@@ -116,7 +139,6 @@ const updateSchedule = () => {
   ).findAll();
 
   let instancesUpdate = schedules.map(updateContainerFromSchedule);
-  //Promise.all(instancesUpdate);
   return true;
 };
 
@@ -127,9 +149,8 @@ const deleteSchedule = () => {
   ).findAll();
 
   let instancesUpdate = schedules.map(deleteContainerFromSchedule);
-  // await Promise.all(instancesUpdate);
 
   return true;
 };
 
-export { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule, startSchedule, updateSchedule, deleteSchedule };
+export { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule, removeAllContainers , startSchedule, updateSchedule, deleteSchedule };

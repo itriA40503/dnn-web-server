@@ -7,6 +7,8 @@ import paraChecker from '../../util/paraChecker';
 import { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule } from '../../cron/kuber';
 import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models';
 
+const BOOKMAXIMUN = 100;
+
 const schedule = {};
 
 schedule.get = asyncWrap(async (req, res, next) => {
@@ -104,20 +106,19 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let start = startDate.format();
   let end = endDate.format();
 
+  let machineWhere = {};
+  if (customGpu) machineWhere.where = { gpuType: customGpu };
+
   let [bookedSchedules, machines, images, overlapSchedules] =
     await Promise.all([
       db.getUserBookedSchedule(userId).findAll(),
-      db.getAllMachineIds().findAll({
-        where: {
-          gpuType: customGpu
-        }
-      }),
+      db.getAllMachineIds().findAll(machineWhere),
       db.getAllImageIds().findAll(),
       db.getAllRunningSchedules(start, end).findAll()
     ]);
 
-  if (bookedSchedules.length > 100) {
-    throw new CdError('401', 'schedules exceed three');
+  if (bookedSchedules.length > BOOKMAXIMUN) {
+    throw new CdError(401, 'schedule reservations exceed maximum number');
   }
 
   if (!images.indexOf(imageIdQuery)) {

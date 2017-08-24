@@ -2,7 +2,7 @@ import moment from 'moment';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import db from '../../db/db';
-import { schedule as Schedule } from '../../models/index';
+import { schedule as Schedule, instance as Instance } from '../../models/index';
 
 const schedule = {};
 
@@ -29,12 +29,14 @@ schedule.getAllSchedule = asyncWrap(async (req, res, next) => {
   }
 
   let schedules = await db.getSchedules(options.start, options.end).findAll();
- /* let schedules = await Schedule.scope(
-    'normal',
-    { method: ['timeOverlap', options] }
-  ).findAll();
-*/
+
   res.json(schedules);
 });
+
+schedule.removeAll = asyncWrap(async (req, res, next) => {
+  let result = await db.removeAllContainers();
+  res.statusCode(200);
+});
+
 
 export default schedule;
