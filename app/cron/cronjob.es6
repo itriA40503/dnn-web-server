@@ -1,5 +1,5 @@
 import { CronJob } from 'cron';
-import { startSchedule, updateSchedule, deleteSchedule } from './kuber'
+import { startSchedule, updateSchedule, deleteSchedule } from './kuber';
 
 let deleteScheduleJob = new CronJob({
   cronTime: '0 0 * * *',
@@ -16,7 +16,7 @@ let startScheduleJob = new CronJob({
 });
 
 let updateScheduleJob = new CronJob({
-  cronTime: '* /10 * * *',
+  cronTime: '* */10 * * *',
   onTick: updateSchedule,
   start: false,
   timeZone: 'Asia/Taipei'
