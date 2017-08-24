@@ -142,6 +142,7 @@ describe('server', () => {
           res.should.to.be.json;
           res.body.should.have.property('machines');
           machines = res.body.machines;
+          console.log(res.body);
           done();
         });
     });
@@ -262,6 +263,7 @@ describe('server', () => {
             done();
           })
       });
+
     });
     describe('Update schedule', () => {
 
@@ -300,5 +302,8 @@ describe('server', () => {
           })
       });
     });
+
+
+
   });
 });

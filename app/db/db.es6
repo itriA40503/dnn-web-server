@@ -18,8 +18,6 @@ db.getDetailSchedules = (start, end) => {
   return Schedule.scope('detail', { method: ['timeOverlap', options] });
 };
 
-
-
 db.getAllRunningSchedules = (start, end) => {
   let options = {
     start: start,
