@@ -100,6 +100,30 @@ const removeAllContainers = async () => {
     };
     let response = await request(options);
     if (response.statusCode === 200) {
+      let schedules = await Schedule.scope('id').findAll();
+      let instances = await Instance.scope('id').findAll();
+      let scheduleIds = await schedules.reduce((sId, schedule) => {
+        sId.push(schedule.id);
+        return sId;
+      }, []);
+
+      let instanceIds = await instances.reduce((sId, instance) => {
+        sId.push(instance.id);
+        return sId;
+      }, []);
+
+      await Schedule.destroy({
+        force: true,
+        where: {
+          id: scheduleIds
+        }});
+      await Instance.destroy({
+        force: true,
+        where: {
+          id: instanceIds
+        }});
+
+
       await Schedule.destroy({
         force: true });
       await Instance.destroy({
@@ -107,7 +131,7 @@ const removeAllContainers = async () => {
       return true;
     }
   } catch (err) {
-    console.log('removeAll fail');
+    console.log(err);
   }
   return false;
 };

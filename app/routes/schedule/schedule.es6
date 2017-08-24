@@ -38,7 +38,7 @@ schedule.getAllSchedule = asyncWrap(async (req, res, next) => {
 /* for testing */
 schedule.removeAll = asyncWrap(async (req, res, next) => {
   let result = await removeAllContainers();
-  res.json({});
+  res.json(result);
 });
 
 
