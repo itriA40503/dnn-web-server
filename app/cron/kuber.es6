@@ -23,7 +23,7 @@ const createContainerFromSchedule = async (schedule) => {
       body: {
         machineId: scheduleP.instance.machine.label,
         gpuType: scheduleP.instance.machine.gpuType,
-        imgTag: scheduleP.instance.image.label,
+        imgTag: `${scheduleP.instance.image.name}:${scheduleP.instance.image.label}`,
         account: schedule.instance.username,
         pwd: schedule.instance.password
       },
