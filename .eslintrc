@@ -5,6 +5,9 @@
     "es6": true
   },
   "extends": "airbnb-base",
+  "settings": {
+    "import/resolver": {"node": {"extensions": [".es6", ".jsx"]}}
+  },
   "rules": {
     "no-console": "off",
     "comma-dangle": "off",

@@ -78,11 +78,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'schedule',
     paranoid: true,
-    classMethods: {
+   /* classMethods: {
       associate: (models) => {
-        Schedule.belongsTo(models.instance, { foreignKey: 'instanceId' });
+        Schedule.belongsTo(models.instance, { foreignKey: 'instanceId', targetKey: 'id' });
       }
-    },
+    },*/
     scopes: {
       id: () => {
         return {
@@ -205,5 +205,9 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
+
+  Schedule.associate = (models) => {
+    Schedule.belongsTo(models.instance, { foreignKey: 'instanceId'});
+  };
   return Schedule;
 };
