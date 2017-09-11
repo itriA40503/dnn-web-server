@@ -5,7 +5,6 @@ const admin = {};
 
 
 admin.getAllSchedules = asyncWrap(async (req, res, next) => {
-
 });
 
 admin.updateSchedule = asyncWrap(async (req, res, next) => {

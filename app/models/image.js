@@ -66,6 +66,19 @@ module.exports = (sequelize, DataTypes) => {
           ]
         };
         return result;
+      },
+      latest: () => {
+        return {
+          attributes: [
+            'id',
+            'name',
+            'label',
+            'path',
+            'description',
+            [sequelize.literal('ROW_NUMBER() OVER (PARTITION BY name ORDER BY created_at DESC)'), 'sort']
+         //   [sequelize.fn('MAX', sequelize.col('created_at')), 'createdAt']
+          ]
+        };
       }
     }
   });

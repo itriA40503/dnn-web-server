@@ -1,11 +1,16 @@
 import request from 'request-promise-native';
 import moment from 'moment';
 import asyncWrap from '../util/asyncWrap';
-import { schedule as Schedule, instance as Instance, machine as Machine } from '../models';
+import db from '../db/db';
+import { schedule as Schedule, instance as Instance, machine as Machine, image as Image } from '../models';
+
 
 const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
+const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
 const conAPI = `${kubeUrl}/container`;
 const consAPI = `${kubeUrl}/containers`;
+const imageAPI = `${kubeUrl2}/image`;
+const imagesAPI = `${kubeUrl2}/images`;
 
 const createContainerFromSchedule = async (schedule) => {
   try {
@@ -91,6 +96,7 @@ const deleteContainerFromSchedule = async (schedule) => {
   }
   return false;
 };
+
 const removeAllContainers = async () => {
   try {
     let options = {
@@ -177,4 +183,47 @@ const deleteSchedule = () => {
   return true;
 };
 
-export { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule, removeAllContainers , startSchedule, updateSchedule, deleteSchedule };
+
+const handleAnImageTag = async (imageTag) => {
+  let [name, label] = imageTag.split(':');
+  console.log(`${name}===========================${label}`);
+  let [image, created] = await Image.findOrCreate({
+    where: {
+      name: name,
+      label: label
+    }
+  });
+  return image;
+};
+
+const getAllImages = async () => {
+  try {
+    let options = {
+      method: 'GET',
+      url: imagesAPI,
+      timeout: 5000,
+      json: true,
+      resolveWithFullResponse: true
+    };
+    let response = await request(options);
+    if (response.statusCode === 200) {
+      let images = response.body.images;
+      images.map(handleAnImageTag);
+      return true;
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+  return false;
+};
+
+export { createContainerFromSchedule,
+  updateContainerFromSchedule,
+  deleteContainerFromSchedule,
+  removeAllContainers,
+  startSchedule,
+  updateSchedule,
+  deleteSchedule,
+  getAllImages
+};

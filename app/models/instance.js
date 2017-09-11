@@ -93,13 +93,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'instance',
     paranoid: true,
-    classMethods: {
+    /* classMethods: {
       associate: (models) => {
         Instance.belongsTo(models.machine, { foreignKey: 'machineId' });
         Instance.belongsTo(models.image, { foreignKey: 'imageId' });
-        Instance.hasMany(models.schedule);
+        Instance.hasMany(models.schedule,{ foreignKey: 'instanceId', sourceKey: 'id' });
       }
-    },
+    }, */
     scopes: {
       id: () => {
         return {
@@ -155,5 +155,10 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
+  Instance.associate = (models) => {
+    Instance.belongsTo(models.machine, { foreignKey: 'machineId' });
+    Instance.belongsTo(models.image, { foreignKey: 'imageId' });
+    Instance.hasMany(models.schedule);
+  };
   return Instance;
 };

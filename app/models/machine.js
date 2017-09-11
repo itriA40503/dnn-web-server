@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-  let machine = sequelize.define('machine', {
+  let Machine = sequelize.define('machine', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -103,6 +103,8 @@ module.exports = (sequelize, DataTypes) => {
 
     }
   });
-
-  return machine;
+  Machine.associate = (models) => {
+    Machine.hasMany(models.instance);
+  };
+  return Machine;
 };

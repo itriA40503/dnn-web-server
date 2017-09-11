@@ -1,5 +1,7 @@
 import { schedule as Schedule, machine as Machine, image as Image } from '../models';
 
+const sequelize = Schedule.sequelize;
+
 const db = {};
 
 db.getSchedules = (start, end) => {
@@ -64,6 +66,10 @@ db.getAllMachineIdsWithGPU = (gpuType) => {
 
 db.getAllImageIds = () => {
   return Image.scope('id');
+};
+
+db.getLatestImage = () => {         // simply add order num of createdAt group by name as 'sort'
+  return Image.scope('latest');
 };
 
 
