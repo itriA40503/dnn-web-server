@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = function(sequelize, DataTypes) {
   return sequelize.define('machineStatus', {
     id: {
       type: DataTypes.INTEGER,

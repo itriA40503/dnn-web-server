@@ -38,11 +38,11 @@ module.exports = (sequelize, DataTypes) => {
     typeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 1,
       references: {
         model: 'user_type',
         key: 'id'
       },
+      defaultValue: 1,
       field: 'type_id'
     }
   }, {

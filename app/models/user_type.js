@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     type: {
       type: DataTypes.STRING,
       allowNull: true,
+      defaultValue: 1,
       field: 'type'
     }
   }, {

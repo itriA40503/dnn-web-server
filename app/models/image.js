@@ -1,18 +1,13 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('image', {
+  let Image = sequelize.define('image', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
       field: 'id'
-    },
-    label: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: 'label'
     },
     path: {
       type: DataTypes.STRING,
@@ -23,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       field: 'name'
+    },
+    label: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'label'
     },
     description: {
       type: DataTypes.STRING,
@@ -76,10 +76,14 @@ module.exports = (sequelize, DataTypes) => {
             'path',
             'description',
             [sequelize.literal('ROW_NUMBER() OVER (PARTITION BY name ORDER BY created_at DESC)'), 'sort']
-         //   [sequelize.fn('MAX', sequelize.col('created_at')), 'createdAt']
+            //   [sequelize.fn('MAX', sequelize.col('created_at')), 'createdAt']
           ]
         };
       }
     }
   });
+  Image.associate = (models) => {
+    Image.hasMany(models.schedule);
+  };
+  return Image;
 };

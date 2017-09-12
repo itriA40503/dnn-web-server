@@ -62,7 +62,7 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   );
 
   let resultSet = await schedules.reduce((set, schedule) => {
-    let machineId = schedule.instance.machine.id;
+    let machineId = schedule.machine.id;
     if (set.has(machineId)) set.delete(machineId);
     return set;
   }, machineSet);
@@ -100,7 +100,7 @@ machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
     let endedDate = moment(startedDate).endOf('days'); // new Date(startedDate.getTime() + (1000 * 86399));
     let usedSet = schedules.reduce((set, schedule) => {
       if (moment(schedule.startedAt) <= endedDate && moment(schedule.endedAt) >= startedDate) {
-        set.add(schedule.instance.machine.id);
+        set.add(schedule.machine.id);
       }
       return set;
     }, new Set());
