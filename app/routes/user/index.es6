@@ -1,6 +1,6 @@
 import express from 'express';
-import login from './login'
-import schedule from './schedule'
+import login from './login';
+import schedule from './schedule';
 import jwtAuth from '../../middleware/jwtAuth';
 
 const router = express.Router();

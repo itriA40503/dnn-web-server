@@ -9,6 +9,7 @@ const image = asyncWrap(async (req, res, next) => {
     images: images
   });*/
   let images = await db.getLatestImage().findAll();
+  
 
   let newImages = images.reduce((list, image) => {
     let imageP = image.get({ plain: true });
