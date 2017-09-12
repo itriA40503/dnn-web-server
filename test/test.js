@@ -358,7 +358,7 @@ describe('server', () => {
             })
         }, 6000);
 
-      }).timeout(10000);;
+      }).timeout(10000);
       it('Delete schedule', done => {
         request
           .delete(`/user/schedule/${resSchedule.id}`)
