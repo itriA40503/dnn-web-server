@@ -24,8 +24,8 @@ let updateScheduleJob = new CronJob({
 
 
 let updateImageJob = new CronJob({
-  cronTime: '* */30 * * *',
-  onTick: getAllImages(),
+  cronTime: '* */10 * * *',
+  onTick: getAllImages,
   start: false,
   timeZone: 'Asia/Taipei'
 });
