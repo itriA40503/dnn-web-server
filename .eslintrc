@@ -13,11 +13,12 @@
     "comma-dangle": "off",
     "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
     "object-shorthand": ["off", "properties"],
-    "import/extensions": ["error", "always", {
+    "import/extensions": ["off", "never", {
       "js": "never",
       "jsx": "never",
       "es6": "never"
     }],
+    "import/no-unresolved": "off",
     "no-lonely-if": "off",
     "no-trailing-spaces": "off",
     "prefer-const": "off",
