@@ -11,7 +11,9 @@
     "build": "babel ./app --ignore node_modules --out-dir build",
     "test": "mocha --compilers js:babel-register",
     "start": "node ./build/bin/www",
-    "start_cron": "node ./build/cron/cronjob"
+    "start_cron": "node ./build/cron/cronjob",
+    "start_pm2": "pm2 start /usr/local/bin/npm --name dnnserver -- run start",
+    "start_cron_pm2": "pm2 start /usr/local/bin/npm --name dnncron -- run start_cron"
   },
   "dependencies": {
     "assert": "^1.4.1",

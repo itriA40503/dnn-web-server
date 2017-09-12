@@ -19,10 +19,10 @@ export default asyncWrap(async (req, res, next) => {
 
   let reg = /^[A-Za-z0-9]+$/; // there's bug with g
 
-  if (!reg.test(username) || !reg.test(password)) throw new CdError(401, 'username or password format error', 40101);
+  if (!reg.test(username)) throw new CdError(401, 'username or password format error', 40101);
 
-  username = username.replace(/[^\w]+/g, '');
-  password = password.replace(/[^\w]+/g, '');
+  // username = username.replace(/[^\w]+/g, '');
+  // password = password.replace(/[^\w]+/g, '');
 
   let ldapOptions = {
     url: 'ldap://itri.ds',
@@ -74,14 +74,14 @@ export default asyncWrap(async (req, res, next) => {
     return;
   };
 
-  /* ldapAuth.authenticate(username, password, (err, user) => {
+  ldapAuth.authenticate(username, password, (err, user) => {
     if (err) {
       next(new CdError(401, err.message, 12345));
       return;
     }
     afterLdapAuthSuccess(username);
     // res.json(user);
-  });*/
-  afterLdapAuthSuccess(username);
+  });
+  //afterLdapAuthSuccess(username);
 
 });
