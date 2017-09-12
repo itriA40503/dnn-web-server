@@ -5,11 +5,24 @@ import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
 import { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule } from '../../cron/kuber';
-import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models';
+import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models';
 
 const BOOKMAXIMUN = 100;
 
 const schedule = {};
+
+schedule.getASchedule = asyncWrap(async (req, res, next) => {
+  let scheduleId = req.params.schedule_id;
+  let where = {
+    id: scheduleId,
+    userId: req.user.id
+  };
+  let schedule = await db.getDetailSchedules().findOne({
+    where: where
+  });
+
+  res.json(schedule);
+});
 
 schedule.get = asyncWrap(async (req, res, next) => {
   let mode = (req.query && req.query.mode) || 'all';
@@ -75,7 +88,7 @@ const instantCreateContainer = async (schedule) => {
 
   setTimeout(() => {
     instantUpdateContainer(schedule, 3);
-  }, 10000);
+  }, 5000);
   return result;
 };
 
@@ -130,7 +143,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   );
 
   let availableSet = await overlapSchedules.reduce((set, schedule) => {
-    let machineId = schedule.instance.machine.id;
+    let machineId = schedule.machine.id;
     if (set.has(machineId)) set.delete(machineId);
     return set;
   }, machineSet);
@@ -146,18 +159,18 @@ schedule.create = asyncWrap(async (req, res, next) => {
     startedAt: start,
     endedAt: end,
     statusId: 1,
-    instance: {
-      machineId: customMachineId || machineArray[Math.floor(Math.random() * machineArray.length)],
-      ip: '',
-      port: undefined,
-      username: username,
-      password: randomPassword,
-      statusId: 1,
-      imageId: imageIdQuery
+    machineId: customMachineId || machineArray[Math.floor(Math.random() * machineArray.length)],
+    username: username,
+    password: randomPassword,
+    imageId: imageIdQuery,
+    userId: userId,
+    container: {
+      serviceIp: undefined,
+      podIp: undefined,
+      sshPort: undefined
     },
-    userId: userId
   }, {
-    include: [Instance.scope('detail')],
+    include: [Container],
   });
 
   if (!schedule) throw new CdError(401, 'create fail');
@@ -193,7 +206,7 @@ schedule.update = asyncWrap(async (req, res, next) => {
   if (!schedule) throw new CdError('401', 'no such schedule');
   else if (schedule.userId !== userId) throw new CdError('401', 'not owner');
 
-  let machineId = schedule.instance.machine.id;
+  let machineId = schedule.machine.id;
   let oldStartDate = moment(schedule.startedAt);
   let oldEndDate = moment(schedule.endedAt);
   let extendableEndDate = moment.max(moment(oldStartDate), moment()).add(30, 'days');
@@ -248,13 +261,13 @@ schedule.delete = asyncWrap(async (req, res, next) => {
 
   if (!schedule) throw new CdError(401, 'schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'have no auth');
- // else if (schedule.statusId == 2) throw new CdError(401, 'schedule can\'t be delete in current moment!');
-  else if (schedule.statusId == 4 || schedule.statusId == 5) throw new CdError(401, 'schedule have been deleted');
-  else if (schedule.statusId == 6) throw new CdError(401, 'schedule have been canceled');
+  // else if (schedule.statusId == 2) throw new CdError(401, 'schedule can\'t be delete in current moment!');
+  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'schedule have been deleted');
+  else if (schedule.statusId === 6) throw new CdError(401, 'schedule have been canceled');
 
   console.log(`delete schedule's status:${schedule.statusId}`);
   // let t = await sequelize.transaction();
-  let newStatus = (schedule.statusId == 2 || schedule.statusId == 3) ? 4 : 6;
+  let newStatus = (schedule.statusId === 2 || schedule.statusId === 3) ? 4 : 6;
   let options = {
     statusId: newStatus,
   };
@@ -273,16 +286,7 @@ schedule.delete = asyncWrap(async (req, res, next) => {
  // let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
   res.json(scheduleU);
 
- /* try {
-    let instance = schedule.instance;
-    await schedule.destroy({ transaction: t });
-    await instance.destroy({ transaction: t });
-    await t.commit();
-    res.json('success');
-  } catch (err) {
-    t.rollback();
-    throw err;
-  }*/
+
 });
 
 
@@ -298,7 +302,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   if (!schedule) throw new CdError('401', 'no such schedule');
   else if (schedule.userId !== userId) throw new CdError('401', 'not owner');
 
-  let machineId = schedule.instance.machine.id;
+  let machineId = schedule.machine.id;
   let oldStartDate = moment(schedule.startedAt);
   let oldEndDate = moment(schedule.endedAt);
   let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');

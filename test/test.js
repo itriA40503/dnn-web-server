@@ -10,7 +10,8 @@ const request = chai.request(app);
 
 const User = require('../build/models').dnnUser;
 const Schedule = require('../build/models').schedule;
-const Instance = require('../build/models').instance;
+const Container = require('../build/models').container;
+const Port = require('../build/models').port;
 const Machine = require('../build/models').machine;
 const Image = require('../build/models').image;
 
@@ -20,11 +21,16 @@ let userSetting = {
   password: 'password',
   token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI5OTk5OTk5OSIsIml0cmlJZCI6Im1vY2hhdGVzdCIsImV4cGlyZXMiOjE1MDM0NzUwMjIuODUxfQ.r0cgCB-LTmO7yl1en14uSii1I2mZU8XwXfW2kcHGKH8'
 }
+
 let scheduleSetting = {
   start: moment('2019-01-01T00:00:00.000Z'),
   end: moment('2019-01-15T00:00:00.000Z')
 }
 
+let currentScheduleSetting = {
+  start: moment(),
+  end: moment().add(1, 'days')
+}
 let images = [];
 let schedules = [];
 let machines = [];
@@ -34,37 +40,43 @@ describe('server', () => {
 
   before( done => {
     (async () => {
-      await User.create({
+      console.log("before");
+      let result = await User.create({
         id: userSetting.id,
-        itriId: userSetting.itriId
+        itriId: userSetting.itriId,
+        typeId:1
       });
       done();
     })();
   });
+
 
   after( done => {
     (async () => {
       try {
         let schedules = await Schedule.scope('detail').findAll({
           where: {userId: userSetting.id},
-          paranoid: false
         });
-        let [scheduleIds, instanceIds] = await schedules.reduce(([sId,iId], schedule) => {
+        let scheduleIds = await schedules.reduce((sId, schedule) => {
           sId.push(schedule.id);
-          iId.push(schedule.instance.id);
-          return [sId,iId];
-        },[[],[]]);
-
+          return sId;
+        },[]);
+        await Port.destroy({
+          force: true,
+          where: {
+            containerId: scheduleIds
+          }
+        })
+        await Container.destroy({
+          force: true,
+          where: {
+            id: scheduleIds
+          }})
         await Schedule.destroy({
           force: true,
           where: {
-          id: scheduleIds
-        }})
-        await Instance.destroy({
-          force: true,
-          where: {
-          id: instanceIds
-        }})
+            id: scheduleIds
+          }})
         await User.destroy({
           force: true,
           where: {
@@ -303,7 +315,62 @@ describe('server', () => {
       });
     });
 
+    describe('Create schedule instantly', () => {
 
+      it('Create a schedule', done => {
+        let scheduleOptions = {
+          start: currentScheduleSetting.start.format(),
+          end: currentScheduleSetting.end.format(),
+        }
+
+        request
+          .post('/user/schedule')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send(scheduleOptions)
+          .end((err, res) => {
+            console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.should.have.property('id')
+            resSchedule = res.body;
+            done();
+
+          })
+      });
+      it('Get schedule', done => {
+        let scheduleOptions = {
+          start: currentScheduleSetting.start.format(),
+          end: currentScheduleSetting.end.format(),
+        }
+        setTimeout( () => {
+          request
+            .get(`/user/schedule/${resSchedule.id}`)
+            .set('x-access-token', userSetting.token)
+            .set('Accept', 'application/json')
+            .end((err, res) => {
+              console.log(res.body);
+              res.should.have.status(200);
+              res.should.to.be.json;
+              res.body.should.have.property('id')
+              resSchedule = res.body;
+              done();
+            })
+        }, 6000);
+
+      }).timeout(10000);;
+      it('Delete schedule', done => {
+        request
+          .delete(`/user/schedule/${resSchedule.id}`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .end((err, res) => {
+            res.should.have.status(200);
+            console.log(res.body)
+            done();
+          })
+      });
+    });
 
   });
 });

@@ -6,6 +6,7 @@ import jwtAuth from '../../middleware/jwtAuth';
 const router = express.Router();
 const scheduleRouter = express.Router();
 
+scheduleRouter.get('/:schedule_id', schedule.getASchedule);
 scheduleRouter.get('/', schedule.get);
 scheduleRouter.post('/', schedule.create);
 scheduleRouter.put('/:schedule_id', schedule.update);
