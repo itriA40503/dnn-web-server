@@ -1,5 +1,5 @@
 import express from 'express';
-import schedule from './statistic'
+import schedule from './statistic';
 
 const router = express.Router();
 const scheduleRouter = express.Router();
