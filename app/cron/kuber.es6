@@ -35,7 +35,7 @@ const createContainerFromSchedule = async (schedule) => {
     if (response.statusCode === 200) {
       let pod = response.body[0];
       let service = response.body[1];
-      let ports = service.spec.ports.map((ports, port) => {
+      let ports = service.spec.ports.map((port) => {
         let newPort = Object.assign({}, port);
         newPort.containerId = schedule.container.id;
         return newPort;
@@ -113,22 +113,6 @@ const removeAllContainers = async () => {
     };
     let response = await request(options);
     if (response.statusCode === 200) {
-    /* (  let schedules = await Schedule.scope('id').findAll();
-      let containers = await Container.scope('id').findAll();
-      let ports = await Port.scope('id').findAll();
-
-      let portIds = await ports.reduce((sId, port) => {
-        sId.push(port.id);
-        return sId;
-      }, []);
-      let containerIds = await containers.reduce((sId, container) => {
-        sId.push(container.id);
-        return sId;
-      }, []);
-      let scheduleIds = await schedules.reduce((sId, schedule) => {
-        sId.push(schedule.id);
-        return sId;
-      }, []);*/
 
       await Port.destroy({
         force: true,

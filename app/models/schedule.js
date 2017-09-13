@@ -124,6 +124,8 @@ module.exports = (sequelize, DataTypes) => {
           attributes: [
             'id',
             'statusId',
+            'machineId',
+            'imageId',
             'projectCode',
             'startedAt',
             'endedAt',

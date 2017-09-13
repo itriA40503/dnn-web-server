@@ -1,5 +1,6 @@
 import express from 'express';
 import login from './login';
+import report from './report';
 import schedule from './schedule';
 import jwtAuth from '../../middleware/jwtAuth';
 
@@ -13,6 +14,8 @@ scheduleRouter.put('/:schedule_id', schedule.update);
 scheduleRouter.delete('/:schedule_id', schedule.delete);
 scheduleRouter.get('/:schedule_id/extendable', schedule.getExtendableDate);
 
+
+router.post('/report', jwtAuth, report);
 router.get('/signin', login);
 router.use('/schedule', jwtAuth, scheduleRouter);
 
