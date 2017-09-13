@@ -1,4 +1,3 @@
-import express from 'express';
 import moment from 'moment';
 import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
@@ -302,7 +301,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   if (!schedule) throw new CdError('401', 'no such schedule');
   else if (schedule.userId !== userId) throw new CdError('401', 'not owner');
 
-  let machineId = schedule.machine.id;
+  let machineId = schedule.machineId;
   let oldStartDate = moment(schedule.startedAt);
   let oldEndDate = moment(schedule.endedAt);
   let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');

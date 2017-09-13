@@ -6,22 +6,24 @@ import { schedule as Schedule, machine as Machine } from '../../models/index';
 
 const PERIOD = 30;
 const machine = {};
-/*
-let getSchedulesOverlapPeriod = (start, end) => {
-  let options = {
-    start: start,
-    end: end
-  };
-  return Schedule.scope('normal', 'statusNormal', { method: ['timeOverlap', options] }).findAll();
-};*/
 
-let getAllMachinesId = () => {
-  return Machine.findAll({ attributes: ['id'], raw: true });
-};
+machine.createMachine = asyncWrap(async (req, res, next) => {
+  let label = (req.query && req.query.label) || (req.body && req.body.label);
+  let name = (req.query && req.query.name) || (req.body && req.body.name) || label;
+  let [machine, created] = Machine.findOrCreate({
+    where: {
+      label: label
+    },
+    defaults: {
+      name: name
+    }
+  });
 
-let getAllMachines = () => {
-  return Machine.scope('normal').findAll();
-};
+  if (!created) throw CdError(401, 'Machine with same label already exist!');
+
+  res.json(machine);
+
+});
 
 machine.getMachines = asyncWrap(async (req, res, next) => {
   let machines = await db.getAllMachineNormal().findAll();
@@ -52,10 +54,6 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
     db.getAllMachineNormal().findAll(machineWhere),
     db.getAllRunningSchedules(start.format(), end.format()).findAll()
   ]);
-  /* let [machines, schedules] = await Promise.all([
-    getAllMachinesId(),
-    getSchedulesOverlapPeriod(start.toDate(), end.toDate())
-  ]);*/
 
   let machineSet = await new Set(
     machines.map(machine => machine.id)
