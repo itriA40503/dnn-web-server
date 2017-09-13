@@ -1,3 +1,5 @@
+/* jshint indent: 2 */
+
 module.exports = (sequelize, DataTypes) => {
   let Schedule = sequelize.define('schedule', {
     id: {
@@ -8,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       field: 'id'
     },
     statusId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'schedule_status',
@@ -17,19 +19,25 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 1,
       field: 'status_id'
     },
-    projectCodeId: {
-      type: DataTypes.BIGINT,
+    username: {
+      type: DataTypes.STRING,
       allowNull: true,
-      references: {
-        model: 'project_code',
-        key: 'id'
-      },
-      field: 'project_code_id'
+      field: 'username'
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'password'
     },
     projectCode: {
       type: DataTypes.STRING,
       allowNull: true,
       field: 'project_code'
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'description'
     },
     startedAt: {
       type: DataTypes.TIME,
@@ -57,15 +65,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'deleted_at'
     },
-    instanceId: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'instance',
-        key: 'id'
-      },
-      field: 'instance_id'
-    },
     userId: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -74,15 +73,37 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       },
       field: 'user_id'
+    },
+    projectCodeId: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      references: {
+        model: 'project_code',
+        key: 'id'
+      },
+      field: 'project_code_id'
+    },
+    imageId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'image',
+        key: 'id'
+      },
+      field: 'image_id'
+    },
+    machineId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'machine',
+        key: 'id'
+      },
+      field: 'machine_id'
     }
   }, {
     tableName: 'schedule',
     paranoid: true,
-   /* classMethods: {
-      associate: (models) => {
-        Schedule.belongsTo(models.instance, { foreignKey: 'instanceId', targetKey: 'id' });
-      }
-    },*/
     scopes: {
       id: () => {
         return {
@@ -100,12 +121,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       normal: () => {
         return {
-          include: [
-            { model: sequelize.models.instance.scope('normal'), paranoid: false }
-          ],
           attributes: [
             'id',
             'statusId',
+            'machineId',
+            'imageId',
             'projectCode',
             'startedAt',
             'endedAt',
@@ -118,24 +138,21 @@ module.exports = (sequelize, DataTypes) => {
       detail: () => {
         return {
           include: [
-            { model: sequelize.models.instance.scope('detail'), paranoid: false }
+            { model: sequelize.models.image.scope('normal') },
+            { model: sequelize.models.container.scope('normal') },
+            { model: sequelize.models.machine.scope('normal') }
           ],
           attributes: [
             'id',
             'statusId',
             'projectCode',
+            'username',
+            'password',
             'startedAt',
             'endedAt',
             'createdAt',
             'updatedAt',
             'userId'
-          ]
-        };
-      },
-      instanceScope: (scope) => {
-        return {
-          include: [
-            { model: sequelize.models.instance.scope(scope), paranoid: false }
           ]
         };
       },
@@ -180,12 +197,12 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
-      machine: (machineId) => {
+      whichMachine: (machineId) => {
         console.log(machineId);
         return {
-          include: [
-            { model: sequelize.models.instance.scope({ method: ['whichMachine', machineId] }) }
-          ]
+          where: {
+            machineId: machineId
+          }
         };
       },
       timeOverlap: (options) => {
@@ -205,9 +222,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
-
   Schedule.associate = (models) => {
-    Schedule.belongsTo(models.instance, { foreignKey: 'instanceId'});
+    Schedule.belongsTo(models.machine, { foreignKey: 'machineId' });
+    Schedule.belongsTo(models.image, { foreignKey: 'imageId' });
+    Schedule.belongsTo(models.dnnUser, { foreignKey: 'userId' });
+    Schedule.hasOne(models.container, { foreignKey: 'id' });
   };
   return Schedule;
 };

@@ -3,10 +3,9 @@
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define('scheduleStatus', {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
       field: 'id'
     },
     status: {

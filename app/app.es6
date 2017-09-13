@@ -24,7 +24,7 @@ app.set('view engine', 'hbs');
 app.set('json spaces', 2);
 
 // app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
-logger.format('detailed', (token, req, res) =>{
+logger.format('detailed', (token, req, res) => {
   return `${req.method}:${req.path}${JSON.stringify(req.body)}->${res.statusCode}:${res.body}\n`;
 });
 

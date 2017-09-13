@@ -3,7 +3,6 @@ import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import db from '../../db/db';
 import { removeAllContainers } from '../../cron/kuber';
-import { schedule as Schedule, instance as Instance } from '../../models/index';
 
 const schedule = {};
 
