@@ -97,7 +97,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let username = req.query.username || (req.body && req.body.username) || req.user.itriId;
   let startQuery = req.query.start || (req.body && req.body.start);
   let endQuery = req.query.end || (req.body && req.body.end);
-  let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 30;
+  let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 1;
   let customMachineId = req.query.machine_id || (req.body && req.body.machine_id);
   let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
 
@@ -148,7 +148,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   }, machineSet);
 
   if (availableSet.size === 0) throw new CdError('401', 'no machine');
-  if (customMachineId && !customMachineId.has(customMachineId)) throw new CdError('401', 'no specific machine');
+  if (customMachineId && !availableSet.has(customMachineId)) throw new CdError('401', 'no specific machine');
 
  // let username = `user${userId}`;
   let randomPassword = Math.random().toString(36).slice(-8);

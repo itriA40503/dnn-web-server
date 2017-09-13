@@ -6,11 +6,11 @@ import { schedule as Schedule, container as Container, machine as Machine, image
 
 
 const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
-const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
+// const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
 const conAPI = `${kubeUrl}/container`;
 const consAPI = `${kubeUrl}/containers`;
-const imageAPI = `${kubeUrl2}/image`;
-const imagesAPI = `${kubeUrl2}/images`;
+const imageAPI = `${kubeUrl}/image`;
+const imagesAPI = `${kubeUrl}/images`;
 
 const createContainerFromSchedule = async (schedule) => {
   try {
