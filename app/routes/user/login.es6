@@ -8,7 +8,7 @@ import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
 import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models/index';
 
-const kubeUrl = 'http://140.96.27.42:30554/kubeGpu';
+const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
 const cVolumnAPI = `${kubeUrl}/volumn`;
 
 export default asyncWrap(async (req, res, next) => {
