@@ -17,5 +17,4 @@ export default asyncWrap((req, res, next) => {
   });
 
   res.json(report);
-
 });
