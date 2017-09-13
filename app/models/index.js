@@ -3,7 +3,7 @@ import path from 'path';
 import Sequelize from 'sequelize';
 
 const env = process.env.NODE_ENV || 'development';
-const sequelize = new Sequelize('dnndev', 'postgres', 'cditripost', {
+const sequelize = new Sequelize('dnn', 'postgres', 'cditripost', {
   host: '54.249.32.121',
   dialect: 'postgres',
   timezone: '+08:00',
