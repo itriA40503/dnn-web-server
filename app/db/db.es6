@@ -44,10 +44,7 @@ db.getScheduleOfMachineId = (machineId, start, end) => {
   return Schedule.scope('onlyTime',
     'statusNormal',
     { method: ['timeOverlap', options] },
-    { method: ['instanceScope', [
-      'id',
-      { method: ['whichMachine', machineId] }]]
-    }
+    { method: ['whichMachine', machineId] }
   );
 };
 

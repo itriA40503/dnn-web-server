@@ -2,7 +2,7 @@ import request from 'request-promise-native';
 import moment from 'moment';
 import asyncWrap from '../util/asyncWrap';
 import db from '../db/db';
-import { schedule as Schedule, instance as Instance, machine as Machine, image as Image } from '../models';
+import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models';
 
 
 const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
@@ -16,16 +16,15 @@ const createContainerFromSchedule = async (schedule) => {
   try {
 
     let scheduleP = await schedule.get({ plain: true });
-    let id = scheduleP.instance.id;
     let options = {
       method: 'POST',
       url: conAPI,
       body: {
-        machineId: scheduleP.instance.machine.label,
-        gpuType: scheduleP.instance.machine.gpuType,
-        imgTag: `${scheduleP.instance.image.name}:${scheduleP.instance.image.label}`,
-        account: schedule.instance.username,
-        pwd: schedule.instance.password
+        machineId: scheduleP.machine.label,
+        gpuType: scheduleP.machine.gpuType,
+        imgTag: `${scheduleP.image.name}:${scheduleP.image.label}`,
+        account: schedule.username,
+        pwd: schedule.password
       },
       timeout: 5000,
       json: true,
@@ -34,6 +33,14 @@ const createContainerFromSchedule = async (schedule) => {
     let response = await request(options);
 
     if (response.statusCode === 200) {
+      let pod = response.body[0];
+      let service = response.body[1];
+      let ports = service.spec.ports.map((port) => {
+        let newPort = Object.assign({}, port);
+        newPort.containerId = schedule.container.id;
+        return newPort;
+      });
+      let portN = Port.bulkCreate(ports);
       let sch = await schedule.updateAttributes({ statusId: 2 });
       return (sch) ? true : false;
     }
@@ -49,7 +56,7 @@ const updateContainerFromSchedule = async (schedule) => {
     let scheduleP = await schedule.get({ plain: true });
     let options = {
       method: 'GET',
-      url: `${conAPI}/${scheduleP.instance.machine.label}`,
+      url: `${conAPI}/${scheduleP.machine.label}`,
       json: true,
       resolveWithFullResponse: true
     };
@@ -60,12 +67,13 @@ const updateContainerFromSchedule = async (schedule) => {
       let service = response.body[1];
       if (pod.status.phase !== 'Running') return false;
 
-      let instanceN = await schedule.instance.updateAttributes({
-        ip: pod.status.hostIP,
-        port: service.spec.ports[0].nodePort
+      let containerN = await schedule.container.updateAttributes({
+        podIp: pod.status.hostIP,
+        sshPort: service.spec.ports[0].nodePort
       });
+      if (!containerN) return false;
 
-      if (!instanceN) return false;
+
       let scheduleN = await schedule.updateAttributes({ statusId: 3 });
       return (scheduleN) ? true : false;
 
@@ -79,10 +87,9 @@ const updateContainerFromSchedule = async (schedule) => {
 const deleteContainerFromSchedule = async (schedule) => {
   try {
     let scheduleP = await schedule.get({ plain: true });
-    let id = scheduleP.instance.id;
     let options = {
       method: 'DELETE',
-      url: `${conAPI}/${scheduleP.instance.machine.label}`,
+      url: `${conAPI}/${scheduleP.machine.label}`,
       resolveWithFullResponse: true
     };
     let response = await request(options);
@@ -106,34 +113,21 @@ const removeAllContainers = async () => {
     };
     let response = await request(options);
     if (response.statusCode === 200) {
-      let schedules = await Schedule.scope('id').findAll();
-      let instances = await Instance.scope('id').findAll();
-      let scheduleIds = await schedules.reduce((sId, schedule) => {
-        sId.push(schedule.id);
-        return sId;
-      }, []);
 
-      let instanceIds = await instances.reduce((sId, instance) => {
-        sId.push(instance.id);
-        return sId;
-      }, []);
+      await Port.destroy({
+        force: true,
+        where: {}
+      });
+      await Container.destroy({
+        force: true,
+        where: {}
+      });
 
       await Schedule.destroy({
         force: true,
-        where: {
-          id: scheduleIds
-        }});
-      await Instance.destroy({
-        force: true,
-        where: {
-          id: instanceIds
-        }});
+        where: {}
+      });
 
-
-      await Schedule.destroy({
-        force: true });
-      await Instance.destroy({
-        force: true });
       return true;
     }
   } catch (err) {
@@ -153,7 +147,7 @@ const startSchedule = () => {
     { method: ['scheduleStatusWhere', 1] }
   ).findAll();
 
-  let instancesUpdate = schedules.map(createContainerFromSchedule);
+  let containersUpdate = schedules.map(createContainerFromSchedule);
 
  // let result = Promise.all(instancesUpdate);
  // console.log(result);
@@ -168,7 +162,7 @@ const updateSchedule = () => {
     { method: ['scheduleStatusWhere', 2] }
   ).findAll();
 
-  let instancesUpdate = schedules.map(updateContainerFromSchedule);
+  let containersUpdate = schedules.map(updateContainerFromSchedule);
   return true;
 };
 
@@ -178,7 +172,7 @@ const deleteSchedule = () => {
     'scheduleShouldDelete'
   ).findAll();
 
-  let instancesUpdate = schedules.map(deleteContainerFromSchedule);
+  let containersUpdate = schedules.map(deleteContainerFromSchedule);
 
   return true;
 };

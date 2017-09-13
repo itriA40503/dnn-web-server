@@ -9,15 +9,25 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       field: 'id'
     },
-    label: {
-      type: DataTypes.STRING,
+    statusId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'label'
+      references: {
+        model: 'machine_status',
+        key: 'id'
+      },
+      defaultValue: 1,
+      field: 'status_id'
     },
     name: {
       type: DataTypes.STRING,
       allowNull: true,
       field: 'name'
+    },
+    label: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'label'
     },
     description: {
       type: DataTypes.STRING,
@@ -33,16 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       field: 'gpu_type'
-    },
-    statusId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'machine_status',
-        key: 'id'
-      },
-      defaultValue: 1,
-      field: 'status_id'
     },
     createdAt: {
       type: DataTypes.TIME,
@@ -62,10 +62,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'machine',
-    classMethods: {
-      associate: (models) => {
-      }
-    },
     scopes: {
       id: () => {
         return {
@@ -100,11 +96,10 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       }
-
     }
   });
   Machine.associate = (models) => {
-    Machine.hasMany(models.instance);
+    Machine.hasMany(models.schedule);
   };
   return Machine;
 };
