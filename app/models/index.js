@@ -4,7 +4,7 @@ import Sequelize from 'sequelize';
 
 const env = process.env.NODE_ENV || 'development';
 const sequelize = new Sequelize('dnn', 'postgres', 'cditripost', {
-  host: '54.249.32.121',
+  host: '54.238.152.54',
   dialect: 'postgres',
   timezone: '+08:00',
   pool: {
