@@ -1,5 +1,5 @@
 build/*
-bin/*
+app/bin/*
 public/*
 apidoc/*
 test/*
