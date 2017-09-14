@@ -50,6 +50,7 @@ app.get('/', (req, res) => {
   res.render('index', { title: 'Express' });
 });
 app.use('/apidoc', express.static(path.join(__dirname, '../apidoc')));
+app.use('/portal', express.static(path.join(__dirname, '../portal')));
 
 setupRouters(app);
 
