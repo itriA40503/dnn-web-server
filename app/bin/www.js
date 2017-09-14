@@ -12,6 +12,7 @@ var https = require('https');
 var config = require('../config');
 
 var env = process.env.NODE_ENV || 'development';
+console.log('env:' + env);
 var serverConfig = config[env].server;
 /**
  * Get port from environment and store in Express.
