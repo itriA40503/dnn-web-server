@@ -1,0 +1,12 @@
+{
+  "apps" : [
+    {
+      "name": "dnnserver",
+      "script": "./build/bin/www.js"
+    },
+    {
+      "name": "dnncron",
+      "script": "./build/cron/cronjob.js"
+    }
+  ]
+}

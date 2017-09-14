@@ -12,8 +12,8 @@
     "test": "mocha --compilers js:babel-register",
     "start": "node ./build/bin/www",
     "start_cron": "node ./build/cron/cronjob",
-    "start_pm2": "pm2 start /usr/local/bin/npm --name dnnserver -- run start",
-    "start_cron_pm2": "pm2 start /usr/local/bin/npm --name dnncron -- run start_cron"
+    "start_pm2": "pm2 ecosystem.json",
+    "start_pm2_docker": "pm2-docker ecosystem.json"
   },
   "dependencies": {
     "assert": "^1.4.1",
