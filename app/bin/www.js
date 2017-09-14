@@ -3,7 +3,6 @@
 /**
  * Module dependencies.
  */
-
 var app = require('../app');
 var debug = require('debug')('dnnserver:server');
 var ssl = require('../sslCert');
@@ -13,6 +12,7 @@ var config = require('../config');
 
 var env = process.env.NODE_ENV || 'development';
 console.log('env:' + env);
+console.log(config);
 var serverConfig = config[env].server;
 /**
  * Get port from environment and store in Express.
