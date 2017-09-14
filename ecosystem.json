@@ -2,7 +2,17 @@
   "apps" : [
     {
       "name": "dnnserver",
-      "script": "./build/bin/www.js"
+      "script": "./build/bin/www.js",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production" : {
+        "NODE_ENV": "production"
+      },
+      "env_stagingaws" : {
+        "NODE_ENV": "development",
+        "DNNSQL_HOSTNAME": "database"
+      }
     },
     {
       "name": "dnncron",

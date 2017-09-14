@@ -1,21 +1,16 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
+import config from '../config';
 
 const env = process.env.NODE_ENV || 'development';
-const sequelize = new Sequelize('dnn', 'postgres', 'cditripost', {
-  host: '54.238.152.54',
-  dialect: 'postgres',
-  timezone: '+08:00',
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000
-  },
-  logging: true
-}
-);
+const dbConfig = config[env].database;
 
+if (env === 'development') {
+  dbConfig.host = process.env.DNNSQL_HOSTNAME || dbConfig.host;
+}
+
+const sequelize = new Sequelize(dbConfig.db, dbConfig.username, dbConfig.password, dbConfig);
 const db = {};
 
 sequelize

@@ -9,15 +9,18 @@ var debug = require('debug')('dnnserver:server');
 var ssl = require('../sslCert');
 var http = require('http');
 var https = require('https');
+var config = require('../config');
 
+var env = process.env.NODE_ENV || 'development';
+var serverConfig = config[env].server;
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '4321');
-var ports = normalizePort(process.env.PORT || '443');
+var port = normalizePort(serverConfig.httpPort);
+var ports = normalizePort(serverConfig.httpsPort);
 app.set('port', port);
-app.set('httpsport',ports);
+app.set('httpsport', ports);
 
 /**
  * Create HTTP server.
