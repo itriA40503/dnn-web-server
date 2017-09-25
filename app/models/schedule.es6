@@ -167,7 +167,16 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [1, 2, 3, 4, 7]
+              $in: [1, 2, 3, 4, 7, 8]
+            }
+          }
+        };
+      },
+      statusShouldStart: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1, 8]
             }
           }
         };
@@ -175,18 +184,9 @@ module.exports = (sequelize, DataTypes) => {
       statusShouldDelete: () => {
         return {
           where: {
-            $or: [
-              {
-                statusId: {
-                  $in: [4]
-                }
-              },
-              {
-                endedAt: {
-                  $lt: new Date()
-                }
-              }
-            ]
+            statusId: {
+              $in: [4]
+            }
           }
         };
       },
