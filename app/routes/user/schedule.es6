@@ -79,16 +79,27 @@ const instantUpdateContainer = async (schedule, times) => {
 
 };
 
-const instantCreateContainer = async (schedule) => {
-  console.log('instance create!');
-  let result = await createContainerFromSchedule(schedule);
-  console.log(`instance create ${result}`);
-  if (result) {
-    setTimeout(() => {
-      instantUpdateContainer(schedule, 3);
-    }, 5000);
+const instantCreateContainer = async (schedule, times) => {
+  let tryTimes = times || 1;
+  if (tryTimes > 0) {
+    console.log(`Start to create container ${schedule.id}`);
+    let result = await createContainerFromSchedule(schedule);
+    if (result) {
+      setTimeout(() => {
+        instantUpdateContainer(schedule, 3);
+      }, 5000);
+    } else {
+      setTimeout(() => {
+        instantCreateContainer(schedule, tryTimes - 1);
+      }, 5000);
+    }
+  } else {
+    schedule.updateAttributes({
+      status: 7
+    });
   }
-  return result;
+
+  return;
 };
 
 
@@ -177,10 +188,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let resSchedule = await Schedule.scope('detail').findById(schedule.id);
 
   if (startDate <= moment()) {
-    let createResult = instantCreateContainer(resSchedule);
-    if (!createResult) {
-      schedule.updateAttributes({ statusId: 7 });
-    }
+    instantCreateContainer(resSchedule, 3);
   }
   
   return res.json(resSchedule);

@@ -45,7 +45,7 @@ const createContainerFromSchedule = async (schedule) => {
       return (sch) ? true : false;
     }
   } catch (err) {
-    console.log(err);
+    console.log(`schedule${schedule.id}: create fail with kubernetes`);
   }
 
   return false;
@@ -79,7 +79,7 @@ const updateContainerFromSchedule = async (schedule) => {
 
     }
   } catch (err) {
-    console.log(`schedule${schedule.id}: update fail`);
+    console.log(`schedule${schedule.id}: update fail with kubernetes`);
   }
   return false;
 };
@@ -99,7 +99,7 @@ const deleteContainerFromSchedule = async (schedule) => {
       return true;
     }
   } catch (err) {
-    console.log(`schedule${schedule.id}: delete fail`);
+    console.log(`schedule${schedule.id}: delete fail with kubernetes`);
   }
   return false;
 };
