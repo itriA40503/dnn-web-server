@@ -1,5 +1,8 @@
-  [![NPM Version][npm-image]][npm-url]
-  [![NPM Downloads][downloads-image]][downloads-url]
-  [![Linux Build][travis-image]][travis-url]
-  [![Windows Build][appveyor-image]][appveyor-url]
-  [![Test Coverage][coveralls-image]][coveralls-url]
+
+## Installation
+
+```bash
+$ npm install
+$ npm run build
+$ npm run start_pm2
+```
