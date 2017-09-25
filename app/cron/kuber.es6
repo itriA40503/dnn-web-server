@@ -2,10 +2,12 @@ import request from 'request-promise-native';
 import moment from 'moment';
 import asyncWrap from '../util/asyncWrap';
 import db from '../db/db';
+import config from '../config';
 import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
 
-
-const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
+const env = process.env.NODE_ENV || 'development';
+const kubeConfig = config[env].kuber;
+const kubeUrl = kubeConfig.url;
 // const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
 const conAPI = `${kubeUrl}/container`;
 const consAPI = `${kubeUrl}/containers`;
