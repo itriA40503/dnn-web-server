@@ -2,7 +2,7 @@ import request from 'request-promise-native';
 import moment from 'moment';
 import asyncWrap from '../util/asyncWrap';
 import db from '../db/db';
-import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models';
+import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
 
 
 const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';

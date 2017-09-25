@@ -1,7 +1,7 @@
 import jwt from 'jwt-simple';
 import asyncWrap from '../util/asyncWrap';
 import CdError from '../util/CdError';
-import { dnnUser as User } from '../models';
+import { dnnUser as User } from '../models/index';
 
 const sequelize = User.sequelize;
 

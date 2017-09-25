@@ -5,7 +5,7 @@ const config = {
       httpsPort: '443'
     },
     database: {
-      host: '54.238.152.54',
+      host: '13.115.57.99',
       port: '5432',
       dialect: 'postgres',
       db: 'dnn',
@@ -29,7 +29,7 @@ const config = {
       httpsPort: '443'
     },
     database: {
-      host: '54.238.152.54',
+      host: '13.115.57.99',
       port: '5432',
       dialect: 'postgres',
       db: 'dnn',

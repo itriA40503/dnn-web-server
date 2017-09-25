@@ -4,7 +4,7 @@ import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
 import { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule } from '../../cron/kuber';
-import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models';
+import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
 
 const BOOKMAXIMUN = 100;
 
@@ -67,15 +67,14 @@ schedule.get = asyncWrap(async (req, res, next) => {
 
 const instantUpdateContainer = async (schedule, times) => {
   let tryTimes = times || 1;
-  if (tryTimes <= 0) return;
-
-  let result = await updateContainerFromSchedule(schedule);
-  if (!result) {
-    setTimeout(() => {
-      instantUpdateContainer(schedule, tryTimes - 1);
-    }, 10000);
+  if (tryTimes > 0) {
+    let result = await updateContainerFromSchedule(schedule);
+    if (!result) {
+      setTimeout(() => {
+        instantUpdateContainer(schedule, tryTimes - 1);
+      }, 10000);
+    }
   }
-
   return;
 
 };
@@ -83,11 +82,12 @@ const instantUpdateContainer = async (schedule, times) => {
 const instantCreateContainer = async (schedule) => {
   console.log('instance create!');
   let result = await createContainerFromSchedule(schedule);
-  console.log(`instance create result${result}`);
-
-  setTimeout(() => {
-    instantUpdateContainer(schedule, 3);
-  }, 5000);
+  console.log(`instance create ${result}`);
+  if (result) {
+    setTimeout(() => {
+      instantUpdateContainer(schedule, 3);
+    }, 5000);
+  }
   return result;
 };
 

@@ -1,7 +1,7 @@
 import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
-import { report as Report } from '../../models';
+import { report as Report } from '../../models/index';
 
 const report = {};
 
