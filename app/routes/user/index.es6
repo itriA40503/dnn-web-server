@@ -12,6 +12,7 @@ scheduleRouter.get('/', schedule.get);
 scheduleRouter.post('/', schedule.create);
 scheduleRouter.put('/:schedule_id', schedule.update);
 scheduleRouter.delete('/:schedule_id', schedule.delete);
+scheduleRouter.put('/:schedule_id/restart', schedule.restart);
 scheduleRouter.get('/:schedule_id/extendable', schedule.getExtendableDate);
 
 
