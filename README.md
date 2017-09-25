@@ -1,4 +1,8 @@
 
+## Requirement ##
+
+* nodejs > 8.0.0
+
 ## Installation
 
 ```bash
