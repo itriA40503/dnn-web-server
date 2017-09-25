@@ -1,4 +1,4 @@
-import { schedule as Schedule, machine as Machine, image as Image } from '../models';
+import { schedule as Schedule, machine as Machine, image as Image } from '../models/index';
 
 const sequelize = Schedule.sequelize;
 

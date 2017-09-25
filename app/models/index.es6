@@ -6,9 +6,7 @@ import config from '../config';
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env].database;
 
-if (env === 'development') {
-  dbConfig.host = process.env.DNNSQL_HOSTNAME || dbConfig.host;
-}
+dbConfig.host = process.env.DNNSQL_HOSTNAME || dbConfig.host;
 
 const sequelize = new Sequelize(dbConfig.db, dbConfig.username, dbConfig.password, dbConfig);
 const db = {};
@@ -25,7 +23,7 @@ sequelize
 fs
   .readdirSync(__dirname)
   .filter((file) => {
-    return (file.indexOf('.') !== 0) && (file !== 'index.js');
+    return (file.indexOf('.') !== 0) && (file !== 'index.js' && file !== 'index.es6');
   })
   .forEach((file) => {
     let model = sequelize.import(path.join(__dirname, file));

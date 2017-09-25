@@ -1,4 +1,4 @@
-import userR from './user'; // will into index.js in /user folder if there is no user.js
+import userR from './user'; // will into index.es6 in /user folder if there is no user.js
 import imageR from './image';
 import machineR from './machine';
 import scheduleR from './schedule';

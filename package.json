@@ -75,12 +75,14 @@
     "chai-http": "~3.0.0",
     "cross-env": "~5.0.0",
     "eslint-config-airbnb-base": "~11.2.0",
+    "happypack": "^4.0.0",
     "mocha": "~3.4.2",
     "run-func": "^1.0.2",
     "sequelize-auto": "^0.4.28",
     "standard": "~10.0.2",
     "supertest": "~3.0.0",
-    "webpack": "^3.4.1",
+    "webpack": "^3.5.6",
+    "webpack-node-externals": "^1.6.0",
     "wscat": "~2.0.1"
   }
 }
