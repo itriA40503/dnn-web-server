@@ -8,10 +8,6 @@
       },
       "env_production" : {
         "NODE_ENV": "production"
-      },
-      "env_stagingaws" : {
-        "NODE_ENV": "development",
-        "DNNSQL_HOSTNAME": "database"
       }
     },
     {

@@ -95,7 +95,7 @@ const instantCreateContainer = async (schedule, times) => {
     }
   } else {
     schedule.updateAttributes({
-      status: 7
+      statusId: 7
     });
   }
 

@@ -6,7 +6,7 @@ import config from '../config';
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env].database;
 
-dbConfig.host = process.env.DNNSQL_HOSTNAME || dbConfig.host;
+dbConfig.host = process.env.DNNDB_HOST || dbConfig.host;
 
 const sequelize = new Sequelize(dbConfig.db, dbConfig.username, dbConfig.password, dbConfig);
 const db = {};
