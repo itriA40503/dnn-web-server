@@ -138,16 +138,12 @@ const removeAllContainers = async () => {
   return false;
 };
 
-const startSchedule = () => {
+const startSchedule = async () => {
   console.log('start schedule');
   let timeOptions = {
     start: moment().format()
   };
-  let schedules = Schedule.scope(
-    'detail',
-    { method: ['timeOverlap', timeOptions] },
-    { method: ['scheduleStatusWhere', 1] }
-  ).findAll();
+  let schedules = await db.getShouldStartSchedule.findAll(timeOptions);
 
   let containersUpdate = schedules.map(createContainerFromSchedule);
 
@@ -157,9 +153,9 @@ const startSchedule = () => {
 };
 
 
-const updateSchedule = () => {
+const updateSchedule = async () => {
   console.log('update schedule');
-  let schedules = Schedule.scope(
+  let schedules = await Schedule.scope(
     'detail',
     { method: ['scheduleStatusWhere', 2] }
   ).findAll();
@@ -168,8 +164,8 @@ const updateSchedule = () => {
   return true;
 };
 
-const deleteSchedule = () => {
-  let schedules = Schedule.scope(
+const deleteSchedule = async () => {
+  let schedules = await Schedule.scope(
     'detail',
     'scheduleShouldDelete'
   ).findAll();

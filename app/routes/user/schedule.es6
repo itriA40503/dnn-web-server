@@ -168,7 +168,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let schedule = await Schedule.scope('detail').create({
     startedAt: start,
     endedAt: end,
-    statusId: 1,
+    statusId: (startDate <= moment()) ? 8 : 1,
     machineId: customMachineId || machineArray[Math.floor(Math.random() * machineArray.length)],
     username: username,
     password: randomPassword,
