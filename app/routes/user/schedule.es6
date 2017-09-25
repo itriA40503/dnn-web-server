@@ -66,7 +66,7 @@ schedule.get = asyncWrap(async (req, res, next) => {
 });
 
 const instantUpdateContainer = async (schedule, times) => {
-  let tryTimes = times || 1;
+  let tryTimes = times;
   if (tryTimes > 0) {
     let result = await updateContainerFromSchedule(schedule);
     if (!result) {
@@ -80,7 +80,7 @@ const instantUpdateContainer = async (schedule, times) => {
 };
 
 const instantCreateContainer = async (schedule, times) => {
-  let tryTimes = times || 1;
+  let tryTimes = times;
   if (tryTimes > 0) {
     console.log(`Start to create container ${schedule.id}`);
     let result = await createContainerFromSchedule(schedule);
@@ -258,6 +258,31 @@ schedule.update = asyncWrap(async (req, res, next) => {
 
 });
 
+schedule.restart = asyncWrap(async (req, res, next) => {
+  let userId = req.user.id;
+  let scheduleId = req.params.schedule_id;
+
+  if (!scheduleId) throw new CdError('401', 'without schedule id');
+
+  let schedule = await Schedule.scope('detail').findById(scheduleId);
+
+  if (!schedule) throw new CdError(401, 'schedule not exist');
+  else if (schedule.userId !== userId) throw new CdError(401, 'have no auth');
+  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'schedule have been deleted');
+  else if (schedule.statusId === 6) throw new CdError(401, 'schedule have been canceled');
+
+  if (moment(schedule.startDate) <= moment() && moment(schedule.endDate) <= moment()) {
+    await deleteContainerFromSchedule(schedule);
+    await schedule.updateAttributes({
+      statusId: 1
+    });
+    instantCreateContainer(schedule, 3);
+  }
+
+  res.json('restart');
+
+});
+
 schedule.delete = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
   let scheduleId = req.params.schedule_id;
@@ -268,7 +293,6 @@ schedule.delete = asyncWrap(async (req, res, next) => {
 
   if (!schedule) throw new CdError(401, 'schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'have no auth');
-  // else if (schedule.statusId == 2) throw new CdError(401, 'schedule can\'t be delete in current moment!');
   else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'schedule have been deleted');
   else if (schedule.statusId === 6) throw new CdError(401, 'schedule have been canceled');
 
@@ -283,13 +307,11 @@ schedule.delete = asyncWrap(async (req, res, next) => {
     options.endedAt = moment().format();
   }
 
-  let scheduleU = await schedule.updateAttributes(options);
-
-  if (!scheduleU) throw new CdError(401, 'update schedule fail');
-
   if (newStatus === 4) {
     deleteContainerFromSchedule(schedule);
   }
+  let scheduleU = await schedule.updateAttributes(options);
+  if (!scheduleU) throw new CdError(401, 'update schedule info fail');
  // let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
   res.json(scheduleU);
 

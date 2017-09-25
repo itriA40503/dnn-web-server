@@ -167,7 +167,7 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [1, 2, 3, 4]
+              $in: [1, 2, 3, 4, 7]
             }
           }
         };
@@ -178,7 +178,7 @@ module.exports = (sequelize, DataTypes) => {
             $or: [
               {
                 statusId: {
-                  $in: [4, 7]
+                  $in: [4]
                 }
               },
               {
