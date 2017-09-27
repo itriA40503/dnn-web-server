@@ -1,7 +1,8 @@
 
 ## Requirement ##
 
-* nodejs > 8.0.0
+* node.js: 8.0.0+
+* npm: 5.0.0+
 
 ## Installation
 
