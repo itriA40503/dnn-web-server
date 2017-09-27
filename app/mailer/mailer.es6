@@ -7,7 +7,7 @@ const mailConfig = config[env].mailer;
 console.log(mailConfig);
 
 let transporter = nodemailer.createTransport(mailConfig.smtpSetting);
-let mailOptions = config.alarmMailOptions;
+let mailOptions = mailConfig.alarmMailOptions;
 
 const sendAlarm = () => {
   transporter.sendMail(mailOptions, (err, info) => {

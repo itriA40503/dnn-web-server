@@ -27,8 +27,8 @@ const config = {
         host: 'localhost',
         port: 25,
         auth: {
-          user: 'admin',
-          pass: 'pass'
+          user: 'kaban',
+          pass: 'kaban'
         },
         tls: {
           rejectUnauthorized: false
@@ -36,7 +36,7 @@ const config = {
       },
       alarmMailOptions: {
         from: 'kaban@japaripark.com',
-        to: 'bakaking@iri.org.tw',
+        to: 'bakaking@itri.org.tw',
         subject: 'alarm',
         text: 'alarm text'
       }
@@ -70,8 +70,8 @@ const config = {
         host: 'localhost',
         port: 25,
         auth: {
-          user: 'admin',
-          pass: 'pass'
+          user: 'kaban',
+          pass: 'kaban'
         },
         tls: {
           rejectUnauthorized: false
@@ -79,7 +79,7 @@ const config = {
       },
       alarmMailOptions: {
         from: 'kaban@japaripark.com',
-        to: 'bakaking@iri.org.tw',
+        to: 'bakaking@itri.org.tw',
         subject: 'alarm',
         text: 'alarm text'
       }
