@@ -21,6 +21,25 @@ const config = {
     },
     kuber: {
       url: 'http://100.86.2.12:30554/kubeGpu'
+    },
+    mailer: {
+      smtpSetting: {
+        host: 'localhost',
+        port: 25,
+        auth: {
+          user: 'admin',
+          pass: 'pass'
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      },
+      alarmMailOptions: {
+        from: 'kaban@japaripark.com',
+        to: 'bakaking@iri.org.tw',
+        subject: 'alarm',
+        text: 'alarm text'
+      }
     }
   },
   production: {
@@ -45,6 +64,25 @@ const config = {
     },
     kuber: {
       url: 'http://100.86.2.12:30554/kubeGpu'
+    },
+    mailer: {
+      smtpSetting: {
+        host: 'localhost',
+        port: 25,
+        auth: {
+          user: 'admin',
+          pass: 'pass'
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      },
+      alarmMailOptions: {
+        from: 'kaban@japaripark.com',
+        to: 'bakaking@iri.org.tw',
+        subject: 'alarm',
+        text: 'alarm text'
+      }
     }
   }
 };
