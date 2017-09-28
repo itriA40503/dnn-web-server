@@ -105,26 +105,27 @@ const instantCreateContainer = async (schedule, times) => {
 
 schedule.create = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
-  let username = req.query.username || (req.body && req.body.username) || req.user.itriId;
+  let username = req.user.itriId;
   let startQuery = req.query.start || (req.body && req.body.start);
   let endQuery = req.query.end || (req.body && req.body.end);
-  let imageIdQuery = req.query.image_id || (req.body && req.body.image_id) || 1;
-  let customMachineId = req.query.machine_id || (req.body && req.body.machine_id);
-  let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
+  let imageIdQuery = req.query.image_id || (req.body && req.body.imageId);
+  let customMachineId = req.query.machine_id || (req.body && req.body.machineId);
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
 
-  if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
+  if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(401, 'Lack of parameter');
 
   let startDate = moment(startQuery);
   let endDate = moment(endQuery);
 
-  if (!startDate.isValid() || !endDate.isValid()) throw new CdError(401, 'wrong date format');
+  if (!startDate.isValid() || !endDate.isValid()) throw new CdError(401, 'Wrong date format');
 
   startDate = startDate.startOf('day');
   endDate = endDate.endOf('day');
 
-  if (startDate > endDate) throw new CdError(401, 'end date must greateeer then start date');
-  else if (startDate < moment().startOf('day')) throw new CdError(401, 'start date must greater then today');
-  else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(401, 'period must smaller then 30 days');
+  if (startDate > endDate) throw new CdError(401, 'End date must greater then start date');
+  else if (endDate < moment()) throw new CdError(401, 'End date must greater then now');
+  else if (startDate < moment().startOf('day')) throw new CdError(401, 'Start date must greater then today');
+  else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(401, 'Period must smaller then 30 days');
 
   let start = startDate.format();
   let end = endDate.format();
@@ -262,14 +263,15 @@ schedule.restart = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
   let scheduleId = req.params.schedule_id;
 
-  if (!scheduleId) throw new CdError('401', 'without schedule id');
+  if (!scheduleId) throw new CdError('401', 'Without schedule id');
 
   let schedule = await Schedule.scope('detail').findById(scheduleId);
 
-  if (!schedule) throw new CdError(401, 'schedule not exist');
-  else if (schedule.userId !== userId) throw new CdError(401, 'have no auth');
-  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'schedule have been deleted');
-  else if (schedule.statusId === 6) throw new CdError(401, 'schedule have been canceled');
+  if (!schedule) throw new CdError(401, 'Schedule not exist');
+  else if (schedule.userId !== userId) throw new CdError(401, 'Have no auth');
+  else if (schedule.statusId === 1) throw new CdError(401, 'Schedule hasn\'t running');
+  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted');
+  else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
 
   if (moment(schedule.startDate) <= moment() && moment(schedule.endDate) <= moment()) {
     await deleteContainerFromSchedule(schedule);

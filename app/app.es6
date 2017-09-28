@@ -12,7 +12,7 @@ import sassMiddleware from 'node-sass-middleware';
 import timeout from 'connect-timeout';
 
 import CdError from './util/CdError';
-import jwtAuth from './middleware/jwtAuth'
+import jwtAuth from './middleware/jwtAuth';
 import setupRouters from './routes';
 
 

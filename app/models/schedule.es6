@@ -181,6 +181,15 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
+      statusShouldTerminate: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1, 2, 3, 4, 7, 8]
+            }
+          }
+        };
+      },
       statusShouldDelete: () => {
         return {
           where: {

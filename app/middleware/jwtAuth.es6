@@ -18,13 +18,14 @@ const jwtAuth = asyncWrap(async (req, res, next) => {
     throw new CdError(401, 'token expired', 40101);
   }
 
+  /* 或許可以不要check */
+
   let user = await User.findOne({
     where: {
       id: decoded.uid,
       itriId: decoded.itriId
     }
   });
-
 
   if (user) {
     req.user = user;
