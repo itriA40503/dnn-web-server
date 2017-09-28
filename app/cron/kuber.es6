@@ -1,12 +1,13 @@
 import request from 'request-promise-native';
 import moment from 'moment';
+import Debug from 'debug';
 import asyncWrap from '../util/asyncWrap';
 import db from '../db/db';
 import config from '../config';
 import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
 
-const env = process.env.NODE_ENV || 'development';
-const kubeConfig = config[env].kuber;
+const debug = Debug('kuber-api');
+const kubeConfig = config.kuber;
 const kubeUrl = kubeConfig.url;
 // const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
 const conAPI = `${kubeUrl}/container`;
@@ -33,23 +34,23 @@ const createContainerFromSchedule = async (schedule) => {
       resolveWithFullResponse: true
     };
     let response = await request(options);
-
-    if (response.statusCode === 200) {
-      let pod = response.body[0];
-      let service = response.body[1];
-      let ports = service.spec.ports.map((port) => {
-        let newPort = Object.assign({}, port);
-        newPort.containerId = schedule.container.id;
-        return newPort;
-      });
-      let portN = Port.bulkCreate(ports);
-      let sch = await schedule.updateAttributes({ statusId: 2 });
-      return (sch) ? true : false;
-    }
+   // if (response.statusCode === 200) {
+    let pod = response.body[0];
+    let service = response.body[1];
+    let ports = service.spec.ports.map((port) => {
+      let newPort = Object.assign({}, port);
+      newPort.containerId = schedule.container.id;
+      return newPort;
+    });
+    let portN = Port.bulkCreate(ports);
+    let sch = await schedule.updateAttributes({ statusId: 2 });
+    return sch;
+   // }
   } catch (err) {
     console.log(`schedule${schedule.id}: create fail with kubernetes`);
+    console.log(`${err.message}`);
+    /* 這裡寄信 */
   }
-
   return false;
 };
 
@@ -81,6 +82,7 @@ const updateContainerFromSchedule = async (schedule) => {
 
     }
   } catch (err) {
+    debug(err);
     console.log(`schedule${schedule.id}: update fail with kubernetes`);
   }
   return false;
@@ -95,13 +97,12 @@ const deleteContainerFromSchedule = async (schedule) => {
       resolveWithFullResponse: true
     };
     let response = await request(options);
-    if (response.statusCode === 200) {
-      console.log('delete success');
-      await schedule.updateAttributes({ statusId: 5, endedAt: moment().format() });
-      return true;
-    }
+    await schedule.updateAttributes({ statusId: 5, endedAt: moment().format() });
+    return true;
+
   } catch (err) {
     console.log(`schedule${schedule.id}: delete fail with kubernetes`);
+    console.log(`${err.message}`);
   }
   return false;
 };
@@ -114,32 +115,29 @@ const removeAllContainers = async () => {
       resolveWithFullResponse: true
     };
     let response = await request(options);
-    if (response.statusCode === 200) {
+    await Port.destroy({
+      force: true,
+      where: {}
+    });
+    await Container.destroy({
+      force: true,
+      where: {}
+    });
 
-      await Port.destroy({
-        force: true,
-        where: {}
-      });
-      await Container.destroy({
-        force: true,
-        where: {}
-      });
+    await Schedule.destroy({
+      force: true,
+      where: {}
+    });
 
-      await Schedule.destroy({
-        force: true,
-        where: {}
-      });
-
-      return true;
-    }
+    return true;
   } catch (err) {
-    console.log(err);
+    console.log(`${err.message}`);
   }
   return false;
 };
 
 const startSchedule = async () => {
-  console.log('start schedule');
+  console.log('Cron Start Schedules');
   let timeOptions = {
     start: moment().format()
   };
@@ -154,7 +152,7 @@ const startSchedule = async () => {
 
 
 const updateSchedule = async () => {
-  console.log('update schedule');
+  debug('Cron Update Schedules');
   let schedules = await Schedule.scope(
     'detail',
     { method: ['scheduleStatusWhere', 2] }
@@ -164,21 +162,28 @@ const updateSchedule = async () => {
   return true;
 };
 
-const deleteSchedule = async () => {
+const terminateSchedule = async () => {
+  debug('Cron terminal Schedules');
   let schedules = await Schedule.scope(
     'detail',
-    'scheduleShouldDelete'
+    'scheduleShouldTerminate'
   ).findAll();
 
-  let containersUpdate = schedules.map(deleteContainerFromSchedule);
+  let containersUpdate = schedules.map((schedule) => {
+    if ([2,3,4]){}
+
+  });
+
+
+  map(deleteContainerFromSchedule);
 
   return true;
 };
 
 
 const handleAnImageTag = async (imageTag) => {
+  debug('Find or Create Image Tag');
   let [name, label] = imageTag.split(':');
-  console.log(`${name}===========================${label}`);
   let [image, created] = await Image.findOrCreate({
     where: {
       name: name,
@@ -189,6 +194,7 @@ const handleAnImageTag = async (imageTag) => {
 };
 
 const getAllImages = async () => {
+  debug('Get All Images\' tags from repository');
   try {
     let options = {
       method: 'GET',
@@ -198,14 +204,13 @@ const getAllImages = async () => {
       resolveWithFullResponse: true
     };
     let response = await request(options);
-    if (response.statusCode === 200) {
-      let images = response.body.images;
-      images.map(handleAnImageTag);
-      return true;
-    }
+    let images = response.body.images;
+    images.map(handleAnImageTag);
+    return true;
 
   } catch (err) {
-    console.log(err);
+    console.log('Get image tags from repository fail');
+    console.log(`${err.message}`);
   }
   return false;
 };
@@ -216,6 +221,6 @@ export { createContainerFromSchedule,
   removeAllContainers,
   startSchedule,
   updateSchedule,
-  deleteSchedule,
+  terminateSchedule,
   getAllImages
 };

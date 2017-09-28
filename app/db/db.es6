@@ -55,16 +55,21 @@ db.getScheduleOfMachineId = (machineId, start, end) => {
   );
 };
 
+db.getMachineById = (id) => {
+  return Machine.scope('normal',
+    { method: ['whichId', id] });
+};
+
 db.getAllMachineNormal = () => {
-  return Machine.scope('normal');
+  return Machine.scope('normal', 'statusNormal');
 };
 
 db.getAllMachineIds = () => {
-  return Machine.scope('id');
+  return Machine.scope('id', 'statusNormal');
 };
 
 db.getAllMachineIdsWithGPU = (gpuType) => {
-  return Machine.scope('id',
+  return Machine.scope('id', 'statusNormal',
     { method: ['whichGpu', gpuType] });
 };
 

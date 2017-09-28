@@ -14,3 +14,5 @@ admin.updateSchedule = asyncWrap(async (req, res, next) => {
 admin.deleteSchedule = asyncWrap(async (req, res, next) => {
 
 });
+
+export default admin;

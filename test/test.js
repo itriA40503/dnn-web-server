@@ -1,3 +1,5 @@
+process.env.DEBUG = 'kuber-api'
+
 const app = require('../build/app');
 const supertest = require('supertest');
 const chai = require('chai');
@@ -22,6 +24,13 @@ let userSetting = {
   token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI5OTk5OTk5OSIsIml0cmlJZCI6Im1vY2hhdGVzdCIsImV4cGlyZXMiOjE1MDM0NzUwMjIuODUxfQ.r0cgCB-LTmO7yl1en14uSii1I2mZU8XwXfW2kcHGKH8'
 }
 
+let machineSetting = {
+  label: 'm19',
+  name: 'm19',
+  gpuAmount: '1',
+  gpuType: 'v100'
+}
+
 let scheduleSetting = {
   start: moment('2019-01-01T00:00:00.000Z'),
   end: moment('2019-01-15T00:00:00.000Z')
@@ -41,11 +50,12 @@ describe('server', () => {
   before( done => {
     (async () => {
       console.log("before");
-      let result = await User.create({
+      await User.create({
         id: userSetting.id,
         itriId: userSetting.itriId,
         typeId:1
       });
+
       done();
     })();
   });
@@ -77,6 +87,12 @@ describe('server', () => {
           where: {
             id: scheduleIds
           }})
+        await Machine.destroy({
+          force: true,
+          where: {
+            label: machineSetting.label
+          }
+        });
         await User.destroy({
           force: true,
           where: {
@@ -139,6 +155,7 @@ describe('server', () => {
           res.should.to.be.json;
           res.body.should.have.property('images');
           images = res.body.images;
+          console.log(images);
           done();
         });
     });
@@ -259,6 +276,7 @@ describe('server', () => {
         let scheduleOptions = {
           start: scheduleSetting.start.format(),
           end: scheduleSetting.end.format(),
+          imageId: images[0].id
         }
 
         request
@@ -316,11 +334,12 @@ describe('server', () => {
     });
 
     describe('Create schedule instantly', () => {
-
+      let resSchedule = {};
       it('Create a schedule', done => {
         let scheduleOptions = {
           start: currentScheduleSetting.start.format(),
           end: currentScheduleSetting.end.format(),
+          imageId: images[0].id
         }
 
         request
@@ -352,7 +371,7 @@ describe('server', () => {
               console.log(res.body);
               res.should.have.status(200);
               res.should.to.be.json;
-              res.body.should.have.property('id')
+              res.body.statusId.should.equal(3);
               resSchedule = res.body;
               done();
             })
@@ -372,5 +391,115 @@ describe('server', () => {
       });
     });
 
+
+
   });
+
+
+  describe('admin', () => {
+    describe('machine maintain', () => {
+      let resMachine = {}
+      it('create', done => {
+        request
+          .post('/admin/machine')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send(machineSetting)
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.should.to.be.json;
+            console.log(res.body);
+            resMachine = res.body;
+            done();
+          });
+      });
+      it('wrong id', done => {
+        request
+          .put(`/admin/machine/1234564874874`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send({
+            gpuAmount: 2,
+            gpuType: 'GTX1080'
+          })
+          .end((err,res) => {
+            res.should.have.status(401);
+            res.should.to.be.json;
+            done();
+          });
+      })
+
+      it('modify machine when still running', done => {
+        request
+          .put(`/admin/machine/${resMachine.id}`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send({
+            gpuAmount: 2,
+            gpuType: 'GTX1080'
+          })
+          .end((err,res) => {
+            res.should.have.status(401);
+            res.should.to.be.json;
+            done();
+          });
+      })
+
+      it('disable', done => {
+        request
+          .put(`/admin/machine/${resMachine.id}/disable`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.statusId.should.equal(3);
+            done();
+          });
+      })
+
+      it('modify machine', done => {
+        request
+          .put(`/admin/machine/${resMachine.id}`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send({
+            gpuAmount: 2,
+            gpuType: 'GTX1080'
+          })
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.gpuAmount.should.equal(2);
+            done();
+          });
+      })
+
+      it('enable', done => {
+        request
+          .put(`/admin/machine/${resMachine.id}/enable`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.statusId.should.equal(1);
+            done();
+          });
+      })
+
+      it('destory', done => {
+        request
+          .delete(`/admin/machine/${resMachine.id}`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .end((err,res) => {
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.statusId.should.equal(4);
+            done();
+          });
+      })
+    })
+  })
 });
