@@ -176,16 +176,22 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [1, 8]
+              $in: [1]
+            },
+            startedAt: {
+              $lte: sequelize.fn('now')
             }
           }
         };
       },
-      statusShouldTerminate: () => {
+      statusShouldEnd: () => {
         return {
           where: {
             statusId: {
               $in: [1, 2, 3, 4, 7, 8]
+            },
+            endedAt: {
+              $lte: sequelize.fn('now')
             }
           }
         };
