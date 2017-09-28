@@ -3,7 +3,7 @@ import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { createContainerFromSchedule, updateContainerFromSchedule, deleteContainerFromSchedule } from '../../cron/kuber';
+import { startASchedule, updateASchedule, deleteASchedule } from '../../cron/kuber';
 import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
 
 const BOOKMAXIMUN = 100;
@@ -62,28 +62,25 @@ schedule.get = asyncWrap(async (req, res, next) => {
   }, resJson);
 
   res.json(resJson);
-  return;
 });
 
 const instantUpdateContainer = async (schedule, times) => {
   let tryTimes = times;
   if (tryTimes > 0) {
-    let result = await updateContainerFromSchedule(schedule);
+    let result = await updateASchedule(schedule);
     if (!result) {
       setTimeout(() => {
         instantUpdateContainer(schedule, tryTimes - 1);
       }, 10000);
     }
   }
-  return;
-
 };
 
 const instantCreateContainer = async (schedule, times) => {
   let tryTimes = times;
   if (tryTimes > 0) {
     console.log(`Start to create container ${schedule.id}`);
-    let result = await createContainerFromSchedule(schedule);
+    let result = await startASchedule(schedule);
     if (result) {
       setTimeout(() => {
         instantUpdateContainer(schedule, 3);
@@ -93,13 +90,7 @@ const instantCreateContainer = async (schedule, times) => {
         instantCreateContainer(schedule, tryTimes - 1);
       }, 5000);
     }
-  } else {
-    schedule.updateAttributes({
-      statusId: 7
-    });
   }
-
-  return;
 };
 
 
@@ -274,7 +265,7 @@ schedule.restart = asyncWrap(async (req, res, next) => {
   else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
 
   if (moment(schedule.startDate) <= moment() && moment(schedule.endDate) <= moment()) {
-    await deleteContainerFromSchedule(schedule);
+    await deleteASchedule(schedule);
     await schedule.updateAttributes({
       statusId: 1
     });
@@ -310,7 +301,7 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   }
 
   if (newStatus === 4) {
-    deleteContainerFromSchedule(schedule);
+    deleteASchedule(schedule);
   }
   let scheduleU = await schedule.updateAttributes(options);
   if (!scheduleU) throw new CdError(401, 'update schedule info fail');

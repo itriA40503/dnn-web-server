@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { schedule as Schedule, machine as Machine, image as Image } from '../models/index';
 
 const sequelize = Schedule.sequelize;
@@ -20,11 +21,16 @@ db.getDetailSchedules = (start, end) => {
   return Schedule.scope('detail', { method: ['timeOverlap', options] });
 };
 
-db.getShouldStartSchedule = (options) => {
+db.getShouldStartSchedule = () => {
   return Schedule.scope(
     'detail',
-    { method: ['timeOverlap', options] },
     'statusShouldStart');
+};
+
+db.getShouldEndSchedule = () => {
+  return Schedule.scope(
+    'detail',
+    'statusShouldEnd');
 };
 
 db.getAllRunningSchedules = (start, end) => {

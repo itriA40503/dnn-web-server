@@ -1,23 +1,23 @@
 import { CronJob } from 'cron';
-import { startSchedule, updateSchedule, deleteSchedule, getAllImages } from './kuber';
+import { startSchedules, updateSchedules, terminateSchedules, getAllImages } from './kuber';
 
-let deleteScheduleJob = new CronJob({
+let terminateScheduleJob = new CronJob({
   cronTime: '* 0 0 * * *',
-  onTick: deleteSchedule,
+  onTick: terminateSchedules,
   start: false,
   timeZone: 'Asia/Taipei'
 });
 
 let startScheduleJob = new CronJob({
   cronTime: '* 1 0 * * *',
-  onTick: startSchedule,
+  onTick: startSchedules,
   start: false,
   timeZone: 'Asia/Taipei'
 });
 
 let updateScheduleJob = new CronJob({
   cronTime: '0 */10 * * * *',
-  onTick: updateSchedule,
+  onTick: updateSchedules,
   start: false,
   timeZone: 'Asia/Taipei'
 });
@@ -34,5 +34,5 @@ let updateImageJob = new CronJob({
 // startSchedule();
 startScheduleJob.start();
 updateScheduleJob.start();
-deleteScheduleJob.start();
+terminateScheduleJob.start();
 updateImageJob.start();

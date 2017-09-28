@@ -15,7 +15,7 @@ const consAPI = `${kubeUrl}/containers`;
 const imageAPI = `${kubeUrl}/image`;
 const imagesAPI = `${kubeUrl}/images`;
 
-const createContainerFromSchedule = async (schedule) => {
+const createContainerUsingSchedule = async (schedule) => {
   try {
 
     let scheduleP = await schedule.get({ plain: true });
@@ -34,18 +34,7 @@ const createContainerFromSchedule = async (schedule) => {
       resolveWithFullResponse: true
     };
     let response = await request(options);
-   // if (response.statusCode === 200) {
-    let pod = response.body[0];
-    let service = response.body[1];
-    let ports = service.spec.ports.map((port) => {
-      let newPort = Object.assign({}, port);
-      newPort.containerId = schedule.container.id;
-      return newPort;
-    });
-    let portN = Port.bulkCreate(ports);
-    let sch = await schedule.updateAttributes({ statusId: 2 });
-    return sch;
-   // }
+    return response;
   } catch (err) {
     console.log(`schedule${schedule.id}: create fail with kubernetes`);
     console.log(`${err.message}`);
@@ -54,7 +43,31 @@ const createContainerFromSchedule = async (schedule) => {
   return false;
 };
 
-const updateContainerFromSchedule = async (schedule) => {
+const startASchedule = async (schedule) => {
+  await schedule.updateAttributes({ statusId: 8 });
+  let response = await createContainerUsingSchedule(schedule);
+  if (!response || response.statusCode !== 200) {
+    schedule.updateAttributes({ statusId: 7 });
+    return false;
+  }
+  try {
+    let pod = response.body[0];
+    let service = response.body[1];
+    let ports = service.spec.ports.map((port) => {
+      let newPort = Object.assign({}, port);
+      newPort.containerId = schedule.container.id;
+      return newPort;
+    });
+    let portN = Port.bulkCreate(ports);
+    await schedule.updateAttributes({ statusId: 2 });
+    return true;
+  } catch (err) {
+    console.log('Error when save schedule update');
+  }
+  return false;
+};
+
+const updateContainerUsingSchedule = async (schedule) => {
   try {
     let scheduleP = await schedule.get({ plain: true });
     let options = {
@@ -65,25 +78,30 @@ const updateContainerFromSchedule = async (schedule) => {
     };
 
     let response = await request(options);
-    if (response.statusCode === 200) {
-      let pod = response.body[0];
-      let service = response.body[1];
-      if (pod.status.phase !== 'Running') return false;
-
-      let containerN = await schedule.container.updateAttributes({
-        podIp: pod.status.hostIP,
-        sshPort: service.spec.ports[0].nodePort
-      });
-      if (!containerN) return false;
-
-
-      let scheduleN = await schedule.updateAttributes({ statusId: 3 });
-      return (scheduleN) ? true : false;
-
-    }
+    return response;
   } catch (err) {
-    debug(err);
     console.log(`schedule${schedule.id}: update fail with kubernetes`);
+  }
+  return false;
+};
+
+const updateASchedule = async (schedule) => {
+  let response = await updateContainerUsingSchedule(schedule);
+  if (!response || response.statusCode !== 200) return false;
+  try {
+    let pod = response.body[0];
+    let service = response.body[1];
+    if (pod.status.phase !== 'Running') return false;
+
+    let containerN = await schedule.container.updateAttributes({
+      podIp: pod.status.hostIP,
+      sshPort: service.spec.ports[0].nodePort
+    });
+    if (!containerN) return false;
+    await schedule.updateAttributes({ statusId: 3 });
+    return true;
+  } catch (err) {
+    console.log('Error when save schedule update');
   }
   return false;
 };
@@ -97,12 +115,40 @@ const deleteContainerFromSchedule = async (schedule) => {
       resolveWithFullResponse: true
     };
     let response = await request(options);
-    await schedule.updateAttributes({ statusId: 5, endedAt: moment().format() });
-    return true;
+    return response;
 
   } catch (err) {
     console.log(`schedule${schedule.id}: delete fail with kubernetes`);
     console.log(`${err.message}`);
+  }
+  return false;
+};
+
+const deleteASchedule = async (schedule) => {
+  let response = await deleteContainerFromSchedule(schedule);
+  if (!response || response.statusCode !== 200) return false;
+  try {
+    await schedule.updateAttributes({
+      statusId: 5,
+      endedAt: moment().format()
+    });
+    return true;
+  } catch (err) {
+    console.log('Error when save schedule update');
+  }
+  return false;
+};
+
+const terminalASchedule = async (schedule) => {
+  let response = deleteContainerFromSchedule(schedule);
+  if (!response || response.statusCode !== 200) return false;
+  try {
+    await schedule.updateAttributes({
+      statusId: 9
+    });
+    return true;
+  } catch (err) {
+    console.log('Error when save schedule update');
   }
   return false;
 };
@@ -136,48 +182,37 @@ const removeAllContainers = async () => {
   return false;
 };
 
-const startSchedule = async () => {
+const startSchedules = async () => {
   console.log('Cron Start Schedules');
   let timeOptions = {
     start: moment().format()
   };
   let schedules = await db.getShouldStartSchedule.findAll(timeOptions);
-
-  let containersUpdate = schedules.map(createContainerFromSchedule);
-
- // let result = Promise.all(instancesUpdate);
- // console.log(result);
-  return true;
+  schedules.map(startASchedule);
 };
 
 
-const updateSchedule = async () => {
+const updateSchedules = async () => {
   debug('Cron Update Schedules');
   let schedules = await Schedule.scope(
     'detail',
     { method: ['scheduleStatusWhere', 2] }
   ).findAll();
-
-  let containersUpdate = schedules.map(updateContainerFromSchedule);
-  return true;
+  schedules.map(updateASchedule);
 };
 
-const terminateSchedule = async () => {
+const terminateSchedules = async () => {
   debug('Cron terminal Schedules');
-  let schedules = await Schedule.scope(
-    'detail',
-    'scheduleShouldTerminate'
-  ).findAll();
+  let schedules = await db.getShouldEndSchedule().findAll();
 
   let containersUpdate = schedules.map((schedule) => {
-    if ([2,3,4]){}
-
+    if (schedule.statusId === 2 || schedule.statusId === 3) {
+      terminalASchedule(schedule);
+    } else if (schedule.statusId === 1 || schedule.statusId === 7) {
+      schedule.updateAttributes({ statusId: 9 });
+    }
+    return true;
   });
-
-
-  map(deleteContainerFromSchedule);
-
-  return true;
 };
 
 
@@ -215,12 +250,12 @@ const getAllImages = async () => {
   return false;
 };
 
-export { createContainerFromSchedule,
-  updateContainerFromSchedule,
-  deleteContainerFromSchedule,
+export { startASchedule,
+  updateASchedule,
+  deleteASchedule,
   removeAllContainers,
-  startSchedule,
-  updateSchedule,
-  terminateSchedule,
+  startSchedules,
+  updateSchedules,
+  terminateSchedules,
   getAllImages
 };
