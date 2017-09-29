@@ -3,8 +3,7 @@ import path from 'path';
 import Sequelize from 'sequelize';
 import config from '../config';
 
-const env = process.env.NODE_ENV || 'development';
-const dbConfig = config[env].database;
+const dbConfig = config.database;
 
 dbConfig.host = process.env.DNNDB_HOST || dbConfig.host;
 

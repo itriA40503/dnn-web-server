@@ -1,3 +1,3 @@
-import { updateSchedule } from '../cron/kuber';
+import { updateSchedules } from '../cron/kuber';
 
-updateSchedule();
+updateSchedules();

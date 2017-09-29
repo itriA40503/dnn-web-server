@@ -89,10 +89,33 @@ module.exports = (sequelize, DataTypes) => {
         };
         return result;
       },
+      statusNormal: () => {
+        return {
+          where: {
+            statusId: 1
+          }
+        };
+      },
+      statusShouldShow: () => {
+        return {
+          where: {
+            statusId: {
+              $notIn: [4]
+            }
+          }
+        };
+      },
       whichGpu: (gpuType) => {
         return {
           where: {
             gpuType: gpuType
+          }
+        };
+      },
+      whichId: (id) => {
+        return {
+          where: {
+            id: id
           }
         };
       }
