@@ -1,5 +1,3 @@
-process.env.DEBUG = 'kuber-api'
-
 const app = require('../build/app');
 const supertest = require('supertest');
 const chai = require('chai');

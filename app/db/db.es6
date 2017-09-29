@@ -24,13 +24,20 @@ db.getDetailSchedules = (start, end) => {
 db.getShouldStartSchedule = () => {
   return Schedule.scope(
     'detail',
-    'statusShouldStart');
+    'statusShouldStart').findAll();
 };
+
+db.getShouldUpdateSchedule = () => {
+  return Schedule.scope(
+    'detail',
+    'shouldUpdate').findAll();
+};
+
 
 db.getShouldEndSchedule = () => {
   return Schedule.scope(
     'detail',
-    'statusShouldEnd');
+    'shouldEnd').findAll();
 };
 
 db.getAllRunningSchedules = (start, end) => {
@@ -95,6 +102,16 @@ db.getUserBookedScheduleIds = (userId) => {
       endedAt: {
         $gte: new Date()
       }
+    }
+  });
+};
+
+db.findOrCreateImageTag = (imageTag) => {
+  let [name, label] = imageTag.split(':');
+  return Image.findOrCreate({
+    where: {
+      name: name,
+      label: label
     }
   });
 };

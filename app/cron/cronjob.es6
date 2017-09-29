@@ -16,7 +16,7 @@ let startScheduleJob = new CronJob({
 });
 
 let updateScheduleJob = new CronJob({
-  cronTime: '0 */10 * * * *',
+  cronTime: '0 */20 * * * *',
   onTick: updateSchedules,
   start: false,
   timeZone: 'Asia/Taipei'
