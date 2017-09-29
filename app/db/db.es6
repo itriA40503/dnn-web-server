@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { schedule as Schedule, machine as Machine, image as Image } from '../models/index';
 
 const sequelize = Schedule.sequelize;
@@ -20,11 +21,23 @@ db.getDetailSchedules = (start, end) => {
   return Schedule.scope('detail', { method: ['timeOverlap', options] });
 };
 
-db.getShouldStartSchedule = (options) => {
+db.getShouldStartSchedule = () => {
   return Schedule.scope(
     'detail',
-    { method: ['timeOverlap', options] },
-    'statusShouldStart');
+    'statusShouldStart').findAll();
+};
+
+db.getShouldUpdateSchedule = () => {
+  return Schedule.scope(
+    'detail',
+    'shouldUpdate').findAll();
+};
+
+
+db.getShouldEndSchedule = () => {
+  return Schedule.scope(
+    'detail',
+    'shouldEnd').findAll();
 };
 
 db.getAllRunningSchedules = (start, end) => {
@@ -55,16 +68,21 @@ db.getScheduleOfMachineId = (machineId, start, end) => {
   );
 };
 
+db.getMachineById = (id) => {
+  return Machine.scope('normal',
+    { method: ['whichId', id] });
+};
+
 db.getAllMachineNormal = () => {
-  return Machine.scope('normal');
+  return Machine.scope('normal', 'statusNormal');
 };
 
 db.getAllMachineIds = () => {
-  return Machine.scope('id');
+  return Machine.scope('id', 'statusNormal');
 };
 
 db.getAllMachineIdsWithGPU = (gpuType) => {
-  return Machine.scope('id',
+  return Machine.scope('id', 'statusNormal',
     { method: ['whichGpu', gpuType] });
 };
 
@@ -84,6 +102,16 @@ db.getUserBookedScheduleIds = (userId) => {
       endedAt: {
         $gte: new Date()
       }
+    }
+  });
+};
+
+db.findOrCreateImageTag = (imageTag) => {
+  let [name, label] = imageTag.split(':');
+  return Image.findOrCreate({
+    where: {
+      name: name,
+      label: label
     }
   });
 };

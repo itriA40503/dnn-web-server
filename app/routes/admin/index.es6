@@ -1,8 +1,17 @@
 import express from 'express';
 import admin from './admin';
+import machine from './machine';
 
 const router = express.Router();
+const machineRouter = express.Router();
 
-router.get('/', admin);
+machineRouter.post('/', machine.createMachine);
+machineRouter.put('/:machine_id', machine.modifyMachine);
+machineRouter.put('/:machine_id/enable', machine.enableMachine);
+machineRouter.put('/:machine_id/disable', machine.disableMachine);
+machineRouter.delete('/:machine_id', machine.deleteMachine);
+
+router.use('/machine', machineRouter);
+// router.get('/', admin);
 
 export default router;

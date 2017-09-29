@@ -1,3 +1,3 @@
-import { startSchedule } from '../cron/kuber';
+import { startSchedules } from '../cron/kuber';
 
-startSchedule();
+startSchedules();

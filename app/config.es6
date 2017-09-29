@@ -21,6 +21,25 @@ const config = {
     },
     kuber: {
       url: 'http://100.86.2.12:30554/kubeGpu'
+    },
+    mailer: {
+      smtpSetting: {
+        host: 'localhost',
+        port: 25,
+        auth: {
+          user: 'kaban',
+          pass: 'kaban'
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      },
+      alarmMailOptions: {
+        from: 'kaban@japaripark.com',
+        to: 'bakaking@itri.org.tw',
+        subject: 'alarm',
+        text: 'alarm text'
+      }
     }
   },
   production: {
@@ -45,8 +64,29 @@ const config = {
     },
     kuber: {
       url: 'http://100.86.2.12:30554/kubeGpu'
+    },
+    mailer: {
+      smtpSetting: {
+        host: 'localhost',
+        port: 25,
+        auth: {
+          user: 'kaban',
+          pass: 'kaban'
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      },
+      alarmMailOptions: {
+        from: 'kaban@japaripark.com',
+        to: 'bakaking@itri.org.tw',
+        subject: 'alarm',
+        text: 'alarm text'
+      }
     }
   }
 };
 
-module.exports = config;
+const env = process.env.NODE_ENV || 'development';
+
+module.exports = config[env];

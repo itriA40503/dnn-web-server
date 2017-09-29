@@ -1,4 +1,5 @@
 /* jshint indent: 2 */
+import moment from 'moment';
 
 module.exports = (sequelize, DataTypes) => {
   let Schedule = sequelize.define('schedule', {
@@ -176,7 +177,31 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [1, 8]
+              $in: [1]
+            },
+            startedAt: {
+              $lte: moment().format()
+            }
+          }
+        };
+      },
+      shouldUpdate: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [2]
+            }
+          }
+        };
+      },
+      shouldEnd: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1, 2, 3, 4, 7, 8]
+            },
+            endedAt: {
+              $lte: moment().format()
             }
           }
         };

@@ -13,7 +13,7 @@ const image = asyncWrap(async (req, res, next) => {
 
   let newImages = images.reduce((list, image) => {
     let imageP = image.get({ plain: true });
-    if (imageP.sort === '1') {
+    if (imageP.sort === '1' && !imageP.label.includes('Disable')) {
       delete imageP.sort;
       list.push(imageP);
     }
