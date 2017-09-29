@@ -17,7 +17,7 @@ const imagesAPI = `${kubeUrl}/images`;
 
 const createContainerUsingSchedule = async (schedule) => {
   try {
-
+    console.log('start create container API')
     let scheduleP = await schedule.get({ plain: true });
     let options = {
       method: 'POST',
@@ -62,6 +62,7 @@ const startASchedule = async (schedule) => {
     await schedule.updateAttributes({ statusId: 2 });
     return true;
   } catch (err) {
+    console.log(err);
     console.log('Error when save schedule update');
   }
   return false;
@@ -127,6 +128,7 @@ const deleteContainerFromSchedule = async (schedule) => {
 const deleteASchedule = async (schedule) => {
   let response = await deleteContainerFromSchedule(schedule);
   if (!response || response.statusCode !== 200) return false;
+
   try {
     await schedule.updateAttributes({
       statusId: 5,
@@ -184,27 +186,22 @@ const removeAllContainers = async () => {
 
 const startSchedules = async () => {
   console.log('Cron Start Schedules');
-  let timeOptions = {
-    start: moment().format()
-  };
-  let schedules = await db.getShouldStartSchedule.findAll(timeOptions);
-  schedules.map(startASchedule);
+
+  let schedules = await db.getShouldStartSchedule();
+  await Promise.all(schedules.map(startASchedule));
 };
 
 
 const updateSchedules = async () => {
   debug('Cron Update Schedules');
-  let schedules = await Schedule.scope(
-    'detail',
-    { method: ['scheduleStatusWhere', 2] }
-  ).findAll();
+  let schedules = await db.getShouldUpdateSchedule();
   schedules.map(updateASchedule);
 };
 
 const terminateSchedules = async () => {
   debug('Cron terminal Schedules');
-  let schedules = await db.getShouldEndSchedule().findAll();
-
+  let schedules = await db.getShouldEndSchedule();
+  console.log(schedules);
   let containersUpdate = schedules.map((schedule) => {
     if (schedule.statusId === 2 || schedule.statusId === 3) {
       terminalASchedule(schedule);
@@ -213,19 +210,6 @@ const terminateSchedules = async () => {
     }
     return true;
   });
-};
-
-
-const handleAnImageTag = async (imageTag) => {
-  debug('Find or Create Image Tag');
-  let [name, label] = imageTag.split(':');
-  let [image, created] = await Image.findOrCreate({
-    where: {
-      name: name,
-      label: label
-    }
-  });
-  return image;
 };
 
 const getAllImages = async () => {
@@ -240,7 +224,7 @@ const getAllImages = async () => {
     };
     let response = await request(options);
     let images = response.body.images;
-    images.map(handleAnImageTag);
+    images.map(db.findOrCreateImageTag);
     return true;
 
   } catch (err) {
@@ -250,7 +234,11 @@ const getAllImages = async () => {
   return false;
 };
 
-export { startASchedule,
+export {
+  createContainerUsingSchedule,
+  updateContainerUsingSchedule,
+  deleteContainerFromSchedule,
+  startASchedule,
   updateASchedule,
   deleteASchedule,
   removeAllContainers,

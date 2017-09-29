@@ -19,7 +19,7 @@ import setupRouters from './routes';
 const app = express();
 
 app.set('jwtsecretkey', 'KemonoFriends');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'hbs');
 app.set('json spaces', 2);
 

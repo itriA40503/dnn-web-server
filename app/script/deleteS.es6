@@ -1,3 +1,4 @@
-import { deleteSchedule } from '../cron/kuber';
+import { terminateSchedules } from '../cron/kuber';
 
-deleteSchedule();
+terminateSchedules();
+
