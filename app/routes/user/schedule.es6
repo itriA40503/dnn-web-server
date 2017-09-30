@@ -122,7 +122,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let end = endDate.format();
 
   let machineWhere = {};
-  if (customGpu) machineWhere.where = { gpuType: customGpu };
+  if (!customMachineId && customGpu) machineWhere.where = { gpuType: customGpu };
 
   let [bookedSchedules, machines, images, overlapSchedules] =
     await Promise.all([
@@ -150,8 +150,8 @@ schedule.create = asyncWrap(async (req, res, next) => {
     return set;
   }, machineSet);
 
-  if (availableSet.size === 0) throw new CdError('401', 'no machine');
-  if (customMachineId && !availableSet.has(customMachineId)) throw new CdError('401', 'no specific machine');
+  if (availableSet.size === 0) throw new CdError('401', 'No available machine');
+  if (customMachineId && !availableSet.has(customMachineId)) throw new CdError('401', 'No specific machine or is occupied');
 
  // let username = `user${userId}`;
   let randomPassword = Math.random().toString(36).slice(-8);
@@ -160,7 +160,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let schedule = await Schedule.scope('detail').create({
     startedAt: start,
     endedAt: end,
-    statusId: (startDate <= moment()) ? 8 : 1,
+    statusId: 1,
     machineId: customMachineId || machineArray[Math.floor(Math.random() * machineArray.length)],
     username: username,
     password: randomPassword,
@@ -190,10 +190,9 @@ schedule.create = asyncWrap(async (req, res, next) => {
 schedule.update = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
   let scheduleId = req.params.schedule_id;
+  let end = req.query.end || (req.body && req.body.end);
 
   if (!scheduleId) throw new CdError('401', 'without schedule id');
-
-  let end = req.query.end || (req.body && req.body.end);
 
   let setting = {
     projectCode: req.query.project_code
@@ -202,8 +201,8 @@ schedule.update = asyncWrap(async (req, res, next) => {
   let getScheduleById = id => Schedule.scope('detail').findOne({ where: { id: id } });
 
   let schedule = await getScheduleById(scheduleId);
-  if (!schedule) throw new CdError('401', 'no such schedule');
-  else if (schedule.userId !== userId) throw new CdError('401', 'not owner');
+  if (!schedule) throw new CdError('401', 'No such schedule');
+  else if (schedule.userId !== userId) throw new CdError('401', 'Not owner');
 
   let machineId = schedule.machine.id;
   let oldStartDate = moment(schedule.startedAt);
@@ -213,10 +212,10 @@ schedule.update = asyncWrap(async (req, res, next) => {
   if (end) {
     let newEndedAt = moment(end);
     console.log(newEndedAt);
-    if (!newEndedAt.isValid()) throw new CdError(401, 'date format error');
-    else if (newEndedAt < moment()) throw new CdError(401, 'end date should greater then current date');
-    else if (newEndedAt < oldStartDate) throw new CdError(401, 'end date should greater then start date');
-    else if (newEndedAt > extendableEndDate) throw new CdError(401, 'end date exceeds quota');
+    if (!newEndedAt.isValid()) throw new CdError(401, 'Date format error');
+    else if (newEndedAt < moment()) throw new CdError(401, 'End date should greater then current date');
+    else if (newEndedAt < oldStartDate) throw new CdError(401, 'End date should greater then start date');
+    else if (newEndedAt > extendableEndDate) throw new CdError(401, 'End date exceeds quota');
 
     let schedules = await db.getScheduleOfMachineId(machineId,
       oldEndDate.format(),
@@ -229,7 +228,7 @@ schedule.update = asyncWrap(async (req, res, next) => {
         }
       });
     console.log(schedules);
-    if (schedules.length > 0) throw new CdError(401, 'extend period already used');
+    if (schedules.length > 0) throw new CdError(401, 'Target period already used');
     setting.endedAt = newEndedAt.format();
   }
 
@@ -242,7 +241,7 @@ schedule.update = asyncWrap(async (req, res, next) => {
     raw: true
   });
 
-  if (affectedCount === 0) throw new CdError(401, 'update schedule fail');
+  if (affectedCount === 0) throw new CdError(401, 'Update schedule fail');
 
   let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
 
@@ -285,9 +284,9 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   let schedule = await Schedule.scope('detail').findById(scheduleId);
 
   if (!schedule) throw new CdError(401, 'schedule not exist');
-  else if (schedule.userId !== userId) throw new CdError(401, 'have no auth');
-  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'schedule have been deleted');
-  else if (schedule.statusId === 6) throw new CdError(401, 'schedule have been canceled');
+  else if (schedule.userId !== userId) throw new CdError(401, 'Not owner!');
+  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted');
+  else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
 
   console.log(`delete schedule's status:${schedule.statusId}`);
   // let t = await sequelize.transaction();
@@ -304,7 +303,7 @@ schedule.delete = asyncWrap(async (req, res, next) => {
     deleteASchedule(schedule);
   }
   let scheduleU = await schedule.updateAttributes(options);
-  if (!scheduleU) throw new CdError(401, 'update schedule info fail');
+  if (!scheduleU) throw new CdError(401, 'Update schedule info fail');
  // let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
   res.json(scheduleU);
 
@@ -316,13 +315,13 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
   let scheduleId = req.params.schedule_id;
 
-  if (!scheduleId) throw new CdError('401', 'without schedule id');
+  if (!scheduleId) throw new CdError('401', 'Eithout schedule id');
 
   let getScheduleById = id => Schedule.scope('normal').findOne({ where: { id: id } });
 
   let schedule = await getScheduleById(scheduleId);
-  if (!schedule) throw new CdError('401', 'no such schedule');
-  else if (schedule.userId !== userId) throw new CdError('401', 'not owner');
+  if (!schedule) throw new CdError('401', 'No such schedule');
+  else if (schedule.userId !== userId) throw new CdError('401', 'Not owner');
 
   let machineId = schedule.machineId;
   let oldStartDate = moment(schedule.startedAt);

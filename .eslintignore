@@ -1,6 +1,7 @@
 build/*
 app/bin/*
 public/*
+api/*
 apidoc/*
 docker/*
 test/*
