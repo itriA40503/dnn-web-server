@@ -14,7 +14,10 @@ const jwtAuth = asyncWrap(async (req, res, next) => {
 
   let decoded = jwt.decode(token, req.app.get('jwtsecretkey'));
 
-  if (!decoded.expires || decoded.expires < ((new Date()).getTime() / 1000)) {
+  if (!decoded) {
+    throw new CdError(401, 'token fail', 40101);
+  }
+  if (decoded.expires < ((new Date()).getTime() / 1000)) {
     throw new CdError(401, 'token expired', 40101);
   }
 
