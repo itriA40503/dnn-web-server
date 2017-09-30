@@ -452,6 +452,7 @@ describe('server', () => {
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.statusId.should.equal(3);
+            console.log(res.body);
             done();
           });
       })
@@ -469,6 +470,7 @@ describe('server', () => {
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.gpuAmount.should.equal(2);
+            console.log(res.body);
             done();
           });
       })
@@ -482,6 +484,7 @@ describe('server', () => {
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.statusId.should.equal(1);
+            console.log(res.body);
             done();
           });
       })
@@ -495,6 +498,7 @@ describe('server', () => {
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.statusId.should.equal(4);
+            console.log(res.body);
             done();
           });
       })

@@ -4,7 +4,10 @@
   "ignore": [
     "build/*",
     "public/*",
-    "apidoc/*"
+    "apidoc/*",
+    "api/*",
+    "docker/*",
+    "portal"
   ],
   "plugins": [
     //"transform-runtime" ,

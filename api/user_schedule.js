@@ -13,7 +13,7 @@
          "schedules": [
            {
              "id": "175",
-             "statusId": "3",           // 1: waiting   2: loading  3: running 4: deleting 5: deleted 6: canceled 7: error
+             "statusId": "3",           // 1: waiting   2: loading  3: running 4: deleting 5: deleted 6: canceled 7: error 8:creating 9: outdate 10: delete fail
              "projectCode": null,
              "startedAt": "2017-08-17T16:00:00.000Z",
              "endedAt": "2017-08-19T15:59:59.000Z",
@@ -68,9 +68,11 @@
 * @apiGroup User/schedule
 *
 * @apiHeader {String} x-access-token Token
-* @apiParam {String} start start date ( ISO-8601)
-* @apiParam {String} end end date
- * @apiParam {int} image_id which image to use
+* @apiParam {String} start Start date ( ISO-8601)
+* @apiParam {String} end End date
+ * @apiParam {int} imageId Which image to use
+ * @apiParam {int} machineId Which machine to use
+ * @apiParam {int} gpuType Target gpu. No use when machineId set.
 *
 * @apiSuccessExample Success-Response:
 *     HTTP/1.1 200 OK

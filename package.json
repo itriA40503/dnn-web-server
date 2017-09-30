@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "sequelize-auto": "sequelize-auto -o ./app/models -d dnndev -h 54.249.32.121 -u postgres -p 5432 -x cditripost -e postgres -C",
-    "apidoc": "apidoc -i apidoc/api -o apidoc",
+    "apidoc": "apidoc -i api -o apidoc",
     "start_dev": "cross-env NODE_ENV=development node -r babel-register .app/bin/www",
     "clean": "rm -rf build",
     "practice": "node -r babel-register ./practice",

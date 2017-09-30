@@ -9,7 +9,10 @@ const machine = {};
 
 
 machine.getMachines = asyncWrap(async (req, res, next) => {
-  let machines = await db.getAllMachineNormal().findAll();
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
+  let machineWhere = {};
+  if (customGpu) machineWhere = { where: { gpuType: customGpu } };
+  let machines = await db.getAllMachineNormal().findAll(machineWhere);
 
   res.json({ machines: machines });
 });
@@ -18,7 +21,7 @@ machine.getMachines = asyncWrap(async (req, res, next) => {
 machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   let startQuery = (req.query && req.query.start) || (req.body && req.body.start);
   let endQuery = (req.query && req.query.end) || (req.body && req.body.end);
-  let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
 
   if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
 
@@ -56,7 +59,7 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
 
 machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
 
-  let customGpu = req.query.gpu_type || (req.body && req.body.gpu_type);
+  let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
   /* let date = new Date();
   date.setHours(0, 0, 0, 0);*/
   let start = moment();
