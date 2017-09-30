@@ -74,14 +74,14 @@ export default asyncWrap(async (req, res, next) => {
     return;
   };
 
-  /* ldapAuth.authenticate(username, password, (err, user) => {
+  ldapAuth.authenticate(username, password, (err, user) => {
     if (err) {
-      next(new CdError(401, err.message, 12345));
+      next(new CdError(401, err.message, 401));
       return;
     }
     afterLdapAuthSuccess(username);
     // res.json(user);
-  });*/
-  afterLdapAuthSuccess(username);
+  });
+  // afterLdapAuthSuccess(username);
 
 });
