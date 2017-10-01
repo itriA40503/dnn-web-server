@@ -1,4 +1,3 @@
-import { terminateSchedules } from '../cron/kuber';
+import { terminateSchedules } from '../k8s/k8sAPI';
 
 terminateSchedules();
-

@@ -3,7 +3,7 @@ import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { startASchedule, updateASchedule, deleteASchedule } from '../../cron/kuber';
+import { startASchedule, updateASchedule, deleteASchedule } from '../../k8s/k8sAPI';
 import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
 
 const BOOKMAXIMUN = 100;

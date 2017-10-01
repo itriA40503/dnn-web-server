@@ -1,23 +1,23 @@
 import { CronJob } from 'cron';
-import { startSchedules, updateSchedules, terminateSchedules, getAllImages } from './kuber';
+import serverJob from '../queue/job';
 
 let terminateScheduleJob = new CronJob({
   cronTime: '* 0 0 * * *',
-  onTick: terminateSchedules,
+  onTick: serverJob.terminateSchedules(),
   start: false,
   timeZone: 'Asia/Taipei'
 });
 
 let startScheduleJob = new CronJob({
   cronTime: '* 1 0 * * *',
-  onTick: startSchedules,
+  onTick: serverJob.startSchedules(),
   start: false,
   timeZone: 'Asia/Taipei'
 });
 
 let updateScheduleJob = new CronJob({
   cronTime: '0 */20 * * * *',
-  onTick: updateSchedules,
+  onTick: serverJob.updateSchedules(),
   start: false,
   timeZone: 'Asia/Taipei'
 });
@@ -25,7 +25,7 @@ let updateScheduleJob = new CronJob({
 
 let updateImageJob = new CronJob({
   cronTime: '30 */10 * * * *',
-  onTick: getAllImages,
+  onTick: serverJob.updateImageList(),
   start: false,
   timeZone: 'Asia/Taipei'
 });

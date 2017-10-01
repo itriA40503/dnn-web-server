@@ -1,7 +1,9 @@
 /**
  * Module dependencies.
  */
+var express = require('express');
 var app = require('../app');
+var kue = require('kue');
 var debug = require('debug')('dnnserver:server');
 var ssl = require('../sslCert');
 var http = require('http');
@@ -27,6 +29,15 @@ app.set('httpsport', ports);
 
 var server = http.createServer(app);
 var servers = https.createServer(ssl.options, app);
+
+/**
+ * Create kue console server
+ */
+
+var kueServer = express.createServer();
+app.use(kue.app);
+app.listen(3000);
+
 /**
  * Listen on provided port, on all network interfaces.
  */

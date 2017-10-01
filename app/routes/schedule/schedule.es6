@@ -2,7 +2,7 @@ import moment from 'moment';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import db from '../../db/db';
-import { removeAllContainers } from '../../cron/kuber';
+import { removeAllContainers } from '../../k8s/k8sAPI';
 
 const schedule = {};
 
