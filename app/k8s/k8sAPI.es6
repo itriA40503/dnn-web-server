@@ -39,8 +39,8 @@ k8sAPI.createContainerUsingSchedule = async (schedule) => {
     return response;
   } catch (err) {
     console.log(`schedule${schedule.id}: create fail with kubernetes`);
-    throw K8SError(err.message);
     /* 這裡寄信 */
+    throw K8SError(err.message);
   }
 };
 

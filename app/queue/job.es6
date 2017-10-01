@@ -40,8 +40,9 @@ serverJob.startASchedule = async (schedule) => {
     if (err instanceof K8SError) {
       schedule.updateAttributes({ statusId: 7 });
     }
-    throw err;
+    console.log(err.message);
   }
+  return false;
 };
 
 serverJob.updateASchedule = async (schedule) => {
@@ -51,8 +52,15 @@ serverJob.updateASchedule = async (schedule) => {
     let response = await kuberAPI.updateContainerUsingSchedule(scheduleP);
     let pod = response.body[0];
     let service = response.body[1];
-    if (pod.status.phase !== 'Running') return false;
-
+    if (pod.status.phase !== 'Running') {
+      // 這裡加入判斷有沒有超過五分鐘沒有更新
+      if (moment(schedule.startedAt) > moment().add(5, 'minute')) {
+        schedule.updateAttributes({
+          statusId: 7
+        });
+      }
+      return false;
+    }
     let containerN = await schedule.container.updateAttributes({
       podIp: pod.status.hostIP,
       sshPort: service.spec.ports[0].nodePort
@@ -61,23 +69,26 @@ serverJob.updateASchedule = async (schedule) => {
     await schedule.updateAttributes({ statusId: 3 });
     return true;
   } catch (err) {
-    throw err;
+    console.log(err.message);
   }
+  return false;
 };
 
 
 serverJob.deleteASchedule = async (schedule) => {
   try {
+    await schedule.updateAttributes({ statusId: 4 });
     let scheduleP = await schedule.get({ plain: true });
     let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
     await schedule.updateAttributes({
       statusId: 5,
-      endedAt: moment().format()
+      endedAt: moment().format()    // 以後改用deletedAt然後model不check deletedAt
     });
     return true;
   } catch (err) {
-    throw err;
+    console.log(err.message);
   }
+  return false;
 };
 
 
@@ -90,8 +101,9 @@ serverJob.terminalASchedule = async (schedule) => {
     });
     return true;
   } catch (err) {
-    throw err;
+    console.log(err.message);
   }
+  return false;
 };
 
 
@@ -159,30 +171,21 @@ serverJob.updateImageList = async () => {
 };
 
 const queueInit = () => {
-  queue.process(START_A_SCHEDULE, async (job, done) => {
-    try {
-      await serverJob.startASchedule(job.data);
-      done();
-    } catch (err) {
-      done(err);
-    }
+  queue.process(START_A_SCHEDULE, (job, done) => {
+    let result = serverJob.startASchedule(job.data);
+    if (!result) done(new Error('queue start schedule error'));
+    done();
 
   });
-  queue.process(UPDATE_A_SCHEDULE, async (job, done) => {
-    try {
-      await serverJob.updateASchedule(job.data);
-      done();
-    } catch (err) {
-      done(err);
-    }
+  queue.process(UPDATE_A_SCHEDULE, (job, done) => {
+    let result = serverJob.updateASchedule(job.data);
+    if (!result) done(new Error('queue start schedule error'));
+    done();
   });
-  queue.process(DELETE_A_SCHEDULE, async (job, done) => {
-    try {
-      await serverJob.deleteASchedule(job.data);
-      done();
-    } catch (err) {
-      done(err);
-    }
+  queue.process(DELETE_A_SCHEDULE, (job, done) => {
+    let result = serverJob.deleteASchedule(job.data);
+    if (!result) done(new Error('queue start schedule error'));
+    done();
   });
 };
 
