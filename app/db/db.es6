@@ -86,6 +86,10 @@ db.getAllMachineIdsWithGPU = (gpuType) => {
     { method: ['whichGpu', gpuType] });
 };
 
+db.getAllImage = () => {
+  return Image.findAll();
+};
+
 db.getAllImageIds = () => {
   return Image.scope('id');
 };

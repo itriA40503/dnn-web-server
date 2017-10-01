@@ -3,6 +3,7 @@ import imageR from './image';
 import machineR from './machine';
 import scheduleR from './schedule';
 import adminR from './admin';
+import statisticR from './statistic';
 
 export default (app) => {
   app.use('/user', userR);
@@ -10,4 +11,5 @@ export default (app) => {
   app.use('/machine', machineR);
   app.use('/image', imageR);
   app.use('/admin', adminR);
+  app.use('/statistic', statisticR);
 };
