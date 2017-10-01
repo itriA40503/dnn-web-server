@@ -1,9 +1,9 @@
 import moment from 'moment';
+import serverJob from '../../queue/job';
 import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { startASchedule, updateASchedule, deleteASchedule } from '../../k8s/k8sAPI';
 import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
 
 const BOOKMAXIMUN = 100;
@@ -67,12 +67,13 @@ schedule.get = asyncWrap(async (req, res, next) => {
 const instantUpdateContainer = async (schedule, times) => {
   let tryTimes = times;
   if (tryTimes > 0) {
-    let result = await updateASchedule(schedule);
+    let result = await serverJob.updateASchedule(schedule);
     if (!result) {
       setTimeout(() => {
         instantUpdateContainer(schedule, tryTimes - 1);
       }, 10000);
     }
+
   }
 };
 
@@ -80,7 +81,7 @@ const instantCreateContainer = async (schedule, times) => {
   let tryTimes = times;
   if (tryTimes > 0) {
     console.log(`Start to create container ${schedule.id}`);
-    let result = await startASchedule(schedule);
+    let result = await serverJob.startASchedule(schedule);
     if (result) {
       setTimeout(() => {
         instantUpdateContainer(schedule, 3);
@@ -227,7 +228,6 @@ schedule.update = asyncWrap(async (req, res, next) => {
           }
         }
       });
-    console.log(schedules);
     if (schedules.length > 0) throw new CdError(401, 'Target period already used');
     setting.endedAt = newEndedAt.format();
   }
@@ -264,7 +264,7 @@ schedule.restart = asyncWrap(async (req, res, next) => {
   else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
 
   if (moment(schedule.startDate) <= moment() && moment(schedule.endDate) <= moment()) {
-    await deleteASchedule(schedule);
+    await serverJob.deleteASchedule(schedule);
     await schedule.updateAttributes({
       statusId: 1
     });
@@ -289,8 +289,16 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
 
   console.log(`delete schedule's status:${schedule.statusId}`);
+
+  if (schedule.statusId === 2 || schedule.statusId === 3) {
+    await serverJob.deleteASchedule(schedule);
+  } else {
+    await schedule.updateAttributes({ statusId: 6 });
+  }
+
+  res.json(schedule);
   // let t = await sequelize.transaction();
-  let newStatus = (schedule.statusId === 2 || schedule.statusId === 3) ? 4 : 6;
+  /* let newStatus = (schedule.statusId === 2 || schedule.statusId === 3) ? 4 : 6;
   let options = {
     statusId: newStatus,
   };
@@ -300,13 +308,11 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   }
 
   if (newStatus === 4) {
-    deleteASchedule(schedule);
+    serverJob.deleteASchedule(schedule);
   }
   let scheduleU = await schedule.updateAttributes(options);
-  if (!scheduleU) throw new CdError(401, 'Update schedule info fail');
+  if (!scheduleU) throw new CdError(401, 'Update schedule info fail'); */
  // let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
-  res.json(scheduleU);
-
 
 });
 
