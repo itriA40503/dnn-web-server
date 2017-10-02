@@ -34,9 +34,9 @@ var servers = https.createServer(ssl.options, app);
  * Create kue console server
  */
 
-var kueServer = express.createServer();
-app.use(kue.app);
-app.listen(3000);
+/*var kueApp = express();
+kueApp.use(kue.app);
+kueApp.listen(3000);*/
 
 /**
  * Listen on provided port, on all network interfaces.
