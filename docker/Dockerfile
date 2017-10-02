@@ -11,5 +11,17 @@ ADD ../../itri-dnn-web-portal-server /dnnserver
 RUN npm install
 # build app
 RUN npm run build
+
+RUN apk update
+
+RUN apk add tzdata
+
+RUN cp /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+
+RUN echo "Asia/Taipei" > /etc/timezone
+
+RUN date
+
+RUN apk del tzdata
 # execute after running on container
 CMD pm2-docker ecosystem.json
