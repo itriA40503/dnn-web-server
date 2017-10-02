@@ -40,7 +40,7 @@ k8sAPI.createContainerUsingSchedule = async (schedule) => {
   } catch (err) {
     console.log(`schedule${schedule.id}: create fail with kubernetes`);
     /* 這裡寄信 */
-    throw K8SError(err.message);
+    throw new K8SError(err.message);
   }
 };
 
@@ -58,7 +58,7 @@ k8sAPI.updateContainerUsingSchedule = async (schedule) => {
     return response;
   } catch (err) {
     console.log(`schedule${schedule.id}: update fail with kubernetes`);
-    throw K8SError(err.message);
+    throw new K8SError(err.message);
   }
 };
 
@@ -75,7 +75,7 @@ k8sAPI.deleteContainerFromSchedule = async (schedule) => {
 
   } catch (err) {
     console.log(`schedule${schedule.id}: delete fail with kubernetes`);
-    throw K8SError(err.message);
+    throw new K8SError(err.message);
   }
 };
 
@@ -90,7 +90,7 @@ k8sAPI.removeAllContainers = async () => {
     let response = await request(options);
     return response;
   } catch (err) {
-    throw K8SError(err.message);
+    throw new K8SError(err.message);
   }
 };
 
@@ -110,7 +110,7 @@ k8sAPI.getAllImages = async () => {
 
   } catch (err) {
     console.log('Get image tags from repository fail');
-    throw K8SError(err.message);
+    throw new K8SError(err.message);
   }
 };
 
