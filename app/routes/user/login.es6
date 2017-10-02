@@ -82,6 +82,6 @@ export default asyncWrap(async (req, res, next) => {
     afterLdapAuthSuccess(username);
     // res.json(user);
   });
-  // afterLdapAuthSuccess(username);
+  afterLdapAuthSuccess(username);
 
 });
