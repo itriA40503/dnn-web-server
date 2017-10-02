@@ -16,6 +16,7 @@
     "start_pm2_docker": "pm2-docker ecosystem.json"
   },
   "dependencies": {
+    "apidoc": "^0.17.6",
     "assert": "^1.4.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.17.2",
