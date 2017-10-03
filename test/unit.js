@@ -8,8 +8,6 @@ chai.use(chaiHttp);
 
 import db from '../build/db/db';
 
-import * as kuber from '../build/cron/kuber';
-
 
 
 describe('Cron unit test', () => {

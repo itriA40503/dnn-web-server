@@ -1,55 +1,50 @@
 /**
-* @api {get} /user/schedule Get user's schedule
+* @api {get} /user/schedule/:id Get user's schedule
 * @apiVersion 0.1.0
 * @apiName  getUserSchedule
 * @apiGroup User/schedule
 *
 * @apiHeader {String} x-access-token Token
-* @apiParam {String} mode all/booked/history(optional)
 *
 * @apiSuccessExample Success-Response:
 *     HTTP/1.1 200 OK
-       {
-         "schedules": [
-           {
-             "id": "175",
-             "statusId": "3",           // 1: waiting   2: loading  3: running 4: deleting 5: deleted 6: canceled 7: error 8:creating 9: outdate 10: delete fail
-             "projectCode": null,
-             "startedAt": "2017-08-17T16:00:00.000Z",
-             "endedAt": "2017-08-19T15:59:59.000Z",
-             "createdAt": "2017-08-18T01:45:30.408Z",
-             "updatedAt": "2017-08-18T01:45:40.190Z",
-             "userId": "6",
-             "instance": {
-               "id": "176",
-               "ip": "100.86.2.10",
-               "port": 31786,
-               "username": "Axxxxx",
-               "password": "jpipxqei",
-               "datasetPath": null,
-               "datasetUsername": null,
-               "datasetPassword": null,
-               "statusId": 1,
-               "image": {
-                 "id": "7",
-                 "label": "all_cpu:demo",
-                 "name": "all_cpu:demo",
-                 "path": null,
-                 "description": "all_cpu"
-               },
-               "machine": {
-                 "id": "1",
-                 "label": "m1",
-                 "name": "Machine1",
-                 "description": "JAPARIPARK",
-                 "gpuAmount": 1,
-                 "gpuType": "v100",
-                 "statusId": 1
-               }
+         {
+           "id": "175",
+           "statusId": "3",           // 1: waiting   2: loading  3: running 4: deleting 5: deleted 6: canceled 7: error 8:creating 9: outdate 10: delete fail
+           "projectCode": null,
+           "startedAt": "2017-08-17T16:00:00.000Z",
+           "endedAt": "2017-08-19T15:59:59.000Z",
+           "createdAt": "2017-08-18T01:45:30.408Z",
+           "updatedAt": "2017-08-18T01:45:40.190Z",
+           "userId": "6",
+           "instance": {
+             "id": "176",
+             "ip": "100.86.2.10",
+             "port": 31786,
+             "username": "Axxxxx",
+             "password": "jpipxqei",
+             "datasetPath": null,
+             "datasetUsername": null,
+             "datasetPassword": null,
+             "statusId": 1,
+             "image": {
+               "id": "7",
+               "label": "all_cpu:demo",
+               "name": "all_cpu:demo",
+               "path": null,
+               "description": "all_cpu"
+             },
+             "machine": {
+               "id": "1",
+               "label": "m1",
+               "name": "Machine1",
+               "description": "JAPARIPARK",
+               "gpuAmount": 1,
+               "gpuType": "v100",
+               "statusId": 1
              }
            }
-         ]
-       }
+         }
 *
 * @apiError  0 Parameter error.
 *

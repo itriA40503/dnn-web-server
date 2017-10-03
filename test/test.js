@@ -210,24 +210,12 @@ describe('server', () => {
     let resSchedule = {};
 
     describe('Get user\'s schedule list', () => {
-      let scheduleType = {
-        all: {
-          mode: 'all'
-        },
-        history: {
-          mode: 'history'
-        },
-        inProgress: {
-          mode: 'booked'
-        }
-      }
 
       it('All', done => {
         request
-          .get('/user/schedule')
+          .get('/user/schedules')
           .set('x-access-token', userSetting.token)
           .set('Accept', 'application/json')
-          .query(scheduleType.all)
           .end((err,res) => {
             res.should.have.status(200);
             res.should.to.be.json;
@@ -239,10 +227,9 @@ describe('server', () => {
       });
       it('History', done => {
         request
-          .get('/user/schedule')
+          .get('/user/schedules/history')
           .set('x-access-token', userSetting.token)
           .set('Accept', 'application/json')
-          .query(scheduleType.history)
           .end((err,res) => {
             res.should.have.status(200);
             res.should.to.be.json;
@@ -254,10 +241,9 @@ describe('server', () => {
       });
       it('In Progress', done => {
         request
-          .get('/user/schedule')
+          .get('/user/schedules/reserved')
           .set('x-access-token', userSetting.token)
           .set('Accept', 'application/json')
-          .query(scheduleType.inProgress)
           .end((err,res) => {
             res.should.have.status(200);
             res.should.to.be.json;
