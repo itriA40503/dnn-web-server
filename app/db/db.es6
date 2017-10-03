@@ -22,11 +22,11 @@ db.getDetailSchedules = (start, end) => {
 };
 
 db.getUserReservedSchedules = (userId) => {
-  return Schedule.scope({ method: ['user', userId] }, 'statusNormal').findAll();
+  return Schedule.scope('detail', { method: ['user', userId] }, 'statusNormal').findAll();
 };
 
 db.getUserHistorySchedules = (userId) => {
-  return Schedule.scope({ method: ['user', userId] }, 'statusHistory').findAll();
+  return Schedule.scope('detail', { method: ['user', userId] }, 'statusHistory').findAll();
 };
 
 db.getShouldStartSchedule = () => {
