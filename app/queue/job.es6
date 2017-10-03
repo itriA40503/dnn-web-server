@@ -16,7 +16,7 @@ const DELETE_A_SCHEDULE = 'delete a schedule';
 /* Jobs should be call in queue not in routers
    PM2 should use gracefulReload for kue.js when restart server */
 
-const queue = kue.createQueue();
+// const queue = kue.createQueue();
 
 const serverJob = {};
 
@@ -170,7 +170,7 @@ serverJob.updateImageList = async () => {
   return false;
 };
 
-const queueInit = () => {
+/* const queueInit = () => {
   queue.process(START_A_SCHEDULE, (job, done) => {
     let result = serverJob.startASchedule(job.data);
     if (!result) done(new Error('queue start schedule error'));
@@ -187,7 +187,7 @@ const queueInit = () => {
     if (!result) done(new Error('queue start schedule error'));
     done();
   });
-};
+};  */
 
 
 export default serverJob;
