@@ -21,6 +21,16 @@ db.getDetailSchedules = (start, end) => {
   return Schedule.scope('detail', { method: ['timeOverlap', options] });
 };
 
+db.getUserSchedules = (userId, mode) => {
+  let modeScope = 'statusAll';
+  if (mode === 'booked') {
+    modeScope = 'statusNormal';
+  } else if (mode === 'history') {
+    modeScope = 'statusHistory';
+  }
+  return Schedule.scope({ method: ['user', userId] }, modeScope).findAll();
+};
+
 db.getShouldStartSchedule = () => {
   return Schedule.scope(
     'detail',

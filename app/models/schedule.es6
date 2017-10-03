@@ -164,11 +164,24 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
+      statusAll: () => {
+        return {
+        };
+      },
       statusNormal: () => {
         return {
           where: {
             statusId: {
               $in: [1, 2, 3, 4, 7, 8]
+            }
+          }
+        };
+      },
+      statusHistory: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [5, 6, 9]
             }
           }
         };
