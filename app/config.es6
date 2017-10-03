@@ -5,8 +5,8 @@ const config = {
       httpsPort: '443'
     },
     database: {
-      host: '13.115.57.99',
-      port: '5432',
+      host: process.env.DNNDB_HOST || '13.115.57.99',
+      port: process.env.DNNDB_PORT || '5432',
       dialect: 'postgres',
       db: 'dnn',
       username: 'postgres',
@@ -39,6 +39,16 @@ const config = {
         to: 'bakaking@itri.org.tw',
         subject: 'alarm',
         text: 'alarm text'
+      },
+      kue: {
+        prefix: 'q',
+        redis: {
+          port: process.env.KUEIP || 6379,
+          host: process.env.KUEHOST || 'localhost',
+          auth: 'password',
+          options: {
+          }
+        }
       }
     }
   },
@@ -48,8 +58,8 @@ const config = {
       httpsPort: '443'
     },
     database: {
-      host: '13.115.57.99',
-      port: '5432',
+      host: process.env.DNNDB_HOST || '13.115.57.99',
+      port: process.env.DNNDB_PORT || '5432',
       dialect: 'postgres',
       db: 'dnn',
       username: 'postgres',
@@ -82,6 +92,16 @@ const config = {
         to: 'bakaking@itri.org.tw',
         subject: 'alarm',
         text: 'alarm text'
+      },
+      kue: {
+        prefix: 'q',
+        redis: {
+          port: process.env.KUEIP || 6379,
+          host: process.env.KUEHOST || 'localhost',
+          auth: 'password',
+          options: {
+          }
+        }
       }
     }
   }
