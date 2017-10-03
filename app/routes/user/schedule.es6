@@ -27,9 +27,7 @@ schedule.get = asyncWrap(async (req, res, next) => {
   let mode = (req.query && req.query.mode) || 'all';
   let dateNow = moment();
 
-  let where = {
-    userId: req.user.id
-  };
+  let userId = req.user.id;
 
   let resJson = {
     schedules: [],
@@ -37,20 +35,12 @@ schedule.get = asyncWrap(async (req, res, next) => {
   };
 
   if (mode === 'booked') {
-    where.endedAt = {
-      $gte: dateNow.format()
-    };
     delete resJson.historySchedules;
   } else if (mode === 'history') {
-    where.endedAt = {
-      $lte: dateNow.format()
-    };
     delete resJson.schedules;
   }
 
-  let schedules = await db.getDetailSchedules().findAll({
-    where: where
-  });
+  let schedules = await db.getUserSchedules(userId);
 
   resJson = await schedules.reduce((json, schedule) => {
     if (schedule.endedAt <= dateNow) {
