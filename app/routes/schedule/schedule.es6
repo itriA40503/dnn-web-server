@@ -2,7 +2,7 @@ import moment from 'moment';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import db from '../../db/db';
-import k8sAPI from '../../k8s/k8sAPI';
+import serverJob from '../../queue/job';
 
 const schedule = {};
 
@@ -36,7 +36,7 @@ schedule.getAllSchedule = asyncWrap(async (req, res, next) => {
 
 /* for testing */
 schedule.removeAll = asyncWrap(async (req, res, next) => {
-  let result = await k8sAPI.removeAllContainers();
+  let result = await serverJob.removeAllSchedule();
   res.json(result);
 });
 
