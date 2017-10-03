@@ -24,34 +24,32 @@ schedule.getASchedule = asyncWrap(async (req, res, next) => {
 });
 
 schedule.get = asyncWrap(async (req, res, next) => {
-  let mode = (req.query && req.query.mode) || 'all';
-  let dateNow = moment();
-
   let userId = req.user.id;
 
-  let resJson = {
-    schedules: [],
-    historySchedules: []
-  };
+  let [schedules, historySchedules] = await Promise.all([
+    db.getUserReservedSchedules(userId),
+    db.getUserHistorySchedules(userId)]
+  );
+  res.json({
+    schedules: schedules,
+    historySchedules: historySchedules
+  });
+});
 
-  if (mode === 'booked') {
-    delete resJson.historySchedules;
-  } else if (mode === 'history') {
-    delete resJson.schedules;
-  }
+schedule.getHistory = asyncWrap(async (req, res, next) => {
+  let userId = req.user.id;
+  let schedules = await db.getUserHistorySchedules(userId);
+  res.json({
+    historySchedules: schedules
+  });
+});
 
-  let schedules = await db.getUserSchedules(userId);
-
-  resJson = await schedules.reduce((json, schedule) => {
-    if (schedule.endedAt <= dateNow) {
-      json.historySchedules.push(schedule);
-    } else {
-      json.schedules.push(schedule);
-    }
-    return json;
-  }, resJson);
-
-  res.json(resJson);
+schedule.getReserved = asyncWrap(async (req, res, next) => {
+  let userId = req.user.id;
+  let schedules = await db.getUserReservedSchedules(userId);
+  res.json({
+    schedules: schedules
+  });
 });
 
 const instantUpdateContainer = async (schedule, times) => {
