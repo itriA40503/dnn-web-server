@@ -110,14 +110,14 @@ serverJob.terminalASchedule = async (schedule) => {
 serverJob.startSchedules = async () => {
   console.log('Cron Start Schedules');
   let schedules = await db.getShouldStartSchedule();
-  await Promise.all(schedules.map(this.startASchedule));
+  await Promise.all(schedules.map(serverJob.startASchedule));
 };
 
 
 serverJob.updateSchedules = async () => {
   debug('Cron Update Schedules');
   let schedules = await db.getShouldUpdateSchedule();
-  await Promise.all(schedules.map(this.updateASchedule));
+  await Promise.all(schedules.map(serverJob.updateASchedule));
 };
 
 serverJob.terminateSchedules = async () => {
@@ -126,7 +126,7 @@ serverJob.terminateSchedules = async () => {
   console.log(schedules);
   let containersUpdate = schedules.map((schedule) => {
     if (schedule.statusId === 2 || schedule.statusId === 3) {
-      this.terminalASchedule(schedule);
+      serverJob.terminalASchedule(schedule);
     } else if (schedule.statusId === 1 || schedule.statusId === 7) {
       schedule.updateAttributes({ statusId: 9 });
     }
@@ -136,7 +136,7 @@ serverJob.terminateSchedules = async () => {
 
 serverJob.removeAllSchedule = async () => {
   try {
-    let response = kuberAPI.removeAllContainers();
+    let response = await kuberAPI.removeAllContainers();
 
     await Port.destroy({
       force: true,
@@ -160,7 +160,7 @@ serverJob.removeAllSchedule = async () => {
 
 serverJob.updateImageList = async () => {
   try {
-    let response = kuberAPI.getAllImages();
+    let response = await kuberAPI.getAllImages();
     let images = response.body.images;
     images.map(db.findOrCreateImageTag);
     return true;
