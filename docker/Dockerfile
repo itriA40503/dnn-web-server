@@ -3,12 +3,6 @@ FROM node:8.6-alpine
 MAINTAINER Baka Wang
 # change work directory
 WORKDIR /dnnserver
-# add projecte
-ADD ./itri-dnn-web-portal-server /dnnserver
-# install module
-RUN npm install
-# build app
-RUN npm run build
 
 RUN apk update
 
@@ -21,6 +15,18 @@ RUN echo "Asia/Taipei" > /etc/timezone
 RUN date
 
 RUN apk del tzdata
+
+RUN npm install pm2
+# add projecte
+ADD ./itri-dnn-web-portal-server /dnnserver
+# install module
+RUN npm install
+# build app
+RUN npm run build
+
+RUN pm2 set pm2-logrotate:rotateInterval '0 0 1 * * *'
+
+RUN pm2 set pm2-logrotate:retain 6
 
 #RUN apk --update add redis
 
