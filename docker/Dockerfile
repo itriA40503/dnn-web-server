@@ -26,8 +26,6 @@ RUN apk del tzdata
 
 #RUN /etc/init.d/redis-server status
 
-RUN mkdir /logs
-
 # expose ports
 EXPOSE 80 443 8080 8443
 # execute after running on container

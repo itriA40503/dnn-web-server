@@ -4,8 +4,8 @@
       "name": "dnnserver",
       "script": "./build/bin/www.js",
       "merge_logs": true,
-      "out_file": "/logs/dnn.web.server.log",
-      "error_file": "/logs/dnn.web.server.log",
+      "out_file": "/utils/dnn.web.server.log",
+      "error_file": "/utils/dnn.web.server.log",
       "log_date_format": "YYYY-MM-DD HH:mm Z",
       "env": {
         "NODE_ENV": "development"
@@ -18,8 +18,8 @@
       "name": "dnncron",
       "script": "./build/cron/cronjob.js",
       "merge_logs": true,
-      "out_file": "/logs/dnn.web.cron.log",
-      "error_file": "/logs/dnn.web.cron.log",
+      "out_file": "/utils/dnn.web.cron.log",
+      "error_file": "/utils/dnn.web.cron.log",
       "log_date_format": "YYYY-MM-DD HH:mm Z",
 
     }
