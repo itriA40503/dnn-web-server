@@ -20,7 +20,6 @@ const k8sAPI = {};
 
 k8sAPI.createContainerUsingSchedule = async (schedule) => {
   try {
-    console.log('start create container API');
     let options = {
       method: 'POST',
       url: conAPI,
@@ -51,7 +50,8 @@ k8sAPI.updateContainerUsingSchedule = async (schedule) => {
       method: 'GET',
       url: `${conAPI}/${schedule.machine.label}`,
       json: true,
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true,
+      timeout: 5000
     };
 
     let response = await request(options);
@@ -68,7 +68,8 @@ k8sAPI.deleteContainerFromSchedule = async (schedule) => {
     let options = {
       method: 'DELETE',
       url: `${conAPI}/${schedule.machine.label}`,
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true,
+      timeout: 5000
     };
     let response = await request(options);
     return response;
@@ -85,7 +86,8 @@ k8sAPI.removeAllContainers = async () => {
     let options = {
       method: 'DELETE',
       url: consAPI,
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true,
+      timeout: 5000
     };
     let response = await request(options);
     return response;

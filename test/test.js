@@ -335,7 +335,7 @@ describe('server', () => {
             console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
-            res.body.should.have.property('id')
+            res.body.statusId.should.equal(8);
             resSchedule = res.body;
             done();
 
@@ -359,7 +359,7 @@ describe('server', () => {
               resSchedule = res.body;
               done();
             })
-        }, 6000);
+        }, 8000);
 
       }).timeout(10000);
       it('Delete schedule', done => {

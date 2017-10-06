@@ -17,7 +17,7 @@ const config = {
         min: 0,
         idle: 10000
       },
-      logging: true
+      logging: false
     },
     kuber: {
       url: 'http://100.86.2.12:30554/kubeGpu'
@@ -43,8 +43,8 @@ const config = {
       kue: {
         prefix: 'q',
         redis: {
-          port: process.env.KUEIP || 6379,
-          host: process.env.KUEHOST || 'localhost',
+          port: process.env.KUE_PORT || 6379,
+          host: process.env.KUE_HOST || 'localhost',
           auth: 'password',
           options: {
           }
@@ -70,7 +70,7 @@ const config = {
         min: 0,
         idle: 10000
       },
-      logging: true
+      logging: false
     },
     kuber: {
       url: 'http://100.86.2.12:30554/kubeGpu'
@@ -96,8 +96,8 @@ const config = {
       kue: {
         prefix: 'q',
         redis: {
-          port: process.env.KUEIP || 6379,
-          host: process.env.KUEHOST || 'localhost',
+          port: process.env.KUE_PORT || 6379,
+          host: process.env.KUE_HOST || 'localhost',
           auth: 'password',
           options: {
           }

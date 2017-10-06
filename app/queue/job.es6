@@ -21,7 +21,7 @@ const DELETE_A_SCHEDULE = 'delete a schedule';
 const serverJob = {};
 
 serverJob.startASchedule = async (schedule) => {
-
+  console.log(`Start schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
     await schedule.updateAttributes({ statusId: 8 });
     let scheduleP = await schedule.get({ plain: true });
@@ -33,7 +33,7 @@ serverJob.startASchedule = async (schedule) => {
       newPort.containerId = schedule.container.id;
       return newPort;
     });
-    let portN = Port.bulkCreate(ports);
+    let portN = await Port.bulkCreate(ports);
     await schedule.updateAttributes({ statusId: 2 });
     return true;
   } catch (err) {
@@ -46,7 +46,7 @@ serverJob.startASchedule = async (schedule) => {
 };
 
 serverJob.updateASchedule = async (schedule) => {
-
+  console.log(`Update schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
     let scheduleP = await schedule.get({ plain: true });
     let response = await kuberAPI.updateContainerUsingSchedule(scheduleP);
@@ -76,6 +76,7 @@ serverJob.updateASchedule = async (schedule) => {
 
 
 serverJob.deleteASchedule = async (schedule) => {
+  console.log(`delete schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
     await schedule.updateAttributes({ statusId: 4 });
     let scheduleP = await schedule.get({ plain: true });
@@ -95,7 +96,7 @@ serverJob.deleteASchedule = async (schedule) => {
 serverJob.terminalASchedule = async (schedule) => {
   try {
     let scheduleP = await schedule.get({ plain: true });
-    let response = kuberAPI.deleteContainerFromSchedule(scheduleP);
+    let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
     await schedule.updateAttributes({
       statusId: 9
     });
@@ -115,13 +116,13 @@ serverJob.startSchedules = async () => {
 
 
 serverJob.updateSchedules = async () => {
-  debug('Cron Update Schedules');
+  console.log('Cron Update Schedules');
   let schedules = await db.getShouldUpdateSchedule();
   await Promise.all(schedules.map(serverJob.updateASchedule));
 };
 
 serverJob.terminateSchedules = async () => {
-  debug('Cron terminal Schedules');
+  console.log('Cron terminal Schedules');
   let schedules = await db.getShouldEndSchedule();
   console.log(schedules);
   let containersUpdate = schedules.map((schedule) => {
@@ -153,7 +154,7 @@ serverJob.removeAllSchedule = async () => {
     });
     return true;
   } catch (err) {
-    console.log(`${err.message}`);
+    console.log(err.message);
   }
   return false;
 };

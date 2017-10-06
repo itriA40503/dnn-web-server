@@ -56,7 +56,10 @@ export default asyncWrap(async (req, res, next) => {
         json: true,
         resolveWithFullResponse: true
       };
+
+      // 先不處理有沒有create volumn
       request(options);
+
       let token = jwt.encode({
         uid: user.id,
         itriId: user.itriId,
@@ -74,14 +77,14 @@ export default asyncWrap(async (req, res, next) => {
     return;
   };
 
-  /* ldapAuth.authenticate(username, password, (err, user) => {
+  ldapAuth.authenticate(username, password, (err, user) => {
     if (err) {
       next(new CdError(401, err.message, 401));
       return;
     }
     afterLdapAuthSuccess(username);
     // res.json(user);
-  }); */
-  afterLdapAuthSuccess(username);
+  });
+  // afterLdapAuthSuccess(username);
 
 });
