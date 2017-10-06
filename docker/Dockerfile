@@ -1,4 +1,4 @@
-FROM node:8.5-alpine
+FROM node:8.6-alpine
 
 MAINTAINER Baka Wang
 # change work directory
@@ -25,6 +25,8 @@ RUN apk del tzdata
 #RUN apk --update add redis
 
 #RUN /etc/init.d/redis-server status
+
+RUN mkdir /logs
 
 # expose ports
 EXPOSE 80 443 8080 8443
