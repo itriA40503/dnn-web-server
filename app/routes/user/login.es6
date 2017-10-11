@@ -77,14 +77,21 @@ export default asyncWrap(async (req, res, next) => {
     return;
   };
 
-  ldapAuth.authenticate(username, password, (err, user) => {
-    if (err) {
-      next(new CdError(401, err.message, 401));
-      return;
-    }
+
+  const env = process.env.NODE_ENV || 'development';
+
+  if (env === 'development') {
     afterLdapAuthSuccess(username);
-    // res.json(user);
-  });
-  // afterLdapAuthSuccess(username);
+  } else {
+    ldapAuth.authenticate(username, password, (err, user) => {
+      if (err) {
+        next(new CdError(401, err.message, 401));
+        return;
+      }
+      afterLdapAuthSuccess(username);
+      // res.json(user);
+    });
+  }
+
 
 });
