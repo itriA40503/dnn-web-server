@@ -16,7 +16,7 @@ RUN date
 
 RUN apk del tzdata
 
-RUN npm install pm2 -g
+RUN npm install pm2
 # add projecte
 ADD ./itri-dnn-web-portal-server /dnnserver
 # install module
