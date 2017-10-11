@@ -16,14 +16,14 @@ RUN date
 
 RUN apk del tzdata
 
-RUN npm install pm2
+RUN npm install pm2 -g
 # add projecte
 ADD ./itri-dnn-web-portal-server /dnnserver
 # install module
 RUN npm install
 # build app
 RUN npm run build
-
+# set log rotate
 RUN pm2 set pm2-logrotate:rotateInterval '0 0 1 * * *'
 
 RUN pm2 set pm2-logrotate:retain 6
