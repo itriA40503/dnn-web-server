@@ -1,6 +1,6 @@
 {
   "name": "dnnserver",
-  "version": "0.5.0",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "sequelize-auto": "sequelize-auto -o ./app/models -d dnndev -h 54.249.32.121 -u postgres -p 5432 -x cditripost -e postgres -C",
@@ -9,7 +9,7 @@
     "clean": "rm -rf build",
     "practice": "node -r babel-register ./practice",
     "build": "babel ./app --ignore node_modules --out-dir build",
-    "test": "mocha --compilers js:babel-core/register test/test.js",
+    "test": "mocha --compilers js:babel-register test/",
     "start": "node ./build/bin/www",
     "start_cron": "node ./build/cron/cronjob",
     "start_pm2": "pm2 startOrReload ecosystem.json",

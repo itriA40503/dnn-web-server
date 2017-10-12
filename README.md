@@ -8,12 +8,20 @@ It's a project for managing the reservation schedule of deep-learning cluster.
 * node.js: 8.0.0+
 * npm: 5.0.0+
 
-## Installation
+## Installation and Running
 
 ```bash
 $ npm install
+$ npm install pm2 -g
 $ npm run build
+$ mkdir /utils
 $ npm run start_pm2
+```
+
+## Testing ##
+
+```bash
+$ npm run test
 ```
 
 ## API doc ##
@@ -21,6 +29,17 @@ $ npm run start_pm2
 ```bash
 $ npm run apidoc
 ```
+
+## Environment Variables
+
+### NODE_ENV
+Set the mode to "development" or "production".
+
+### DNNDB_HOST 
+This environment variable can be used to set the postgresql database host.
+
+### DNNDB_PORT
+This environment variable can be used to set the postgresql database port.
 
 ## Docker Tutorial ##
 
@@ -64,3 +83,15 @@ $ docker push 100.86.2.10:32190/<target imagename:tag>
 $ docker commit <container name> <imagename:tag>
 ```
 
+## Language ##
+* ECMAScript 6
+
+## Coding Style ##
+* Base on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+
+## Authors ##
+* Baka Wang
+
+## Change log ##
+
+* `0.2.3` Production version release.
