@@ -6,13 +6,7 @@
       "merge_logs": true,
       "out_file": "/utils/dnn.web.server.log",
       "error_file": "/utils/dnn.web.server.log",
-      "log_date_format": "YYYY-MM-DD HH:mm Z",
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "env_production" : {
-        "NODE_ENV": "production"
-      }
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
     },
     {
       "name": "dnncron",
@@ -20,8 +14,7 @@
       "merge_logs": true,
       "out_file": "/utils/dnn.web.cron.log",
       "error_file": "/utils/dnn.web.cron.log",
-      "log_date_format": "YYYY-MM-DD HH:mm Z",
-
+      "log_date_format": "YYYY-MM-DD HH:mm Z"
     }
   ]
 }
