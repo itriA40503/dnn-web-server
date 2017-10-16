@@ -103,7 +103,7 @@ k8sAPI.getAllImages = async () => {
     let options = {
       method: 'GET',
       url: imagesAPI,
-      timeout: 5000,
+      timeout: 7000,
       json: true,
       resolveWithFullResponse: true
     };

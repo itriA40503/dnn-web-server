@@ -97,9 +97,9 @@ serverJob.terminalASchedule = async (schedule) => {
   try {
     let scheduleP = await schedule.get({ plain: true });
     let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
-    await schedule.updateAttributes({
+    /* await schedule.updateAttributes({
       statusId: 9
-    });
+    }); */
     return true;
   } catch (err) {
     console.log(err.message);
@@ -126,11 +126,11 @@ serverJob.terminateSchedules = async () => {
   let schedules = await db.getShouldEndSchedule();
   console.log(schedules);
   let containersUpdate = schedules.map((schedule) => {
-    if (schedule.statusId === 2 || schedule.statusId === 3) {
+    if (schedule.statusId === 2 || schedule.statusId === 3 || schedule.statusId === 4) {
       serverJob.terminalASchedule(schedule);
-    } else if (schedule.statusId === 1 || schedule.statusId === 7) {
-      schedule.updateAttributes({ statusId: 9 });
     }
+    schedule.updateAttributes({ statusId: 9 });
+
     return true;
   });
 };
