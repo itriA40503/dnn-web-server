@@ -10,9 +10,7 @@ const machine = {};
 
 machine.getMachines = asyncWrap(async (req, res, next) => {
   let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
-  let machineWhere = {};
-  if (customGpu) machineWhere = { where: { gpuType: customGpu } };
-  let machines = await db.getAllMachineNormal().findAll(machineWhere);
+  let machines = await db.getAllMachine(customGpu);
 
   res.json({ machines: machines });
 });

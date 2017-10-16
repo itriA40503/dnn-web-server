@@ -105,11 +105,11 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
-      whichGpu: (gpuType) => {
+      whatGpu: (gpuType) => {
+        let where = {};
+        if (gpuType) where.gpuType = gpuType;
         return {
-          where: {
-            gpuType: gpuType
-          }
+          where: where
         };
       },
       whichId: (id) => {

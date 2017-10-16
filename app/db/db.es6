@@ -81,8 +81,13 @@ db.getMachineById = (id) => {
     { method: ['whichId', id] });
 };
 
-db.getAllMachineNormal = () => {
-  return Machine.scope('normal', 'statusNormal');
+db.getAllMachine = (gpuType) => {
+  return Machine.scope('normal',
+    { method: ['whatGpu', gpuType] }).findAll();
+};
+
+db.getAllMachineNormal = (gpuType) => {
+  return Machine.scope('normal', 'statusNormal', { method: ['whatGpu', gpuType] });
 };
 
 db.getAllMachineIds = () => {
@@ -91,7 +96,7 @@ db.getAllMachineIds = () => {
 
 db.getAllMachineIdsWithGPU = (gpuType) => {
   return Machine.scope('id', 'statusNormal',
-    { method: ['whichGpu', gpuType] });
+    { method: ['whatGpu', gpuType] });
 };
 
 db.getAllImage = () => {
