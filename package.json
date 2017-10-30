@@ -1,6 +1,6 @@
 {
   "name": "dnnserver",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": true,
   "scripts": {
     "sequelize-auto": "sequelize-auto -o ./app/models -d dnndev -h 54.249.32.121 -u postgres -p 5432 -x cditripost -e postgres -C",
