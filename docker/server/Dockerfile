@@ -17,16 +17,18 @@ RUN date
 RUN apk del tzdata
 
 RUN npm install pm2 -g
-# add projecte
+# Add project. Remeber to put the Dockerfile into directory which has our project directory.
 ADD ./itri-dnn-web-portal-server /dnnserver
-# install module
+# Install module
 RUN npm install
-# build app
+# Build app
 RUN npm run build
-
+# Set log rotate time.
 RUN pm2 set pm2-logrotate:rotateInterval '0 0 1 * * *'
-
+# Set max log files' amount
 RUN pm2 set pm2-logrotate:retain 6
+
+VOLUME /utils
 
 #RUN apk --update add redis
 
