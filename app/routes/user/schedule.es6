@@ -185,7 +185,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
 schedule.update = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
-  let scheduleId = req.params.schedule_id.toString();
+  let scheduleId = req.params.schedule_id;
   let end = req.query.end || (req.body && req.body.end);
 
   if (!scheduleId) throw new CdError('401', 'without schedule id');
@@ -203,11 +203,10 @@ schedule.update = asyncWrap(async (req, res, next) => {
   let machineId = schedule.machine.id;
   let oldStartDate = moment(schedule.startedAt);
   let oldEndDate = moment(schedule.endedAt);
-  let extendableEndDate = moment.max(moment(oldStartDate), moment()).add(30, 'days');
+  let extendableEndDate = moment.max(moment(oldStartDate), moment()).add(30, 'days').endOf('d');
 
   if (end) {
     let newEndedAt = moment(end);
-    console.log(newEndedAt);
     if (!newEndedAt.isValid()) throw new CdError(401, 'Date format error');
     else if (newEndedAt < moment()) throw new CdError(401, 'End date should greater then current date');
     else if (newEndedAt < oldStartDate) throw new CdError(401, 'End date should greater then start date');
@@ -296,7 +295,7 @@ schedule.delete = asyncWrap(async (req, res, next) => {
 
 schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
-  let scheduleId = req.params.schedule_id.toString();
+  let scheduleId = req.params.schedule_id;
 
   if (!scheduleId) throw new CdError('401', 'Eithout schedule id');
 
@@ -312,7 +311,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');
  // let reducibleEndDate = moment.max(oldStartDate.add(1, 'days').startOf('day'),
   // moment().add(1, 'days').startOf('day'));
-  let schedules = await db.getScheduleOfMachineId(
+  let schedules = await db.getScheduleByMachineId(
     machineId,
     oldEndDate.format(),
     extendableEndDate.format());
