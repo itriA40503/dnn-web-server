@@ -5,47 +5,76 @@ const sequelize = Schedule.sequelize;
 
 const db = {};
 
-db.getSchedules = (start, end) => {
-  let options = {
-    start: start,
-    end: end
+db.getSchedules = (options) => {
+  let timeOptions = {
+    start: options.start,
+    end: options.end
   };
-  return Schedule.scope('normal', { method: ['timeOverlap', options] });
+  return Schedule.scope('normal',
+    { method: ['timeOverlap', timeOptions] })
+    .findAll();
 };
+
+db.getDetailScheduleById = (id) => {
+  return Schedule.scope(
+    'detail',
+  ).findById(id);
+};
+
 
 db.getDetailSchedules = (start, end) => {
   let options = {
     start: start,
     end: end
   };
-  return Schedule.scope('detail', { method: ['timeOverlap', options] });
+  return Schedule.scope('detail',
+    { method: ['timeOverlap', options] }
+  ).findAll();
+};
+
+db.getUserReservedSchedulesIds = (userId) => {
+  return Schedule.scope(
+    'id',
+    'statusNormal',
+    { method: ['user', userId] }
+  ).findAll();
 };
 
 db.getUserReservedSchedules = (userId) => {
-  return Schedule.scope('detail', { method: ['user', userId] }, 'statusNormal').findAll();
+  return Schedule.scope(
+    'detail',
+    { method: ['user', userId] },
+    'statusNormal'
+  ).findAll();
 };
 
 db.getUserHistorySchedules = (userId) => {
-  return Schedule.scope('detail', { method: ['user', userId] }, 'statusHistory').findAll();
+  return Schedule.scope('detail',
+    { method: ['user', userId] },
+    'statusHistory'
+  ).findAll();
 };
 
 db.getShouldStartSchedule = () => {
   return Schedule.scope(
     'detail',
-    'statusShouldStart').findAll();
+    'statusShouldStart'
+  ).findAll();
 };
 
 db.getShouldUpdateSchedule = () => {
   return Schedule.scope(
     'detail',
-    'shouldUpdate').findAll();
+    'shouldUpdate'
+  ).findAll();
 };
 
 
 db.getShouldEndSchedule = () => {
   return Schedule.scope(
     'detail',
-    'shouldEnd').findAll();
+    'shouldEnd'
+  ).findAll();
 };
 
 db.getAllRunningSchedules = (start, end) => {
@@ -53,18 +82,14 @@ db.getAllRunningSchedules = (start, end) => {
     start: start,
     end: end
   };
-  return Schedule.scope('detail', 'statusNormal', { method: ['timeOverlap', options] });
-};
-
-db.getUserBookedSchedule = (userId) => {
   return Schedule.scope(
-      'id',
-      'statusNormal',
-      { method: ['user', userId] }
-    );
+    'detail',
+    'statusNormal',
+    { method: ['timeOverlap', options] }
+  ).findAll();
 };
 
-db.getScheduleOfMachineId = (machineId, start, end) => {
+db.getScheduleByMachineId = (machineId, start, end) => {
   let options = {
     start: start,
     end: end
@@ -73,25 +98,29 @@ db.getScheduleOfMachineId = (machineId, start, end) => {
     'statusNormal',
     { method: ['timeOverlap', options] },
     { method: ['whichMachine', machineId] }
-  );
+  ).findAll();
 };
 
 db.getMachineById = (id) => {
-  return Machine.scope('normal',
-    { method: ['whichId', id] });
+  return Machine.scope('normal').findById(id);
 };
 
-db.getAllMachineNormal = () => {
-  return Machine.scope('normal', 'statusNormal');
+db.getAllMachineNormal = (options) => {
+  return Machine.scope(
+    'normal',
+    'statusNormal'
+  ).findAll({
+    where: options
+  });
 };
 
-db.getAllMachineIds = () => {
-  return Machine.scope('id', 'statusNormal');
-};
-
-db.getAllMachineIdsWithGPU = (gpuType) => {
-  return Machine.scope('id', 'statusNormal',
-    { method: ['whichGpu', gpuType] });
+db.getAllMachineIds = (options) => {
+  return Machine.scope(
+    'id',
+    'statusNormal'
+  ).findAll({
+    where: options
+  });
 };
 
 db.getAllImage = () => {
@@ -99,15 +128,32 @@ db.getAllImage = () => {
 };
 
 db.getAllImageIds = () => {
-  return Image.scope('id');
+  return Image.scope('id').findAll();
 };
 
 db.getLatestImage = () => {         // simply add order num of createdAt group by name as 'sort'
-  return Image.scope('latest');
+  return Image.scope('latest').findAll();
 };
 
+db.getImageById = (id) => {
+  return Image.findById(id);
+};
 
-db.getUserBookedScheduleIds = (userId) => {
+db.updateImage = (id, options) => {
+  return Image.update(
+    options,
+    {
+      where: {
+        $or: [
+          { id: id },
+          { digest: id }
+        ]
+      }
+    }
+  );
+};
+
+/* db.getUserBookedScheduleIds = (userId) => {
   return Schedule.scope('id').findAll({
     where: {
       userId: userId,
@@ -116,7 +162,7 @@ db.getUserBookedScheduleIds = (userId) => {
       }
     }
   });
-};
+}; */
 
 db.findOrCreateImageTag = (imageTag) => {
   let [name, label] = imageTag.split(':');

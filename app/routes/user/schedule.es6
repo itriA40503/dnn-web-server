@@ -8,17 +8,44 @@ import { sequelize, dnnUser as User, schedule as Schedule, container as Containe
 
 const BOOKMAXIMUN = 100;
 
+const instantUpdateContainer = async (schedule, times) => {
+  let tryTimes = times;
+  if (tryTimes > 0) {
+    let result = await serverJob.updateASchedule(schedule);
+    if (!result) {
+      setTimeout(() => {
+        instantUpdateContainer(schedule, tryTimes - 1);
+      }, 10000);
+    }
+
+  }
+};
+
+const instantCreateContainer = async (schedule, times) => {
+  let tryTimes = times;
+  if (tryTimes > 0) {
+    console.log(`Start to create container ${schedule.id}`);
+    let result = await serverJob.startASchedule(schedule);
+    if (result) {
+      setTimeout(() => {
+        instantUpdateContainer(schedule, 3);
+      }, 5000);
+    } else {
+      setTimeout(() => {
+        instantCreateContainer(schedule, tryTimes - 1);
+      }, 5000);
+    }
+  }
+};
+
 const schedule = {};
 
 schedule.getASchedule = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
-  let where = {
-    id: scheduleId,
-    userId: req.user.id
-  };
-  let schedule = await db.getDetailSchedules().findOne({
-    where: where
-  });
+  let userId = req.user.id;
+  let schedule = await db.getDetailScheduleById(scheduleId);
+
+  if (schedule.userId !== userId) throw new CdError(401, 'You don\'t have permission!');
 
   res.json(schedule);
 });
@@ -52,37 +79,6 @@ schedule.getReserved = asyncWrap(async (req, res, next) => {
   });
 });
 
-const instantUpdateContainer = async (schedule, times) => {
-  let tryTimes = times;
-  if (tryTimes > 0) {
-    let result = await serverJob.updateASchedule(schedule);
-    if (!result) {
-      setTimeout(() => {
-        instantUpdateContainer(schedule, tryTimes - 1);
-      }, 10000);
-    }
-
-  }
-};
-
-const instantCreateContainer = async (schedule, times) => {
-  let tryTimes = times;
-  if (tryTimes > 0) {
-    console.log(`Start to create container ${schedule.id}`);
-    let result = await serverJob.startASchedule(schedule);
-    if (result) {
-      setTimeout(() => {
-        instantUpdateContainer(schedule, 3);
-      }, 5000);
-    } else {
-      setTimeout(() => {
-        instantCreateContainer(schedule, tryTimes - 1);
-      }, 5000);
-    }
-  }
-};
-
-
 schedule.create = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
   let username = req.user.itriId;
@@ -91,6 +87,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let imageIdQuery = req.query.image_id || (req.body && req.body.imageId);
   let customMachineId = req.query.machine_id || (req.body && req.body.machineId);
   let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
+  let customGpuAmount = req.query.gpu_amount || (req.body && req.body.gpuAmount) || 1;
 
   if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(401, 'Lack of parameter');
 
@@ -110,15 +107,24 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let start = startDate.format();
   let end = endDate.format();
 
-  let machineWhere = {};
-  if (!customMachineId && customGpu) machineWhere.where = { gpuType: customGpu };
+  let timeOptions = {
+    start: start,
+    end: end
+  };
+
+  let machineOptions = {};
+  if (!customMachineId) {
+    if (customGpu) machineOptions.gpuType = customGpu;
+    if (customGpuAmount) machineOptions.gpuAmount = customGpuAmount;
+  }
+
 
   let [bookedSchedules, machines, images, overlapSchedules] =
     await Promise.all([
-      db.getUserBookedSchedule(userId).findAll(),
-      db.getAllMachineIds().findAll(machineWhere),
-      db.getAllImageIds().findAll(),
-      db.getAllRunningSchedules(start, end).findAll()
+      db.getUserReservedSchedulesIds(userId),
+      db.getAllMachineIds(machineOptions),
+      db.getAllImageIds(),
+      db.getAllRunningSchedules(start, end)
     ]);
 
   if (bookedSchedules.length > BOOKMAXIMUN) {
@@ -168,6 +174,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
   let resSchedule = await Schedule.scope('detail').findById(schedule.id);
 
+  // 如果啟動時間是現在或之前的話立即啟動Container
   if (startDate <= moment()) {
     instantCreateContainer(resSchedule, 3);
   }
@@ -178,7 +185,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
 schedule.update = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
-  let scheduleId = req.params.schedule_id;
+  let scheduleId = req.params.schedule_id.toString();
   let end = req.query.end || (req.body && req.body.end);
 
   if (!scheduleId) throw new CdError('401', 'without schedule id');
@@ -206,16 +213,14 @@ schedule.update = asyncWrap(async (req, res, next) => {
     else if (newEndedAt < oldStartDate) throw new CdError(401, 'End date should greater then start date');
     else if (newEndedAt > extendableEndDate) throw new CdError(401, 'End date exceeds quota');
 
-    let schedules = await db.getScheduleOfMachineId(machineId,
+    let schedules = await db.getScheduleByMachineId(
+      machineId,
       oldEndDate.format(),
-      newEndedAt.format())
-      .findAll({
-        where: {
-          id: {
-            $ne: scheduleId
-          }
-        }
-      });
+      newEndedAt.format());
+
+    schedules = await schedules.filter((schedule) => {
+      return schedule.id !== scheduleId;
+    });
     if (schedules.length > 0) throw new CdError(401, 'Target period already used');
     setting.endedAt = newEndedAt.format();
   }
@@ -285,29 +290,13 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   }
 
   res.json(schedule);
-  // let t = await sequelize.transaction();
-  /* let newStatus = (schedule.statusId === 2 || schedule.statusId === 3) ? 4 : 6;
-  let options = {
-    statusId: newStatus,
-  };
-
-  if (newStatus === 6) {
-    options.endedAt = moment().format();
-  }
-
-  if (newStatus === 4) {
-    serverJob.deleteASchedule(schedule);
-  }
-  let scheduleU = await schedule.updateAttributes(options);
-  if (!scheduleU) throw new CdError(401, 'Update schedule info fail'); */
- // let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
 
 });
 
 
 schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let userId = req.user.id;
-  let scheduleId = req.params.schedule_id;
+  let scheduleId = req.params.schedule_id.toString();
 
   if (!scheduleId) throw new CdError('401', 'Eithout schedule id');
 
@@ -326,15 +315,10 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let schedules = await db.getScheduleOfMachineId(
     machineId,
     oldEndDate.format(),
-    extendableEndDate.format())
-    .findAll({
-      where: {
-        id: {
-          $ne: scheduleId
-        }
-      }
-    });
-
+    extendableEndDate.format());
+  schedules = await schedules.filter((schedule) => {
+    return schedule.id !== scheduleId;
+  });
   let ended = await schedules.reduce((minDate, schedule) => {
     let maxableEndDate = moment(schedule.startedAt).subtract(1, 'days').endOf('day');
     return moment.min(minDate, maxableEndDate);
