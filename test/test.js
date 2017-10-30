@@ -255,7 +255,6 @@ describe('server', () => {
       });
     });
     describe('Create schedule', () => {
-
       it('Create a schedule', done => {
         let scheduleOptions = {
           start: scheduleSetting.start.format(),
@@ -277,13 +276,26 @@ describe('server', () => {
             done();
           })
       });
-
     });
     describe('Update schedule', () => {
-
+      let extendableLatestDate;
+      it('Get schedule extendable date', done => {
+        request
+          .get(`/user/schedule/${resSchedule.id}/extendable`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .end((err, res) => {
+            console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.should.have.property('extendableLatestDate')
+            extendableLatestDate = res.body.extendableLatestDate;
+            done();
+          })
+      });
       it('Update schedule', done => {
         let scheduleOptions = {
-          end: scheduleSetting.end.add(2,'d').format(),
+          end: moment(extendableLatestDate).format() || scheduleSetting.end.add(2,'d').format(),
         }
 
         request
