@@ -9,7 +9,7 @@ console.log(Machine);
 
 
 const checkMachineExist = async (id) => {
-  let machine = await db.getMachineById(id).findOne();
+  let machine = await db.getMachineById(id);
   if (!machine) throw new CdError(401, 'Machine not exist!!');
   return machine;
 };

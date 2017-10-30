@@ -66,6 +66,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'deleted_at'
     },
+    terminalAt: {
+      type: DataTypes.TIME,
+      allowNull: true,
+      field: 'deleted_at'
+    },
     userId: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -172,7 +177,7 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [1, 2, 3, 4, 7, 8]
+              $in: [1, 2, 3, 4, 7, 8, 10]
             }
           }
         };
@@ -211,7 +216,7 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [1, 2, 3, 4, 7, 8]
+              $in: [1, 2, 3, 4, 7, 8, 10]
             },
             endedAt: {
               $lte: moment().format()

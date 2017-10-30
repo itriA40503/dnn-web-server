@@ -12,7 +12,7 @@ machine.getMachines = asyncWrap(async (req, res, next) => {
   let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
   let machineWhere = {};
   if (customGpu) machineWhere = { where: { gpuType: customGpu } };
-  let machines = await db.getAllMachineNormal().findAll(machineWhere);
+  let machines = await db.getAllMachineNormal(machineWhere);
 
   res.json({ machines: machines });
 });
@@ -37,8 +37,8 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   if (customGpu) machineWhere = { where: { gpuType: customGpu } };
 
   let [machines, schedules] = await Promise.all([
-    db.getAllMachineNormal().findAll(machineWhere),
-    db.getAllRunningSchedules(start.format(), end.format()).findAll()
+    db.getAllMachineNormal(machineWhere),
+    db.getAllRunningSchedules(start.format(), end.format())
   ]);
 
   let machineSet = await new Set(
@@ -69,8 +69,8 @@ machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
   if (customGpu) machineWhere = { where: { gpuType: customGpu } };
 
   let [machines, schedules] = await Promise.all([
-    db.getAllMachineNormal().findAll(machineWhere),
-    db.getAllRunningSchedules(start.format(), end.format()).findAll()
+    db.getAllMachineNormal(machineWhere),
+    db.getAllRunningSchedules(start.format(), end.format())
   ]);
 
   let machineSet = await machines.reduce((set, machine) => {

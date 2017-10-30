@@ -3,6 +3,7 @@ import image from './image';
 
 const router = express.Router();
 
-router.get('/', image);
+router.get('/', image.getLatest);
+router.put('/', image.update);
 
 export default router;

@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       field: 'id'
     },
+    digest: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'digest'
+    },
     path: {
       type: DataTypes.STRING,
       allowNull: true,

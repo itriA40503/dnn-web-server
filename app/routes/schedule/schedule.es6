@@ -28,7 +28,7 @@ schedule.getAllSchedule = asyncWrap(async (req, res, next) => {
     };
   }
 
-  let schedules = await db.getSchedules(options.start, options.end).findAll();
+  let schedules = await db.getSchedules(options);
 
   res.json(schedules);
 });

@@ -23,8 +23,8 @@ let userSetting = {
 }
 
 let machineSetting = {
-  label: 'm19',
-  name: 'm19',
+  label: 'm24',
+  name: 'm24',
   gpuAmount: '1',
   gpuType: 'v100'
 }
@@ -292,11 +292,11 @@ describe('server', () => {
           .set('Accept', 'application/json')
           .send(scheduleOptions)
           .end((err, res) => {
+            console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.should.have.property('id')
             resSchedule = res.body;
-            console.log(res.body);
             done();
           })
       });

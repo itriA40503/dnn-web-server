@@ -105,7 +105,16 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
+      gpuAmount: (gpuAmount) => {
+        if (!gpuAmount) return {};
+        return {
+          where: {
+            gpuAmount: gpuAmount
+          }
+        };
+      },
       whichGpu: (gpuType) => {
+        if (!gpuType) return {};
         return {
           where: {
             gpuType: gpuType

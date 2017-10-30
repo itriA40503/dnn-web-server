@@ -3,14 +3,11 @@ import asyncWrap from '../../util/asyncWrap';
 import db from '../../db/db';
 import { image as Image } from '../../models/index';
 
-const image = asyncWrap(async (req, res, next) => {
-  /* let images = await Image.scope('normal').findAll();
-  res.json({
-    images: images
-  });*/
-  let images = await db.getLatestImage().findAll();
-  
+const image = {};
 
+image.getLatest = asyncWrap(async (req, res, next) => {
+
+  let images = await db.getLatestImage();
   let newImages = images.reduce((list, image) => {
     let imageP = image.get({ plain: true });
     if (imageP.sort === '1' && !imageP.label.includes('Disable')) {
@@ -23,6 +20,23 @@ const image = asyncWrap(async (req, res, next) => {
   res.json({
     images: newImages
   });
+
+});
+
+image.update = asyncWrap(async (req, res, next) => {
+
+  let imageId = req.params.image_id;
+  let description = req.query.description || (req.body && req.body.description);
+
+  let options = {
+    description: description
+  };
+  let image = db.updateImage(imageId, options);
+
+  res.json({
+    images: image
+  });
+
 });
 
 export default image;

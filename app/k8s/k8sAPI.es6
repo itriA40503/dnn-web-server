@@ -28,7 +28,8 @@ k8sAPI.createContainerUsingSchedule = async (schedule) => {
         gpuType: schedule.machine.gpuType,
         imgTag: `${schedule.image.name}:${schedule.image.label}`,
         account: schedule.username,
-        pwd: schedule.password
+        pwd: schedule.password,
+        gpuCnt: schedule.machine.gpuAmount || 1
       },
       timeout: 5000,
       json: true,
@@ -42,7 +43,6 @@ k8sAPI.createContainerUsingSchedule = async (schedule) => {
     throw new K8SError(err.message);
   }
 };
-
 
 k8sAPI.updateContainerUsingSchedule = async (schedule) => {
   try {
@@ -61,7 +61,6 @@ k8sAPI.updateContainerUsingSchedule = async (schedule) => {
     throw new K8SError(err.message);
   }
 };
-
 
 k8sAPI.deleteContainerFromSchedule = async (schedule) => {
   try {
@@ -95,7 +94,6 @@ k8sAPI.removeAllContainers = async () => {
     throw new K8SError(err.message);
   }
 };
-
 
 k8sAPI.getAllImages = async () => {
   debug('Get All Images\' tags from repository');
