@@ -116,7 +116,9 @@ module.exports = (sequelize, DataTypes) => {
       whichGpu: (gpuType) => {
         if (!gpuType) return {};
         return {
-          where: where
+          where: {
+            gpuType: gpuType
+          }
         };
       },
       whichId: (id) => {

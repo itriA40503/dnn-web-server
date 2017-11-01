@@ -35,69 +35,70 @@ db.getDetailSchedules = (start, end) => {
 db.getUserReservedSchedulesIds = (userId) => {
   return Schedule.scope(
     'id',
-    'statusNormal',
-    { method: ['user', userId] }
+    'thoseOccupiedSchedule',
+    { method: ['byUser', userId] }
   ).findAll();
 };
 
 db.getUserReservedSchedules = (userId) => {
   return Schedule.scope(
     'detail',
-    { method: ['user', userId] },
-    'statusNormal'
+    'thoseOccupiedSchedule',
+    { method: ['byUser', userId] },
   ).findAll();
 };
 
 db.getUserHistorySchedules = (userId) => {
-  return Schedule.scope('detail',
-    { method: ['user', userId] },
-    'statusHistory'
+  return Schedule.scope(
+    'detail',
+    'thoseBeingAncient',
+    { method: ['byUser', userId] },
   ).findAll();
 };
 
 db.getShouldStartSchedule = () => {
   return Schedule.scope(
     'detail',
-    'statusShouldStart'
+    'thoseShouldStart'
   ).findAll();
 };
 
 db.getShouldUpdateSchedule = () => {
   return Schedule.scope(
     'detail',
-    'shouldUpdate'
+    'thoseShouldUpdate'
   ).findAll();
 };
 
-
-db.getShouldEndSchedule = () => {
+db.getShouldExpireSchedules = () => {
   return Schedule.scope(
     'detail',
-    'shouldEnd'
+    'thoseWillExpire'
   ).findAll();
 };
 
-db.getAllRunningSchedules = (start, end) => {
+db.getAllOccupiedSchedules = (start, end) => {
   let options = {
     start: start,
     end: end
   };
   return Schedule.scope(
     'detail',
-    'statusNormal',
+    'thoseOccupiedSchedule',
     { method: ['timeOverlap', options] }
   ).findAll();
 };
 
-db.getScheduleByMachineId = (machineId, start, end) => {
+db.getMachinesOccupiedSchedules = (machineId, start, end) => {
   let options = {
     start: start,
     end: end
   };
-  return Schedule.scope('onlyTime',
-    'statusNormal',
+  return Schedule.scope(
+    'onlyTime',
+    'thoseOccupiedSchedule',
     { method: ['timeOverlap', options] },
-    { method: ['whichMachine', machineId] }
+    { method: ['byMachine', machineId] }
   ).findAll();
 };
 

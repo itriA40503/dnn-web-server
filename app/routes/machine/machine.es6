@@ -39,7 +39,7 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
 
   let [machines, schedules] = await Promise.all([
     db.getAllMachineNormal(machineWhere),
-    db.getAllRunningSchedules(start.format(), end.format())
+    db.getAllOccupiedSchedules(start.format(), end.format())
   ]);
 
   let machineSet = await new Set(
@@ -71,7 +71,7 @@ machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
 
   let [machines, schedules] = await Promise.all([
     db.getAllMachineNormal(machineWhere),
-    db.getAllRunningSchedules(start.format(), end.format())
+    db.getAllOccupiedSchedules(start.format(), end.format())
   ]);
 
   let machineSet = await machines.reduce((set, machine) => {

@@ -23,7 +23,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
       field: 'ssh_port'
-    }
+    },
+    message: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'message'
+    },
   }, {
     tableName: 'container',
     timestamps: false,
@@ -37,7 +42,9 @@ module.exports = (sequelize, DataTypes) => {
             'id',
             'serviceIp',
             'podIp',
-            'sshPort'
+            'sshPort',
+            'phase',
+            'message'
           ]
         };
       }
