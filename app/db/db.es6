@@ -115,6 +115,18 @@ db.getMachinesOccupiedSchedules = (machineId, start, end) => {
   ).findAll();
 };
 
+db.getMachinesCurrentOccupiedSchedules = (machineId) => {
+  let options = {
+    start: moment().format(),
+  };
+  return Schedule.scope(
+    'onlyTime',
+    'thoseOccupiedSchedule',
+    { method: ['timeOverlap', options] },
+    { method: ['byMachine', machineId] }
+  ).findOne();
+};
+
 db.getMachineById = (id) => {
   return Machine.scope('normal').findById(id);
 };
