@@ -86,6 +86,27 @@
 *
 **/
 /**
+ * @api {put} /user/schedule/:id/restart Restart schedule
+ * @apiVersion 0.1.0
+ * @apiName  RestartSchedule
+ * @apiGroup User/schedule
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+  *     }
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+/**
 * @api {put} /user/schedule/:id Update schedule
 * @apiVersion 0.1.0
 * @apiName  UpdateSchedule
