@@ -89,6 +89,13 @@ module.exports = (sequelize, DataTypes) => {
         };
         return result;
       },
+      thoseDeleted: () => {
+        return {
+          where: {
+            statusId: 4
+          }
+        };
+      },
       statusNormal: () => {
         return {
           where: {
@@ -96,7 +103,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
-      statusShouldShow: () => {
+      thoseExist: () => {
         return {
           where: {
             statusId: {
@@ -125,6 +132,13 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             id: id
+          }
+        };
+      },
+      byLabel: (label) => {
+        return {
+          where: {
+            label: label
           }
         };
       }

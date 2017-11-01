@@ -89,6 +89,19 @@ db.getAllOccupiedSchedules = (start, end) => {
   ).findAll();
 };
 
+db.getMachineAllOccupiedSchedule = (machineId, now) => {
+  let options = {
+    start: now,
+    end: now
+  };
+  return Schedule.scope(
+    'detail',
+    'thoseOccupiedSchedule',
+    { method: ['timeOverlap', options] },
+    { method: ['byMachine', machineId] }
+  ).findAll();
+};
+
 db.getMachinesOccupiedSchedules = (machineId, start, end) => {
   let options = {
     start: start,
@@ -104,6 +117,25 @@ db.getMachinesOccupiedSchedules = (machineId, start, end) => {
 
 db.getMachineById = (id) => {
   return Machine.scope('normal').findById(id);
+};
+
+db.getExistMachineById = (id) => {
+  return Machine.scope('normal',
+    'thoseExist',
+    ).findById(id);
+};
+
+db.getMachineByLabel = (label) => {
+  return Machine.scope('normal',
+    { method: ['byLabel', label] }
+  ).findOne();
+};
+
+db.getExistMachineByLabel = (label) => {
+  return Machine.scope('normal',
+    'thoseExist',
+    { method: ['byLabel', label] }
+  ).findOne();
 };
 
 db.getAllMachineNormal = (options) => {

@@ -64,7 +64,6 @@ serverJob.updateASchedule = async (schedule) => {
       let reason = (pod.status.containerStatuses
         && pod.status.containerStatuses.state
         && pod.status.containerStatuses.state.reason);
-      console.log(phase);
       if (phase === 'Pending') {
         /* if (reason !== 'ContainerCreating' ) {
           throw new K8SError(reason);
