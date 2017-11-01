@@ -25,7 +25,7 @@ let userSetting = {
 let machineSetting = {
   label: 'm24',
   name: 'm24',
-  gpuAmount: '1',
+  gpuAmount: 1,
   gpuType: 'v100'
 }
 
@@ -371,9 +371,9 @@ describe('server', () => {
               resSchedule = res.body;
               done();
             })
-        }, 8000);
+        }, 6000);
 
-      }).timeout(10000);
+      }).timeout(9000);
       it('Delete schedule', done => {
         request
           .delete(`/user/schedule/${resSchedule.id}`)
@@ -402,9 +402,9 @@ describe('server', () => {
           .set('Accept', 'application/json')
           .send(machineSetting)
           .end((err,res) => {
+            console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
-            console.log(res.body);
             resMachine = res.body;
             done();
           });
@@ -425,21 +425,6 @@ describe('server', () => {
           });
       })
 
-      it('modify machine when still running', done => {
-        request
-          .put(`/admin/machine/${resMachine.id}`)
-          .set('x-access-token', userSetting.token)
-          .set('Accept', 'application/json')
-          .send({
-            gpuAmount: 2,
-            gpuType: 'GTX1080'
-          })
-          .end((err,res) => {
-            res.should.have.status(401);
-            res.should.to.be.json;
-            done();
-          });
-      })
 
       it('disable', done => {
         request
@@ -450,24 +435,6 @@ describe('server', () => {
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.statusId.should.equal(3);
-            console.log(res.body);
-            done();
-          });
-      })
-
-      it('modify machine', done => {
-        request
-          .put(`/admin/machine/${resMachine.id}`)
-          .set('x-access-token', userSetting.token)
-          .set('Accept', 'application/json')
-          .send({
-            gpuAmount: 2,
-            gpuType: 'GTX1080'
-          })
-          .end((err,res) => {
-            res.should.have.status(200);
-            res.should.to.be.json;
-            res.body.gpuAmount.should.equal(2);
             console.log(res.body);
             done();
           });
@@ -487,16 +454,94 @@ describe('server', () => {
           });
       })
 
+      let resSchedule = {};
+      it('Create a schedule', done => {
+        let scheduleOptions = {
+          start: currentScheduleSetting.start.format(),
+          end: currentScheduleSetting.end.format(),
+          imageId: images[0].id,
+          machineId: resMachine.id
+        }
+
+        request
+          .post('/user/schedule')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send(scheduleOptions)
+          .end((err, res) => {
+            console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.statusId.should.equal(8);
+            resSchedule = res.body;
+            done();
+
+          })
+      });
+      it('Get schedule', done => {
+        setTimeout( () => {
+          request
+            .get(`/user/schedule/${resSchedule.id}`)
+            .set('x-access-token', userSetting.token)
+            .set('Accept', 'application/json')
+            .end((err, res) => {
+              console.log(res.body);
+              res.should.have.status(200);
+              res.should.to.be.json;
+              res.body.statusId.should.equal(3);
+              res.body.machine.id.should.equal(resMachine.id);
+              done();
+            })
+        }, 6000);
+
+      }).timeout(9000);
+      it('modify machine', done => {
+        request
+          .put(`/admin/machine/${resMachine.id}`)
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send({
+            gpuAmount: 2,
+            gpuType: 'GTX1080'
+          })
+          .end((err,res) => {
+            console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.gpuAmount.should.equal(2);
+            done();
+          });
+      })
+      it('Get schedule', done => {
+        setTimeout( () => {
+          request
+            .get(`/user/schedule/${resSchedule.id}`)
+            .set('x-access-token', userSetting.token)
+            .set('Accept', 'application/json')
+            .end((err, res) => {
+              console.log(res.body);
+              res.should.have.status(200);
+              res.should.to.be.json;
+              res.body.statusId.should.equal(3);
+              res.body.machine.id.should.equal(resMachine.id);
+              resSchedule = res.body;
+              done();
+            })
+        }, 6000);
+
+      }).timeout(9000);
+
+
       it('destory', done => {
         request
           .delete(`/admin/machine/${resMachine.id}`)
           .set('x-access-token', userSetting.token)
           .set('Accept', 'application/json')
           .end((err,res) => {
+            console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.statusId.should.equal(4);
-            console.log(res.body);
             done();
           });
       })

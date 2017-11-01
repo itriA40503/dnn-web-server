@@ -28,7 +28,7 @@ const instantCreateContainer = async (schedule, times) => {
     let result = await serverJob.startASchedule(schedule);
     if (result) {
       setTimeout(() => {
-        instantUpdateContainer(schedule, 3);
+        instantUpdateContainer(schedule, 2);
       }, 5000);
     } else {
       setTimeout(() => {
@@ -252,14 +252,11 @@ schedule.restart = asyncWrap(async (req, res, next) => {
   if (!schedule) throw new CdError(401, 'Schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'Have no auth');
   else if (schedule.statusId === 1) throw new CdError(401, 'Schedule hasn\'t running');
-  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted');
-  else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
+  else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is already deleting!');
+  else if (schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted!');
+  // else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled!');
 
   if (moment(schedule.startDate) <= moment() && moment(schedule.endDate) <= moment()) {
-    await serverJob.deleteASchedule(schedule);
-    await schedule.updateAttributes({
-      statusId: 1
-    });
     instantCreateContainer(schedule, 3);
   }
 
@@ -277,16 +274,11 @@ schedule.delete = asyncWrap(async (req, res, next) => {
 
   if (!schedule) throw new CdError(401, 'schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'Not owner!');
-  else if (schedule.statusId === 4 || schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted');
-  else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled');
+  else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is already deleting!');
+  else if (schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted!');
+  // else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled!');
 
-  console.log(`delete schedule's status:${schedule.statusId}`);
-
-  if (schedule.statusId === 2 || schedule.statusId === 3) {
-    await serverJob.deleteASchedule(schedule);
-  } else {
-    await schedule.updateAttributes({ statusId: 6 });
-  }
+  await serverJob.deleteASchedule(schedule);
 
   res.json(schedule);
 
