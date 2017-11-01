@@ -124,7 +124,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
       db.getUserReservedSchedulesIds(userId),
       db.getAllMachineIds(machineOptions),
       db.getAllImageIds(),
-      db.getAllRunningSchedules(start, end)
+      db.getAllOccupiedSchedules(start, end)
     ]);
 
   if (bookedSchedules.length > BOOKMAXIMUN) {
@@ -212,7 +212,7 @@ schedule.update = asyncWrap(async (req, res, next) => {
     else if (newEndedAt < oldStartDate) throw new CdError(401, 'End date should greater then start date');
     else if (newEndedAt > extendableEndDate) throw new CdError(401, 'End date exceeds quota');
 
-    let schedules = await db.getScheduleByMachineId(
+    let schedules = await db.getMachinesOccupiedSchedules(
       machineId,
       oldEndDate.format(),
       newEndedAt.format());
@@ -311,7 +311,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');
  // let reducibleEndDate = moment.max(oldStartDate.add(1, 'days').startOf('day'),
   // moment().add(1, 'days').startOf('day'));
-  let schedules = await db.getScheduleByMachineId(
+  let schedules = await db.getMachinesOccupiedSchedules(
     machineId,
     oldEndDate.format(),
     extendableEndDate.format());

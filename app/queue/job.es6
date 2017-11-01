@@ -13,7 +13,8 @@ const START_A_SCHEDULE = 'start a schedule';
 const UPDATE_A_SCHEDULE = 'update a schedule';
 const DELETE_A_SCHEDULE = 'delete a schedule';
 
-/* Jobs should be call in queue not in routers
+/* In future
+   Jobs should be call in queue not in routers
    PM2 should use gracefulReload for kue.js when restart server */
 
 // const queue = kue.createQueue();
@@ -23,24 +24,30 @@ const serverJob = {};
 serverJob.startASchedule = async (schedule) => {
   console.log(`Start schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
-    await schedule.updateAttributes({ statusId: 8 });
-    let scheduleP = await schedule.get({ plain: true });
-    let response = await kuberAPI.createContainerUsingSchedule(scheduleP);
-    let pod = response.body[0];
-    let service = response.body[1];
-    let ports = service.spec.ports.map((port) => {
-      let newPort = Object.assign({}, port);
-      newPort.containerId = schedule.container.id;
-      return newPort;
-    });
-    let portN = await Port.bulkCreate(ports);
-    await schedule.updateAttributes({ statusId: 2 });
+    if ([1, 2, 3, 7].includes(schedule.statusId)) {
+      await schedule.updateAttributes({ statusId: 8 });
+      let scheduleP = await schedule.get({ plain: true });
+      let response = await kuberAPI.createContainerUsingSchedule(scheduleP);
+      let pod = response.body[0];
+      let service = response.body[1];
+      let ports = service.spec.ports.map((port) => {
+        let newPort = Object.assign({}, port);
+        newPort.containerId = schedule.container.id;
+        return newPort;
+      });
+      await Port.bulkCreate(ports);
+      await schedule.updateAttributes({ statusId: 2,
+        createdAt: moment().format()
+      });
+    } else {
+      throw new Error('This kind schedules are not able to be started!');
+    }
     return true;
   } catch (err) {
+    console.log(err.message);
     if (err instanceof K8SError) {
       schedule.updateAttributes({ statusId: 7 });
     }
-    console.log(err.message);
   }
   return false;
 };
@@ -48,65 +55,82 @@ serverJob.startASchedule = async (schedule) => {
 serverJob.updateASchedule = async (schedule) => {
   console.log(`Update schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
-    let scheduleP = await schedule.get({ plain: true });
-    let response = await kuberAPI.updateContainerUsingSchedule(scheduleP);
-    let pod = response.body[0];
-    let service = response.body[1];
-    if (pod.status.phase !== 'Running') {
-      // 這裡加入判斷有沒有超過五分鐘沒有更新
-      if (moment(schedule.startedAt) > moment().add(5, 'minute')) {
-        schedule.updateAttributes({
-          statusId: 7
-        });
+    if ([2, 3].includes(schedule.statusId)) {
+      let scheduleP = await schedule.get({ plain: true });
+      let response = await kuberAPI.updateContainerUsingSchedule(scheduleP);
+      let pod = response.body[0];
+      let service = response.body[1];
+      let phase = pod.status.phase;
+      let reason = (pod.status.containerStatuses
+        && pod.status.containerStatuses.state
+        && pod.status.containerStatuses.state.reason);
+      console.log(phase);
+      if (phase === 'Pending') {
+        /* if (reason !== 'ContainerCreating' ) {
+          throw new K8SError(reason);
+        } */
+        if (moment(schedule.container.createdAt).add('m', 5) < moment().format()) {
+          throw new K8SError('timeout');
+        }
+        return false;
+      } else if (phase !== 'Running') {
+        throw new K8SError(phase);
       }
-      return false;
+      let updateAttr = {
+        podIp: pod.status.hostIP,
+        sshPort: service.spec.ports[0].nodePort,
+        phase: phase
+      };
+      schedule.container.updateAttributes(updateAttr);
+      schedule.updateAttributes({ statusId: 3 });
+
+    } else {
+      throw new Error('This kind schedules are not necessary to be updated!');
     }
-    let containerN = await schedule.container.updateAttributes({
-      podIp: pod.status.hostIP,
-      sshPort: service.spec.ports[0].nodePort
-    });
-    if (!containerN) return false;
-    await schedule.updateAttributes({ statusId: 3 });
     return true;
+
   } catch (err) {
     console.log(err.message);
+    if (err instanceof K8SError) {
+      schedule.container.updateAttributes({
+        message: err.message
+      });
+      schedule.updateAttributes({ statusId: 7 });
+    }
   }
   return false;
 };
 
-
-serverJob.deleteASchedule = async (schedule) => {
+serverJob.deleteASchedule = async (schedule, isExpired) => {
   console.log(`delete schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
-    await schedule.updateAttributes({ statusId: 4 });
-    let scheduleP = await schedule.get({ plain: true });
-    let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
-    await schedule.updateAttributes({
-      statusId: 5,
-      endedAt: moment().format()    // 以後改用deletedAt然後model不check deletedAt
-    });
+    if (schedule.statusId === 2 || schedule.statusId === 3) {
+      await schedule.updateAttributes({ statusId: 4 });
+      let scheduleP = await schedule.get({ plain: true });
+      let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
+    } else if (schedule.statusId !== 1) {
+      throw new Error('This kind schedule can\'t be delete manually');
+    }
+
+    let updateAttr = { statusId: 5 };
+    let deleteAtType = (schedule.statusId === 1) ? 'canceledAt' : 'deletedAt';
+    deleteAtType = (isExpired) ? 'expiredAt' : deleteAtType;
+    updateAttr[deleteAtType] = moment().format();
+    await schedule.updateAttributes(updateAttr);
+
     return true;
   } catch (err) {
     console.log(err.message);
+    if (err instanceof K8SError) {
+      schedule.updateAttributes({
+        statusId: 10,
+        deletedAt: moment().format()
+      });
+    }
+
   }
   return false;
 };
-
-
-serverJob.terminalASchedule = async (schedule) => {
-  try {
-    let scheduleP = await schedule.get({ plain: true });
-    let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
-    /* await schedule.updateAttributes({
-      statusId: 9
-    }); */
-    return true;
-  } catch (err) {
-    console.log(err.message);
-  }
-  return false;
-};
-
 
 serverJob.startSchedules = async () => {
   console.log('Cron Start Schedules');
@@ -121,18 +145,12 @@ serverJob.updateSchedules = async () => {
   await Promise.all(schedules.map(serverJob.updateASchedule));
 };
 
-serverJob.terminateSchedules = async () => {
-  console.log('Cron terminal Schedules');
-  let schedules = await db.getShouldEndSchedule();
-  console.log(schedules);
-  let containersUpdate = schedules.map((schedule) => {
-    if (schedule.statusId === 2 || schedule.statusId === 3 || schedule.statusId === 4) {
-      serverJob.terminalASchedule(schedule);
-    }
-    schedule.updateAttributes({ statusId: 9 });
-
-    return true;
-  });
+serverJob.expireSchedules = async () => {
+  console.log('Cron expire Schedules');
+  let schedules = await db.getShouldExpireSchedules();
+  await Promise.all(
+    schedules.map(schedule => serverJob.deleteASchedule(schedule, true))
+  );
 };
 
 serverJob.removeAllSchedule = async () => {

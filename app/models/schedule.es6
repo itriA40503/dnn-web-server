@@ -66,10 +66,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'deleted_at'
     },
-    terminalAt: {
+    canceledAt: {
       type: DataTypes.TIME,
       allowNull: true,
-      field: 'deleted_at'
+      field: 'canceled_at'
+    },
+    expiredAt: {
+      type: DataTypes.TIME,
+      allowNull: true,
+      field: 'expired_at'
     },
     userId: {
       type: DataTypes.BIGINT,
@@ -109,7 +114,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'schedule',
-    paranoid: true,
+    paranoid: false,
     scopes: {
       id: () => {
         return {
@@ -137,6 +142,9 @@ module.exports = (sequelize, DataTypes) => {
             'endedAt',
             'createdAt',
             'updatedAt',
+            'canceledAt',
+            'expiredAt',
+            'deletedAt',
             'userId'
           ]
         };
@@ -158,19 +166,111 @@ module.exports = (sequelize, DataTypes) => {
             'endedAt',
             'createdAt',
             'updatedAt',
+            'canceledAt',
+            'expiredAt',
+            'deletedAt',
             'userId'
           ]
         };
       },
-      user: (userId) => {
+      byUser: (userId) => {
         return {
           where: {
             userId: userId
           }
         };
       },
-      statusAll: () => {
+      thoseOccupiedSchedule: () => {
         return {
+          where: {
+            statusId: {
+              $in: [1, 2, 3, 4, 7, 8, 10]
+            }
+          }
+        };
+      },
+      thoseBeingAncient: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [5]
+            }
+          }
+        };
+      },
+      thoseShouldStart: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1]
+            },
+            startedAt: {
+              $lte: moment().format()
+            },
+            endedAt: {
+              $gt: moment().format()
+            }
+          }
+        };
+      },
+      thoseShouldRestart: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [7]
+            },
+            startedAt: {
+              $lte: moment().format()
+            },
+            endedAt: {
+              $gt: moment().format()
+            }
+          }
+        };
+      },
+      thoseShouldUpdate: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [2, 3]
+            },
+          }
+        };
+      },
+      thoseWillBeCanceled: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1]
+            },
+            startedAt: {
+              $lte: moment().format()
+            },
+            endedAt: {
+              $gt: moment().format()
+            }
+          }
+        };
+      },
+      thoseWillExpire: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [1, 2, 3, 7, 8]
+            },
+            endedAt: {
+              $lte: moment().format()
+            }
+          }
+        };
+      },
+      thoseWillBeDeleted: () => {
+        return {
+          where: {
+            statusId: {
+              $in: [2, 3, 8]
+            },
+          }
         };
       },
       statusNormal: () => {
@@ -187,27 +287,6 @@ module.exports = (sequelize, DataTypes) => {
           where: {
             statusId: {
               $in: [5, 6, 9]
-            }
-          }
-        };
-      },
-      statusShouldStart: () => {
-        return {
-          where: {
-            statusId: {
-              $in: [1]
-            },
-            startedAt: {
-              $lte: moment().format()
-            }
-          }
-        };
-      },
-      shouldUpdate: () => {
-        return {
-          where: {
-            statusId: {
-              $in: [2]
             }
           }
         };
@@ -233,15 +312,14 @@ module.exports = (sequelize, DataTypes) => {
           }
         };
       },
-      status: (statusId) => {
+      byStatus: (statusId) => {
         return {
           where: {
             statusId: statusId
           }
         };
       },
-      whichMachine: (machineId) => {
-        console.log(machineId);
+      byMachine: (machineId) => {
         return {
           where: {
             machineId: machineId
