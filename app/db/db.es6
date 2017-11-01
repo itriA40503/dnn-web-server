@@ -120,7 +120,7 @@ db.getMachinesCurrentOccupiedSchedules = (machineId) => {
     start: moment().format(),
   };
   return Schedule.scope(
-    'onlyTime',
+    'detail',
     'thoseOccupiedSchedule',
     { method: ['timeOverlap', options] },
     { method: ['byMachine', machineId] }
