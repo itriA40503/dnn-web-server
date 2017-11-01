@@ -98,7 +98,6 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   if (gpuAmount) {
     if (!Number.isInteger(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
     else if (gpuAmount >= GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
-
     updateAttr.gpuAmount = gpuAmount;
   }
 
@@ -111,13 +110,15 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   }
 
   let machine = await checkMachineExist(machineId);
+  // 要先update db裡的機器資訊
+  await machine.updateAttributes(updateAttr);
 
   let currentScheduleOnMachine =
     await db.getMachinesCurrentOccupiedSchedules(machineId, moment().format());
   if (currentScheduleOnMachine) {
     instantCreateContainer(currentScheduleOnMachine, 3);
   }
-  await machine.updateAttributes(updateAttr);
+
 
   res.json(machine);
 });
