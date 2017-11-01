@@ -20,7 +20,7 @@ const config = {
       logging: false
     },
     kuber: {
-      url: process.env.K8S_API || 'http://100.86.2.12:30554/kubeGpu'
+      url: process.env.DNNDB_PORT || 'http://100.86.2.12:30554/kubeGpu'
     },
     mailer: {
       smtpSetting: {
@@ -73,7 +73,7 @@ const config = {
       logging: false
     },
     kuber: {
-      url: process.env.K8S_API || 'http://100.86.2.12:30554/kubeGpu'
+      url: 'http://100.86.2.12:30554/kubeGpu'
     },
     mailer: {
       smtpSetting: {

@@ -113,7 +113,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   let machine = await checkMachineExist(machineId);
 
   let currentScheduleOnMachine =
-    await db.getMachinesOccupiedSchedules(machineId, moment().format());
+    await db.getMachinesCurrentOccupiedSchedules(machineId, moment().format());
 
   if (currentScheduleOnMachine) {
     instantCreateContainer(currentScheduleOnMachine, 3);

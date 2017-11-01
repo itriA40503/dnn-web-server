@@ -197,8 +197,12 @@ schedule.update = asyncWrap(async (req, res, next) => {
   let getScheduleById = id => Schedule.scope('detail').findOne({ where: { id: id } });
 
   let schedule = await getScheduleById(scheduleId);
-  if (!schedule) throw new CdError('401', 'No such schedule');
-  else if (schedule.userId !== userId) throw new CdError('401', 'Not owner');
+
+  if (!schedule) throw new CdError(401, 'Schedule not exist');
+  else if (schedule.userId !== userId) throw new CdError(401, 'Have no auth');
+  else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is deleting!');
+  else if (schedule.statusId === 5) throw new CdError(401, 'Schedule has been deleted!');
+  else if (schedule.statusId === 10) throw new CdError(401, 'Wrong schedule status.');
 
   let machineId = schedule.machine.id;
   let oldStartDate = moment(schedule.startedAt);
@@ -252,13 +256,13 @@ schedule.restart = asyncWrap(async (req, res, next) => {
   if (!schedule) throw new CdError(401, 'Schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'Have no auth');
   else if (schedule.statusId === 1) throw new CdError(401, 'Schedule hasn\'t running');
-  else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is already deleting!');
-  else if (schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted!');
-  // else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled!');
+  else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is deleting!');
+  else if (schedule.statusId === 5) throw new CdError(401, 'Schedule has been deleted!');
+  else if (schedule.statusId === 10) throw new CdError(401, 'Wrong schedule status.');
+  else if (moment(schedule.startDate) > moment() || moment(schedule.endDate) < moment()) throw new CdError(401, 'Wrong period.');
 
-  if (moment(schedule.startDate) <= moment() && moment(schedule.endDate) <= moment()) {
-    instantCreateContainer(schedule, 3);
-  }
+  instantCreateContainer(schedule, 3);
+
 
   res.json('restart');
 
