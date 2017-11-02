@@ -45,10 +45,8 @@
 /**
  * @api {get} /image/:id Get  imag by id or digest
  * @apiVersion 0.1.0
- * @apiName  UpdateImage
+ * @apiName  GetImage
  * @apiGroup Image
- *
- * @apiParam {String} description Image description.
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -74,7 +72,7 @@
 /**
  * @api {put} /image/:id Update image
  * @apiVersion 0.1.0
- * @apiName  GetImages
+ * @apiName  UpdateImage
  * @apiGroup Image
  *
  * @apiParam {String} description Image description.
