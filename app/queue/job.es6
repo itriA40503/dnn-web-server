@@ -36,10 +36,11 @@ serverJob.startASchedule = async (schedule) => {
         return newPort;
       });
       await db.destoryAllPortsBySchedule(schedule.id);
-      await Port.bulkCreate(ports);
-      await schedule.container.updateAttributes({ statusId: 2,
+      schedule.updateAttributes({ statusId: 2 });
+      schedule.container.updateAttributes({
         createdAt: moment().format()
       });
+      Port.bulkCreate(ports);
     } else {
       throw new Error('This kind schedules are not able to be started!');
     }
@@ -117,7 +118,7 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
     await schedule.updateAttributes(updateAttr);
 
     if (schedule.statusId === 7 || schedule.statusId === 8) {
-      await kuberAPI.deleteContainerFromSchedule(scheduleP);
+      kuberAPI.deleteContainerFromSchedule(scheduleP);
     }
 
     return true;
@@ -129,7 +130,6 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
         deletedAt: moment().format()
       });
     }
-
   }
   return false;
 };
