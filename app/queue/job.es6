@@ -46,9 +46,7 @@ serverJob.startASchedule = async (schedule) => {
     return true;
   } catch (err) {
     console.log(err.message);
-    if (err instanceof K8SError) {
-      schedule.updateAttributes({ statusId: 7 });
-    }
+    schedule.updateAttributes({ statusId: 7 });
   }
   return false;
 };
@@ -108,7 +106,7 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
     if (schedule.statusId === 2 || schedule.statusId === 3) {
       await schedule.updateAttributes({ statusId: 4 });
       let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
-    } else if (schedule.statusId !== 1 || schedule.statusId !== 7) {
+    } else if (schedule.statusId !== 1 || schedule.statusId !== 7 || schedule.statusId !== 8) {
       throw new Error('This kind schedule can\'t be delete manually');
     }
 
@@ -118,7 +116,7 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
     updateAttr[deleteAtType] = moment().format();
     await schedule.updateAttributes(updateAttr);
 
-    if (schedule.statusId !== 7) {
+    if (schedule.statusId === 7 || schedule.statusId === 8) {
       await kuberAPI.deleteContainerFromSchedule(scheduleP);
     }
 
