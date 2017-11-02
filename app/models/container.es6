@@ -29,6 +29,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'message'
     },
+    phase: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'message'
+    },
+    createdAt: {
+      type: DataTypes.TIME,
+      allowNull: true,
+      field: 'created_at'
+    }
   }, {
     tableName: 'container',
     timestamps: false,
@@ -44,7 +54,8 @@ module.exports = (sequelize, DataTypes) => {
             'podIp',
             'sshPort',
             'phase',
-            'message'
+            'message',
+            'createdAt'
           ]
         };
       }
