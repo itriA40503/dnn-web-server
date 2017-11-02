@@ -60,6 +60,11 @@ const checkMachineExist = async (id) => {
   return machine;
 };
 
+machineAPI.getAllExistMachine = asyncWrap(async (req, res, next) => {
+  let machines = await db.getAllExistMachines();
+  res.json(machines);
+});
+
 machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   let label = (req.query && req.query.label) || (req.body && req.body.label);
   let name = (req.query && req.query.name) || (req.body && req.body.name) || label;

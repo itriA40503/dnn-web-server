@@ -1,4 +1,39 @@
 /**
+ * @api {get} /admin/machines Get machine list
+ * @apiVersion 0.1.0
+ * @apiName  GetMachineList
+ * @apiGroup Admin/machines
+ *
+ * @apiHeader {String} x-access-token Admin token
+ * @apiParam {String} gpuAmount Gpu amount (1~4)
+ * @apiParam {String} gpuType Gpu type GTX1080 or v100
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ [
+  { id: '51',
+   label: 'm19',
+   name: 'm19',
+   description: null,
+   gpuAmount: 2,
+   gpuType: 'GTX1080',
+   statusId: 1,     // 1: running 2:error 3: disable 4: destoryed
+   updatedAt: '2017-09-30T02:09:43.615Z' },
+    ...
+ ]
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+/**
  * @api {post} /admin/machine Create new machine
  * @apiVersion 0.1.0
  * @apiName  CreateMachine

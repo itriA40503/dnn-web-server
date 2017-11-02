@@ -140,6 +140,10 @@ db.getMachineById = (id) => {
   return Machine.scope('normal').findById(id);
 };
 
+db.getAllExistMachines = () => {
+  return Machine.scope('thoseExist').findAll();
+};
+
 db.getExistMachineById = (id) => {
   return Machine.scope('normal',
     'thoseExist',
