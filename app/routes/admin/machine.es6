@@ -152,6 +152,10 @@ machineAPI.disableMachine = asyncWrap(async (req, res, next) => {
   let machineId = req.params.machine_id;
   let machine = await checkMachineExist(machineId);
 
+  let currentScheduleOnMachine =
+    await db.getMachineAllOccupiedSchedule(machineId);
+  // 取消或刪除所有機器上的schedule
+  currentScheduleOnMachine.map(serverJob.deleteASchedule);
   await machine.updateAttributes({ statusId: 3 });
 
   res.json(machine);
@@ -164,7 +168,6 @@ machineAPI.deleteMachine = asyncWrap(async (req, res, next) => {
 
   let currentScheduleOnMachine =
     await db.getMachineAllOccupiedSchedule(machineId);
-  console.log(currentScheduleOnMachine);
   // 取消或刪除所有機器上的schedule
   currentScheduleOnMachine.map(serverJob.deleteASchedule);
   await machine.updateAttributes({ statusId: 4 });
