@@ -37,7 +37,7 @@ serverJob.startASchedule = async (schedule) => {
       });
       await db.destoryAllPortsBySchedule(schedule.id);
       await Port.bulkCreate(ports);
-      await schedule.updateAttributes({ statusId: 2,
+      await schedule.container.updateAttributes({ statusId: 2,
         createdAt: moment().format()
       });
     } else {

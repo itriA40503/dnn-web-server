@@ -43,9 +43,9 @@
  */
 
 /**
- * @api {get} /image/:id Update image
+ * @api {get} /image/:id Get  imag by id or digest
  * @apiVersion 0.1.0
- * @apiName  GetImages
+ * @apiName  UpdateImage
  * @apiGroup Image
  *
  * @apiParam {String} description Image description.
