@@ -1,5 +1,5 @@
 /**
- * @api {get} /machine Get machine list
+ * @api {get} /machines Get machine list
  * @apiVersion 0.1.0
  * @apiName  getMachineList
  * @apiGroup Machine
@@ -41,7 +41,7 @@
  *     }
  */
  /**
- * @api {get} /machine/remain Machine remain
+ * @api {get} /machines/remain Machine remain
  * @apiVersion 0.1.0
  * @apiName  checkMachineRemain
  * @apiGroup Machine
@@ -68,7 +68,7 @@
  *
  **/
  /**
- * @api {get} /machine/calendar Machine available calendar
+ * @api {get} /machines/calendar Machine available calendar
  * @apiVersion 0.1.0
  * @apiName  getMachineCalendar
  * @apiGroup Machine

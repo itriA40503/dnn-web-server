@@ -146,7 +146,7 @@ describe('server', () => {
   describe('image', () => {
     it('Get Image List', done => {
       request
-        .get('/image')
+        .get('/images')
         .set('Accept', 'application/json')
         .end( (err, res) => {
           res.should.have.status(200);
@@ -162,7 +162,7 @@ describe('server', () => {
   describe('machine', () => {
     it('Get Machine List', done => {
       request
-        .get('/machine')
+        .get('/machines')
         .set('Accept', 'application/json')
         .end( (err, res) => {
           res.should.have.status(200);
@@ -175,7 +175,7 @@ describe('server', () => {
     });
     it('Get Machine Available Calender', done => {
       request
-        .get('/machine/calendar')
+        .get('/machines/calendar')
         .set('Accept', 'application/json')
         .end( (err, res) => {
           res.should.have.status(200);
@@ -192,7 +192,7 @@ describe('server', () => {
         end: scheduleSetting.end.format()
       }
       request
-        .get('/machine/remain')
+        .get('/machines/remain')
         .set('Accept', 'application/json')
         .send(dateRange)
         .end( (err, res) => {
@@ -527,7 +527,7 @@ describe('server', () => {
               resSchedule = res.body;
               done();
             })
-        }, 6000);
+        }, 7000);
 
       }).timeout(9000);
 

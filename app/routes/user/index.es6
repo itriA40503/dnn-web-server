@@ -4,7 +4,9 @@ import report from './report';
 import schedule from './schedule';
 import jwtAuth from '../../middleware/jwtAuth';
 
+const rootRouter = express.Router();
 const router = express.Router();
+const userRouter = express.Router();
 const scheduleRouter = express.Router();
 const schedulesRouter = express.Router();
 
@@ -19,10 +21,12 @@ schedulesRouter.get('/', schedule.get);
 schedulesRouter.get('/reserved', schedule.getReserved);
 schedulesRouter.get('/history', schedule.getHistory);
 
-router.post('/report', jwtAuth, report);
-router.get('/signin', login);
-router.use('/schedule', jwtAuth, scheduleRouter);
-router.use('/schedules', jwtAuth, schedulesRouter);
+userRouter.post('/report', jwtAuth, report);
+userRouter.get('/signin', login);
+userRouter.use('/schedule', jwtAuth, scheduleRouter);
+userRouter.use('/schedules', jwtAuth, schedulesRouter);
+
+router.use ('/user', userRouter);
 
 export default router;
 

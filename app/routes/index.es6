@@ -6,10 +6,10 @@ import adminR from './admin';
 import statisticR from './statistic';
 
 export default (app) => {
-  app.use('/user', userR);
-  app.use('/schedule', scheduleR);
-  app.use('/machine', machineR);
-  app.use('/image', imageR);
-  app.use('/admin', adminR);
-  app.use('/statistic', statisticR);
+  app.use('/', userR);
+  app.use('/', scheduleR);
+  app.use('/', machineR);
+  app.use('/', imageR);
+  app.use('/', adminR);
+  app.use('/', statisticR);
 };

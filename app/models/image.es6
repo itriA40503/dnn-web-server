@@ -84,6 +84,16 @@ module.exports = (sequelize, DataTypes) => {
             //   [sequelize.fn('MAX', sequelize.col('created_at')), 'createdAt']
           ]
         };
+      },
+      byIdOrDigest: (id) => {
+        return {
+          where: {
+            $or: [
+              { id: id },
+              { digest: id }
+            ]
+          }
+        };
       }
     }
   });
