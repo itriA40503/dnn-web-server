@@ -22,7 +22,7 @@ const DELETE_A_SCHEDULE = 'delete a schedule';
 const serverJob = {};
 
 serverJob.startASchedule = async (schedule) => {
-  console.log(`Start schedule:${schedule.id} Container:${schedule.machine.id}`);
+  console.log(`Start schedule:${schedule.id} Machine:${schedule.machine.id}`);
   try {
     if ([1, 2, 3, 7].includes(schedule.statusId)) {
       await schedule.updateAttributes({ statusId: 8 });
@@ -52,7 +52,7 @@ serverJob.startASchedule = async (schedule) => {
 };
 
 serverJob.updateASchedule = async (schedule) => {
-  console.log(`Update schedule:${schedule.id} Container:${schedule.machine.id}`);
+  console.log(`Update schedule:${schedule.id} Machine:${schedule.machine.id}`);
   try {
     if ([2, 3].includes(schedule.statusId)) {
       let scheduleP = await schedule.get({ plain: true });
@@ -100,13 +100,13 @@ serverJob.updateASchedule = async (schedule) => {
 };
 
 serverJob.deleteASchedule = async (schedule, isExpired) => {
-  console.log(`delete schedule:${schedule.id} Container:${schedule.machine.id}`);
+  console.log(`delete schedule:${schedule.id} Machine:${schedule.machine.id}`);
   try {
     let scheduleP = await schedule.get({ plain: true });
     if (schedule.statusId === 2 || schedule.statusId === 3) {
       await schedule.updateAttributes({ statusId: 4 });
       let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
-    } else if (schedule.statusId !== 1 || schedule.statusId !== 7 || schedule.statusId !== 8) {
+    } else if (schedule.statusId !== 1 && schedule.statusId !== 7 && schedule.statusId !== 8) {
       throw new Error('This kind schedule can\'t be delete manually');
     }
 
