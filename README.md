@@ -36,10 +36,28 @@ $ npm run apidoc
 Set the mode to "development" or "production".
 
 ### DNNDB_HOST 
-This environment variable can be used to set the postgresql database host.
+This environment variable can be used to set the postgreSQL database host.
 
 ### DNNDB_PORT
-This environment variable can be used to set the postgresql database port.
+This environment variable can be used to set the postgreSQL database port.
+
+### DNNDB_DBNAME
+Database name. Default = "dnn".
+
+### DNNDB_USERNAME
+
+### DNNDB_PASS
+
+### K8S_API
+K8S api url. Ex: "http://100.86.2.12:30554/kubeGpu".
+
+### MAIL_SERVER_HOST
+
+### MAIL_SERVER_PORT
+
+### MAIL_SERVER_USERNAME
+
+### MAIL_SERVER_PASS
 
 ## Docker Tutorial ##
 
@@ -51,11 +69,22 @@ $ sudo update-ca-certificates
 $ sudo service docker restart
 ```
 
-### Build image ###
+### Copy Dockerfile to the right situation ###
+
+$ cp docker/server/Dockerfile ../../../Dockerfile
+
+### Build project image ###
 
 ```bash
-$ cd docker
+$ cd /<parent directory of project root>
 $ docker build -t <imagename:tag> .
+```
+
+### Build database image ###
+
+```bash
+$ cd database
+$ docker build -t <database-imagename:tag> .
 ```
 
 ### Pull image ###
@@ -94,4 +123,6 @@ $ docker commit <container name> <imagename:tag>
 
 ## Change log ##
 
+* `0.2.5` Schedule and machine management complete.
+* `0.2.4` Schedule management refactor.
 * `0.2.3` Production version release.

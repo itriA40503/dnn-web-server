@@ -8,9 +8,9 @@ const config = {
       host: process.env.DNNDB_HOST || '13.115.57.99',
       port: process.env.DNNDB_PORT || '5432',
       dialect: 'postgres',
-      db: 'dnn',
-      username: 'postgres',
-      password: 'cditripost',
+      db: process.env.DNNDB_DBNAME || 'dnn',
+      username: process.env.DNNDB_USERNAME || 'postgres',
+      password: process.env.DNNDB_PASS || 'cditripost',
       timeZone: '+08:00',
       pool: {
         max: 5,
@@ -20,15 +20,15 @@ const config = {
       logging: false
     },
     kuber: {
-      url: process.env.DNNDB_PORT || 'http://100.86.2.12:30554/kubeGpu'
+      url: process.env.k8S_API || 'http://100.86.2.12:30554/kubeGpu'
     },
     mailer: {
       smtpSetting: {
-        host: 'localhost',
-        port: 25,
+        host: process.env.MAIL_SERVER_HOST || 'localhost',
+        port: process.env.MAIL_SERVER_PORT || 25,
         auth: {
-          user: 'kaban',
-          pass: 'kaban'
+          user: process.env.MAIL_SERVER_USERNAME || 'kaban',
+          pass: process.env.MAIL_SERVER_PASS || 'kaban'
         },
         tls: {
           rejectUnauthorized: false
@@ -61,9 +61,9 @@ const config = {
       host: process.env.DNNDB_HOST || '13.115.57.99',
       port: process.env.DNNDB_PORT || '5432',
       dialect: 'postgres',
-      db: 'dnn',
-      username: 'postgres',
-      password: 'cditripost',
+      db: process.env.DNNDB_DBNAME || 'dnn',
+      username: process.env.DNNDB_USERNAME || 'postgres',
+      password: process.env.DNNDB_PASS || 'cditripost',
       timeZone: '+08:00',
       pool: {
         max: 5,
@@ -73,15 +73,15 @@ const config = {
       logging: false
     },
     kuber: {
-      url: 'http://100.86.2.12:30554/kubeGpu'
+      url: process.env.k8S_API || 'http://100.86.2.12:30554/kubeGpu'
     },
     mailer: {
       smtpSetting: {
-        host: 'localhost',
-        port: 25,
+        host: process.env.MAIL_SERVER_HOST || 'localhost',
+        port: process.env.MAIL_SERVER_PORT || 25,
         auth: {
-          user: 'kaban',
-          pass: 'kaban'
+          user: process.env.MAIL_SERVER_USERNAME || 'kaban',
+          pass: process.env.MAIL_SERVER_PASS || 'kaban'
         },
         tls: {
           rejectUnauthorized: false

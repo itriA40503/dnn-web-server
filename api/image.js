@@ -1,5 +1,5 @@
 /**
- * @api {get} /image Get image list
+ * @api {get} /images Get image list
  * @apiVersion 0.1.0
  * @apiName  GetImages
  * @apiGroup Image
@@ -33,6 +33,35 @@
            }
          ]
        }
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *          "message": ""
+ *     }
+ */
+
+/**
+ * @api {get} /image/:id Update image
+ * @apiVersion 0.1.0
+ * @apiName  GetImages
+ * @apiGroup Image
+ *
+ * @apiParam {String} description Image description.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+
+
+ {
+   "id": "3",
+   "label": "caffe_2017may",
+   "name": "caffe_2017may",
+   "path": null,
+   "description": "caffe123456"
+ }
+
  *
  *
  * @apiErrorExample Error-Response:
