@@ -43,6 +43,10 @@ const schedule = {};
 schedule.getASchedule = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
   let userId = req.user.id;
+
+  if (!scheduleId) throw new CdError('401', 'without schedule id');
+  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
+
   let schedule = await db.getDetailScheduleById(scheduleId);
 
   if (schedule.userId !== userId) throw new CdError(401, 'You don\'t have permission!');
@@ -189,6 +193,7 @@ schedule.update = asyncWrap(async (req, res, next) => {
   let end = req.query.end || (req.body && req.body.end);
 
   if (!scheduleId) throw new CdError('401', 'without schedule id');
+  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
 
   let setting = {
     projectCode: req.query.project_code
@@ -250,6 +255,7 @@ schedule.restart = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
 
   if (!scheduleId) throw new CdError('401', 'Without schedule id');
+  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
 
   let schedule = await Schedule.scope('detail').findById(scheduleId);
 
@@ -273,6 +279,7 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
 
   if (!scheduleId) throw new CdError('401', 'without schedule id');
+  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
 
   let schedule = await Schedule.scope('detail').findById(scheduleId);
 
@@ -294,6 +301,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
 
   if (!scheduleId) throw new CdError('401', 'Eithout schedule id');
+  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
 
   let getScheduleById = id => Schedule.scope('normal').findOne({ where: { id: id } });
 

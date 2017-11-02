@@ -35,6 +35,7 @@ serverJob.startASchedule = async (schedule) => {
         newPort.containerId = schedule.container.id;
         return newPort;
       });
+      await db.destoryAllPortsBySchedule(schedule.id);
       await Port.bulkCreate(ports);
       await schedule.updateAttributes({ statusId: 2,
         createdAt: moment().format()
@@ -103,11 +104,11 @@ serverJob.updateASchedule = async (schedule) => {
 serverJob.deleteASchedule = async (schedule, isExpired) => {
   console.log(`delete schedule:${schedule.id} Container:${schedule.machine.id}`);
   try {
+    let scheduleP = await schedule.get({ plain: true });
     if (schedule.statusId === 2 || schedule.statusId === 3) {
       await schedule.updateAttributes({ statusId: 4 });
-      let scheduleP = await schedule.get({ plain: true });
       let response = await kuberAPI.deleteContainerFromSchedule(scheduleP);
-    } else if (schedule.statusId !== 1) {
+    } else if (schedule.statusId !== 1 || schedule.statusId !== 7) {
       throw new Error('This kind schedule can\'t be delete manually');
     }
 
@@ -116,6 +117,10 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
     deleteAtType = (isExpired) ? 'expiredAt' : deleteAtType;
     updateAttr[deleteAtType] = moment().format();
     await schedule.updateAttributes(updateAttr);
+
+    if (schedule.statusId !== 7) {
+      await kuberAPI.deleteContainerFromSchedule(scheduleP);
+    }
 
     return true;
   } catch (err) {

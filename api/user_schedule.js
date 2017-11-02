@@ -72,8 +72,66 @@
 *
 * @apiSuccessExample Success-Response:
 *     HTTP/1.1 200 OK
-*     {
-  *     }
+ {
+    "id": "732",
+    "statusId": 7,
+    "projectCode": null,
+    "username": "Axxxxx",
+    "password": "ofv7to2f",
+    "startedAt": "2017-11-01T16:00:00.000Z",
+    "endedAt": "2017-11-03T15:59:59.000Z",
+    "createdAt": "2017-11-01T03:32:23.957Z",
+    "updatedAt": "2017-11-01T18:40:21.124Z",
+    "canceledAt": null,
+    "expiredAt": null,
+    "deletedAt": null,
+    "userId": "1",
+    "machine": {
+      "id": "1",
+      "label": "m1",
+      "name": "m1",
+      "description": null,
+      "gpuAmount": 1,
+      "gpuType": "v100",
+      "statusId": 1
+    },
+    "container": {
+      "id": "732",
+      "serviceIp": null,
+      "podIp": null,
+      "sshPort": null,
+      "phase": null,
+      "message": "401 - {\"message\":\"CaCert is empty\"}",
+      "ports": [
+        {
+          "id": "5785",
+          "containerId": "732",
+          "name": "ssh",
+          "protocol": "TCP",
+          "port": 22,
+          "targetPort": 22,
+          "nodePort": 31967
+        },
+        {
+          "id": "5786",
+          "containerId": "732",
+          "name": "port1",
+          "protocol": "TCP",
+          "port": 1010,
+          "targetPort": 1010,
+          "nodePort": 31772
+        },
+        ...
+      ]
+    },
+    "image": {
+      "id": "35",
+      "label": "2017v009",
+      "name": "tensorflow",
+      "path": null,
+      "description": null
+    }
+  }
 *
 * @apiError  0 Parameter error.
 *

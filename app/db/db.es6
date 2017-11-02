@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { schedule as Schedule, machine as Machine, image as Image } from '../models/index';
+import { schedule as Schedule, port as Port, machine as Machine, image as Image } from '../models/index';
 
 const sequelize = Schedule.sequelize;
 
@@ -127,6 +127,15 @@ db.getMachinesCurrentOccupiedSchedules = (machineId) => {
   ).findOne();
 };
 
+db.destoryAllPortsBySchedule = (scheduleId) => {
+  return Port.destroy({
+    where: {
+      containerId: scheduleId
+    },
+    force: true
+  });
+};
+
 db.getMachineById = (id) => {
   return Machine.scope('normal').findById(id);
 };
@@ -184,18 +193,12 @@ db.getImageById = (id) => {
   return Image.findById(id);
 };
 
+db.getImageByIdOrDigest = (id) => {
+  return Image.scope({ method: ['byIdOrDigest', id] }).findOne();
+};
+
 db.updateImage = (id, options) => {
-  return Image.update(
-    options,
-    {
-      where: {
-        $or: [
-          { id: id },
-          { digest: id }
-        ]
-      }
-    }
-  );
+  return Image.scope({ method: ['byIdOrDigest', id] }).update(options);
 };
 
 /* db.getUserBookedScheduleIds = (userId) => {
@@ -209,12 +212,24 @@ db.updateImage = (id, options) => {
   });
 }; */
 
-db.findOrCreateImageTag = (imageTag) => {
+/* db.findOrCreateImageTag = (imageTag) => {
   let [name, label] = imageTag.split(':');
   return Image.findOrCreate({
     where: {
       name: name,
       label: label
+    }
+  });
+}; */
+
+db.findOrCreateImageTag = (image) => {
+  return Image.findOrCreate({
+    where: {
+      name: image.name,
+      label: image.label
+    },
+    defaults: {
+      digest: image.digest
     }
   });
 };
