@@ -107,7 +107,7 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $notIn: [4]
+              $not: 4
             }
           }
         };
