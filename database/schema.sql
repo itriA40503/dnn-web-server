@@ -13,7 +13,7 @@
 --
 
 CREATE TABLE admin_user(
-    id    int8    NOT NULL,
+    id    BIGSERIAL,
     CONSTRAINT "PK12" PRIMARY KEY (id)
 )
 ;
@@ -25,7 +25,7 @@ CREATE TABLE admin_user(
 --
 
 CREATE TABLE container(
-    id            int8           NOT NULL,
+    id            BIGSERIAL,
     service_ip    varchar(16),
     pod_ip        varchar(16),
     ssh_port      int4,
@@ -44,7 +44,7 @@ CREATE TABLE container(
 --
 
 CREATE TABLE dnn_user(
-    id            int8           NOT NULL,
+    id            BIGSERIAL,
     itri_id       varchar(32)    NOT NULL,
     salt          varchar(32),
     created_at    timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE dnn_user(
 --
 
 CREATE TABLE image(
-    id             int8            NOT NULL,
+    id             BIGSERIAL,
     digest         varchar(64),
     path           varchar(256),
     name           varchar(64),
@@ -82,7 +82,7 @@ CREATE TABLE image(
 --
 
 CREATE TABLE machine(
-    id             int8            NOT NULL,
+    id             BIGSERIAL,
     status_id      int4            NOT NULL,
     name           varchar(64),
     label          varchar(10)     NOT NULL,
@@ -116,7 +116,7 @@ CREATE TABLE machine_status(
 --
 
 CREATE TABLE port(
-    id              int8           NOT NULL,
+    id              BIGSERIAL,
     container_id    int8           NOT NULL,
     name            varchar(25),
     protocol        varchar(25),
@@ -134,7 +134,7 @@ CREATE TABLE port(
 --
 
 CREATE TABLE project_code(
-    id            int8           NOT NULL,
+    id            BIGSERIAL,
     code          varchar(32)    NOT NULL,
     created_at    timestamp      DEFAULT CURRENT_TIMESTAMP,
     updated_at    timestamp,
@@ -150,7 +150,7 @@ CREATE TABLE project_code(
 --
 
 CREATE TABLE report(
-    id             int8            NOT NULL,
+    id             BIGSERIAL,
     description    varchar(256),
     schedule_id    int8,
     user_id        int8,
@@ -168,7 +168,7 @@ CREATE TABLE report(
 --
 
 CREATE TABLE schedule(
-    id                 int8           NOT NULL,
+    id                 BIGSERIAL,
     status_id          int4           NOT NULL,
     username           varchar(32),
     password           varchar(32),
