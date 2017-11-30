@@ -5,10 +5,11 @@ import moment from 'moment';
 import LdapAuth from 'ldapauth-fork';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
-import paraChecker from '../../util/paraChecker';
+import config from '../../config';
 import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models/index';
 
-const kubeUrl = 'http://100.86.2.12:30554/kubeGpu';
+const kubeConfig = config.kuber;
+const kubeUrl = kubeConfig.url;
 const cVolumnAPI = `${kubeUrl}/volumn`;
 
 export default asyncWrap(async (req, res, next) => {
