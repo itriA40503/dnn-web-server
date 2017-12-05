@@ -11,6 +11,7 @@ import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance,
 
 export default asyncWrap(async (req, res, next) => {
   let username = (req.body && req.body.username) || (req.query && req.query.username) || req.headers['x-username'];
+  /* Todo: encrypt password between server and client */
   let password = (req.body && req.body.password) || (req.query && req.query.password) || req.headers['x-password'];
 
   if ((!username || !password)) throw new CdError(401, 'missing username or password', 40100);
