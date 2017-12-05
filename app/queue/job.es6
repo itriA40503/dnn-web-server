@@ -13,9 +13,7 @@ const START_A_SCHEDULE = 'start a schedule';
 const UPDATE_A_SCHEDULE = 'update a schedule';
 const DELETE_A_SCHEDULE = 'delete a schedule';
 
-/* In future
-   Jobs should be call in queue not in routers
-   PM2 should use gracefulReload for kue.js when restart server */
+/* Todo: run jobs by using queue, pm2 should use gracecfulReload for kue.js (options) */
 
 // const queue = kue.createQueue();
 
