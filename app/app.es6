@@ -25,11 +25,8 @@ app.set('json spaces', 2);
 
 // app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 logger.format('detailed', (token, req, res) => {
-  return `${req.method}:${req.path} ${JSON.stringify(req.body)} -> ${res.statusCode}:${res.body}\n`;
+  return `${req.method}:${req.path} ${JSON.stringify(req.body)} -> ${res.statusCode}\n`;
 });
-
-// register logging middleware and use custom logging format
-app.use(logger('detailed'));
 
 // app.use(logger('dev'));
 app.use(cors({ origin: '*', optionsSuccessStatus: 200 }));
@@ -45,6 +42,9 @@ app.use(sassMiddleware({
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(timeout(12000));
+
+// register logging middleware and use custom logging format
+app.use(logger('detailed'));
 
 app.get('/', (req, res) => {
   res.render('index', { title: 'Express' });

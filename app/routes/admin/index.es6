@@ -7,6 +7,8 @@ const adminRouter = express.Router();
 const machineRouter = express.Router();
 const machinesRouter = express.Router();
 
+/* Todo: add admin authentication */
+
 machineRouter.post('/', machine.createMachine);
 machineRouter.put('/:machine_id', machine.modifyMachine);
 machineRouter.put('/:machine_id/enable', machine.enableMachine);

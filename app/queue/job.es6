@@ -46,7 +46,7 @@ serverJob.startASchedule = async (schedule) => {
     }
     return true;
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     schedule.updateAttributes({ statusId: 7 });
   }
   return false;
@@ -89,7 +89,7 @@ serverJob.updateASchedule = async (schedule) => {
     return true;
 
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     if (err instanceof K8SError) {
       schedule.container.updateAttributes({
         message: err.message
@@ -123,7 +123,7 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
 
     return true;
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     if (err instanceof K8SError) {
       schedule.updateAttributes({
         statusId: 10,

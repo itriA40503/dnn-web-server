@@ -3,6 +3,8 @@ import { schedule as Schedule, port as Port, machine as Machine, image as Image 
 
 const sequelize = Schedule.sequelize;
 
+/* Todo: put functions to models separately */
+
 const db = {};
 
 db.getSchedules = (options) => {

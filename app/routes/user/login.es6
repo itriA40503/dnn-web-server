@@ -3,14 +3,11 @@ import request from 'request-promise-native';
 import crypto from 'crypto';
 import moment from 'moment';
 import LdapAuth from 'ldapauth-fork';
+import k8sAPI from '../../k8s/k8sAPI';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import config from '../../config';
 import { sequelize, dnnUser as User, schedule as Schedule, instance as Instance, image as Image, machine as Machine } from '../../models/index';
-
-const kubeConfig = config.kuber;
-const kubeUrl = kubeConfig.url;
-const cVolumnAPI = `${kubeUrl}/volumn`;
 
 export default asyncWrap(async (req, res, next) => {
   let username = (req.body && req.body.username) || (req.query && req.query.username) || req.headers['x-username'];
@@ -45,21 +42,9 @@ export default asyncWrap(async (req, res, next) => {
           salt: crypto.randomBytes(16).toString('hex')
         }
       });
-      console.log(created);
 
-      let options = {
-        method: 'POST',
-        url: cVolumnAPI,
-        body: {
-          account: itriId
-        },
-        timeout: 5000,
-        json: true,
-        resolveWithFullResponse: true
-      };
-
-      // 先不處理有沒有create volumn
-      request(options);
+      /* Todo: add createdVolume column in user table to check whether or not to call the API  */
+      k8sAPI.createUserVolumeUsingITRIID(itriId);
 
       let token = jwt.encode({
         uid: user.id,

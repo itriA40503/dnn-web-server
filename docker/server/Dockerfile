@@ -18,7 +18,7 @@ RUN apk del tzdata
 
 RUN npm install pm2 -g
 # Add project. Remeber to put the Dockerfile into directory which has our project directory.
-ADD ./itri-dnn-web-portal-server /dnnserver
+ADD ./dnn-web-server /dnnserver
 # Install module
 RUN npm install
 # Build app

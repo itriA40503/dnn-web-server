@@ -11,6 +11,7 @@ const debug = Debug('kuber-api');
 const kubeConfig = config.kuber;
 const kubeUrl = kubeConfig.url;
 // const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
+const cVolumnAPI = `${kubeUrl}/volumn`;
 const conAPI = `${kubeUrl}/container`;
 const consAPI = `${kubeUrl}/containers`;
 const imageAPI = `${kubeUrl}/image`;
@@ -18,7 +19,30 @@ const imagesAPI = `${kubeUrl}/images`;
 
 const k8sAPI = {};
 
+k8sAPI.createUserVolumeUsingITRIID = async (itriId) => {
+  console.log(`ITRI id ${itriId}: creating storage volume`);
+  try {
+    let options = {
+      method: 'POST',
+      url: cVolumnAPI,
+      body: {
+        account: itriId
+      },
+      timeout: 5000,
+      json: true,
+      resolveWithFullResponse: true
+    };
+    let response = await request(options);
+    return response;
+  } catch (err) {
+    console.error(`ITRI id ${itriId}: create storage volume failed`);
+    /* 這裡寄信 */
+    throw new K8SError(err.message);
+  }
+};
+
 k8sAPI.createContainerUsingSchedule = async (schedule) => {
+  console.log(`Schedule${schedule.id}: creating container`);
   try {
     let options = {
       method: 'POST',
@@ -38,13 +62,14 @@ k8sAPI.createContainerUsingSchedule = async (schedule) => {
     let response = await request(options);
     return response;
   } catch (err) {
-    console.log(`schedule${schedule.id}: create fail with kubernetes`);
+    console.error(`Schedule${schedule.id}: create fail with kubernetes`);
     /* 這裡寄信 */
     throw new K8SError(err.message);
   }
 };
 
 k8sAPI.updateContainerUsingSchedule = async (schedule) => {
+  console.log(`Schedule${schedule.id}: updating container`);
   try {
     let options = {
       method: 'GET',
@@ -57,12 +82,13 @@ k8sAPI.updateContainerUsingSchedule = async (schedule) => {
     let response = await request(options);
     return response;
   } catch (err) {
-    console.log(`schedule${schedule.id}: update fail with kubernetes`);
+    console.error(`Schedule${schedule.id}: update fail with kubernetes`);
     throw new K8SError(err.message);
   }
 };
 
 k8sAPI.deleteContainerFromSchedule = async (schedule) => {
+  console.log(`Schedule${schedule.id}: deleting container`);
   try {
     let options = {
       method: 'DELETE',
@@ -74,7 +100,7 @@ k8sAPI.deleteContainerFromSchedule = async (schedule) => {
     return response;
 
   } catch (err) {
-    console.log(`schedule${schedule.id}: delete fail with kubernetes`);
+    console.error(`Schedule${schedule.id}: delete fail with kubernetes`);
     throw new K8SError(err.message);
   }
 };
@@ -96,7 +122,7 @@ k8sAPI.removeAllContainers = async () => {
 };
 
 k8sAPI.getAllImages = async () => {
-  debug('Get All Images\' tags from repository');
+  console.log('Getting All Images\' tags from repository.');
   try {
     let options = {
       method: 'GET',
@@ -109,7 +135,7 @@ k8sAPI.getAllImages = async () => {
     return response;
 
   } catch (err) {
-    console.log('Get image tags from repository fail');
+    console.error('Get images\' tags from repository failed.');
     throw new K8SError(err.message);
   }
 };

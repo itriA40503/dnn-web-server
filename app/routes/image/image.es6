@@ -17,7 +17,7 @@ image.getLatest = asyncWrap(async (req, res, next) => {
   let images = await db.getLatestImage();
   let newImages = images.reduce((list, image) => {
     let imageP = image.get({ plain: true });
-    if (imageP.sort === '1' && !imageP.label.includes('Disable')) {
+    if (imageP.sort === '1' && imageP.label && !imageP.label.includes('Disable')) {
       delete imageP.sort;
       list.push(imageP);
     }

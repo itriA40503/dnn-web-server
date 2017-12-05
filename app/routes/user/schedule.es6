@@ -24,7 +24,6 @@ const instantUpdateContainer = async (schedule, times) => {
 const instantCreateContainer = async (schedule, times) => {
   let tryTimes = times;
   if (tryTimes > 0) {
-    console.log(`Start to create container ${schedule.id}`);
     let result = await serverJob.startASchedule(schedule);
     if (result) {
       setTimeout(() => {
@@ -269,7 +268,6 @@ schedule.restart = asyncWrap(async (req, res, next) => {
 
   instantCreateContainer(schedule, 3);
 
-
   res.json('restart');
 
 });
@@ -287,7 +285,6 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   else if (schedule.userId !== userId) throw new CdError(401, 'Not owner!');
   else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is already deleting!');
   else if (schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted!');
-  // else if (schedule.statusId === 6) throw new CdError(401, 'Schedule have been canceled!');
 
   await serverJob.deleteASchedule(schedule);
 
@@ -313,8 +310,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   let oldStartDate = moment(schedule.startedAt);
   let oldEndDate = moment(schedule.endedAt);
   let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');
- // let reducibleEndDate = moment.max(oldStartDate.add(1, 'days').startOf('day'),
-  // moment().add(1, 'days').startOf('day'));
+
   let schedules = await db.getMachinesOccupiedSchedules(
     machineId,
     oldEndDate.format(),
@@ -329,7 +325,6 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
 
   extendableEndDate = moment.max([oldEndDate, ended]);
   res.json({
-    // reducibleLatesDate: reducibleEndDate,
     extendableLatestDate: extendableEndDate
   });
 
