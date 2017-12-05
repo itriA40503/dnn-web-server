@@ -47,7 +47,7 @@ describe('server', () => {
 
   before( done => {
     (async () => {
-      console.log("before");
+      console.log("test before");
       await User.create({
         id: userSetting.id,
         itriId: userSetting.itriId,

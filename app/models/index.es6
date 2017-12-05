@@ -9,7 +9,7 @@ const dbConfig = config.database;
 
 const sequelize = new Sequelize(dbConfig.db, dbConfig.username, dbConfig.password, dbConfig);
 const db = {};
-
+/* Connect to database */
 sequelize
   .authenticate()
   .then((err) => {
@@ -18,7 +18,7 @@ sequelize
   .catch((err) => {
     console.log('Unable to connect to the database:', err);
   });
-
+/* Import models */
 fs
   .readdirSync(__dirname)
   .filter((file) => {
@@ -26,7 +26,7 @@ fs
   })
   .forEach((file) => {
     let model = sequelize.import(path.join(__dirname, file));
-    console.log(model);
+    console.log(`Import model: ${model.name}`);
     db[model.name] = model;
   });
 

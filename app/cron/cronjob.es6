@@ -1,9 +1,9 @@
 import { CronJob } from 'cron';
 import serverJob from '../queue/job';
 
-let terminateScheduleJob = new CronJob({
+let expireScheduleJob = new CronJob({
   cronTime: '0 0 0 * * *',
-  onTick: serverJob.terminateSchedules,
+  onTick: serverJob.expireSchedules,
   start: false,
   timeZone: 'Asia/Taipei'
 });
@@ -33,5 +33,5 @@ let updateImageJob = new CronJob({
 
 startScheduleJob.start();
 updateScheduleJob.start();
-terminateScheduleJob.start();
+expireScheduleJob.start();
 updateImageJob.start();
