@@ -204,7 +204,10 @@ db.getImageByIdOrDigest = (id) => {
 };
 
 db.updateImage = (id, options) => {
-  return Image.scope({ method: ['byIdOrDigest', id] }).update(options);
+  return Image.scope({ method: ['byIdOrDigest', id] })
+    .update({
+      where: options
+    });
 };
 
 /* db.getUserBookedScheduleIds = (userId) => {
