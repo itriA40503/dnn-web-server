@@ -1,7 +1,6 @@
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import db from '../../db/db';
-import { image as Image } from '../../models/index';
 
 const image = {};
 
@@ -33,13 +32,16 @@ image.update = asyncWrap(async (req, res, next) => {
   let imageId = req.params.image_id;
   let description = req.query.description || (req.body && req.body.description);
 
-  let options = {
+  let image = db.getImageByIdOrDigest(imageId);
+
+  if (!image) throw new CdError(401, 'No specify image.');
+
+  image.updateAttributes({
     description: description
-  };
-  let image = db.updateImage(imageId, options);
+  });
 
   res.json({
-    images: image
+    image: image
   });
 });
 
