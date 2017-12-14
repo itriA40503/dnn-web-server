@@ -1,15 +1,15 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
 
-const env = process.env.NODE_ENV || 'development';
-const mailConfig = config[env].mailer;
+// const env = process.env.NODE_ENV || 'development';
+const mailConfig = config.mailer;
 
 console.log(mailConfig);
 
 let transporter = nodemailer.createTransport(mailConfig.smtpSetting);
 let mailOptions = mailConfig.alarmMailOptions;
 
-const sendAlarm = () => {
+export const sendAlarm = () => {
   transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
       return console.log(err);
@@ -18,6 +18,6 @@ const sendAlarm = () => {
   });
 };
 
-export {
-  sendAlarm
-};
+// export {
+//   sendAlarm
+// };
