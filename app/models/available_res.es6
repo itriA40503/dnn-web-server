@@ -52,8 +52,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'available_res'
   });
   AvailableRes.associate = (models) => {
-    AvailableRes.belongTo(models.resInfo, { foreignKey: 'resId' });
-    AvailableRes.belongTo(models.dnnUser, { foreignKey: 'userId' });
+    AvailableRes.belongsTo(models.resInfo, { foreignKey: 'resId' });
+    AvailableRes.belongsTo(models.dnnUser, { foreignKey: 'userId' });
   };
   return AvailableRes;
 };
