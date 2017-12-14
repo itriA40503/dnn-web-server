@@ -24,18 +24,18 @@ const config = {
     },
     mailer: {
       smtpSetting: {
-        host: process.env.MAIL_SERVER_HOST || 'localhost',
+        host: process.env.MAIL_SERVER_HOST || 'smtpx.itri.org.tw',
         port: process.env.MAIL_SERVER_PORT || 25,
         auth: {
-          user: process.env.MAIL_SERVER_USERNAME || 'kaban',
-          pass: process.env.MAIL_SERVER_PASS || 'kaban'
+          user: process.env.MAIL_SERVER_USERNAME || '533022',
+          pass: process.env.MAIL_SERVER_PASS || '022passw'
         },
         tls: {
           rejectUnauthorized: false
         }
       },
       alarmMailOptions: {
-        from: 'kaban@japaripark.com',
+        from: 'kevin7674@itri.org.tw',
         to: 'bakaking@itri.org.tw',
         subject: 'alarm',
         text: 'alarm text'
@@ -77,18 +77,18 @@ const config = {
     },
     mailer: {
       smtpSetting: {
-        host: process.env.MAIL_SERVER_HOST || 'localhost',
+        host: process.env.MAIL_SERVER_HOST || 'smtpx.itri.org.tw',
         port: process.env.MAIL_SERVER_PORT || 25,
         auth: {
-          user: process.env.MAIL_SERVER_USERNAME || 'kaban',
-          pass: process.env.MAIL_SERVER_PASS || 'kaban'
+          user: process.env.MAIL_SERVER_USERNAME || '533022',
+          pass: process.env.MAIL_SERVER_PASS || '022passw'
         },
         tls: {
           rejectUnauthorized: false
         }
       },
       alarmMailOptions: {
-        from: 'kaban@japaripark.com',
+        from: 'kevin7674@itri.org.tw',
         to: 'bakaking@itri.org.tw',
         subject: 'alarm',
         text: 'alarm text'
