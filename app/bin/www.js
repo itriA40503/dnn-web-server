@@ -8,6 +8,7 @@ var debug = require('debug')('dnnserver:server');
 var ssl = require('../sslCert');
 var http = require('http');
 var https = require('https');
+var http2 = require('spdy');
 var config = require('../config');
 
 var env = process.env.NODE_ENV || 'development';
@@ -27,7 +28,8 @@ app.set('httpsport', ports);
  */
 
 var server = http.createServer(app);
-var servers = https.createServer(ssl.options, app);
+// var servers = https.createServer(ssl.options, app);
+var servers = http2.createServer(ssl.options, app);
 
 /**
  * Create kue console server
