@@ -96,8 +96,10 @@ $ docker pull 100.86.2.10:32190/<imagename:tag>
 ### Run image ###
 
 ```bash
-$ docker run -d -p <target port>:80 --name <container name> <imagename:tag>
+$ docker run -d -p <target port>:80 -p <target port>:443 --dns <dns ip> --name <container name> <imagename:tag>
 ```
+* Setting `dns ip` to be available for `smtpx.itri.org.tw`.
+* `dns ip` can use `140.96.254.98`.
 
 ### Push image ###
 
