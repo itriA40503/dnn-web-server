@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('dnnUser', {
+  let DnnUser = sequelize.define('dnnUser', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       field: 'salt'
+    },
+    mail: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'mail'
     },
     createdAt: {
       type: DataTypes.TIME,
@@ -48,4 +53,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'dnn_user'
   });
+  DnnUser.associate = (models) => {
+    DnnUser.hasMany(models.transaction);
+    DnnUser.hasMany(models.availableRes);
+  };
+  return DnnUser;
 };
