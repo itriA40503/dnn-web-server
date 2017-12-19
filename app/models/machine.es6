@@ -19,6 +19,15 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 1,
       field: 'status_id'
     },
+    resId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'res_info',
+        key: 'id'
+      },
+      field: 'res_id'
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: true,
