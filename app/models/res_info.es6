@@ -19,6 +19,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'machine_type'
     },
+    valueUnit: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'value_unit'
+    },
+    value: {
+      type: DataTypes.REAL,
+      allowNull: true,
+      field: 'value'
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -36,10 +46,11 @@ module.exports = (sequelize, DataTypes) => {
       field: 'deleted_at'
     }
   }, {
-    tableName: 'res_info',
+    tableName: 'res_info'
   });
   ResInfo.associate = (models) => {
     ResInfo.hasMany(models.availableRes);
+    ResInfo.hasMany(models.machine);
   };
   return ResInfo;
 };
