@@ -247,4 +247,8 @@ db.getResourceInfo = () => {
   return ResInfo.scope('normal', 'notDelete').findAll();
 };
 
+db.findResourceInfoById = (id) => {
+  return ResInfo.scope('normal', 'notDelete').findById(id);
+};
+
 export default db;
