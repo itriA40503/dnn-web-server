@@ -5,7 +5,7 @@ const config = {
       httpsPort: '443'
     },
     database: {
-      host: process.env.DNNDB_HOST || '13.115.57.99',
+      host: process.env.DNNDB_HOST || '13.115.57.99', 
       port: process.env.DNNDB_PORT || '5432',
       dialect: 'postgres',
       db: process.env.DNNDB_DBNAME || 'dnn',
@@ -36,7 +36,7 @@ const config = {
       },
       alarmMailOptions: {
         from: 'kevin7674@itri.org.tw',
-        to: 'bakaking@itri.org.tw',
+        to: 'forworking00@gmail.com',
         subject: 'alarm',
         text: 'alarm text'
       },
@@ -73,7 +73,7 @@ const config = {
       logging: false
     },
     kuber: {
-      url: process.env.k8S_API || 'http://100.86.2.12:30554/kubeGpu'
+      url: process.env.K8S_API || 'http://100.86.2.12:30554/kubeGpu'
     },
     mailer: {
       smtpSetting: {
