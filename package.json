@@ -10,7 +10,7 @@
     "practice": "node -r babel-register ./practice",
     "build": "babel ./app --ignore node_modules --out-dir build",
     "test": "mocha --compilers js:babel-register test/",
-    "start": "node ./build/bin/www",
+    "start": "npm run apidoc && npm run build && node ./build/bin/www",
     "start_cron": "node ./build/cron/cronjob",
     "start_pm2": "pm2 startOrReload ecosystem.json",
     "start_pm2_docker": "pm2-docker ecosystem.json"
@@ -58,7 +58,8 @@
     "serve-favicon": "^2.4.3",
     "sha1": "^1.1.1",
     "sinon": "^4.0.0",
-    "spdy": "^3.4.7"
+    "spdy": "^3.4.7",
+    "validator": "^9.2.0"
   },
   "devDependencies": {
     "babel-cli": "~6.24.1",
