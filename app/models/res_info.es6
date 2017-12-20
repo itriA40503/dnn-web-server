@@ -46,7 +46,23 @@ module.exports = (sequelize, DataTypes) => {
       field: 'deleted_at'
     }
   }, {
-    tableName: 'res_info'
+    tableName: 'res_info',
+    scopes: {
+      normal: () => {
+        return {
+          attributes: [
+            'id',
+            'gpuType',
+            'machineType',
+            'valueUnit',
+            'value',
+            'createdAt',
+            'updateAt',
+            'deletedAt'
+          ]
+        };
+      }
+    }
   });
   ResInfo.associate = (models) => {
     ResInfo.hasMany(models.availableRes);
