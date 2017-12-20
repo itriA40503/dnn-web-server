@@ -9,6 +9,12 @@ const resourceAPI = {};
 
 const timeFormat = ['Y', 'M', 'D', 'h', 'm', 's'];
 
+const checkResourceExist = async (id) => {
+  let res = await db.findResourceInfoById(id);
+  if (!res) throw new CdError(401, 'Resource(id) not exist!!');
+  return res;
+};
+
 resourceAPI.createResource = asyncWrap(async (req, res, next) => {
   let gpuType = (req.query && req.query.gpuType) || (req.body && req.body.gpuType);
   let machineType = (req.query && req.query.machineType) || (req.body && req.body.machineType);
@@ -17,7 +23,6 @@ resourceAPI.createResource = asyncWrap(async (req, res, next) => {
   
   if (!gpuType) throw new CdError(401, 'gpyType not input');
   if (!machineType) throw new CdError(401, 'machineType not input');
-
   if (!valueUnit) {
     throw new CdError(401, 'valueUnit not input');    
   } else {
