@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { schedule as Schedule, port as Port, machine as Machine, image as Image } from '../models/index';
+import { schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
 
 const sequelize = Schedule.sequelize;
 
@@ -241,6 +241,10 @@ db.findOrCreateImageTag = (image) => {
       digest: image.digest
     }
   });
+};
+
+db.getResourceInfo = () => {
+  return ResInfo.scope('normal', 'notDelete').findAll();
 };
 
 export default db;
