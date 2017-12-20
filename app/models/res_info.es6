@@ -57,9 +57,15 @@ module.exports = (sequelize, DataTypes) => {
             'valueUnit',
             'value',
             'createdAt',
-            'updateAt',
-            'deletedAt'
+            'updatedAt'            
           ]
+        };
+      },
+      notDelete: () => {
+        return {
+          where: {
+            deletedAt: null
+          }
         };
       }
     }
