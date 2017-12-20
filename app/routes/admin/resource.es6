@@ -51,20 +51,48 @@ resourceAPI.getResource = asyncWrap(async (req, res, next) => {
   res.json(resources);
 });
 
-resourceAPI.updateResource = asyncWrap(async (req, res, next) => {
+resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
+  let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
   let gpuType = (req.query && req.query.gpuType) || (req.body && req.body.gpuType);
   let machineType = (req.query && req.query.machineType) || (req.body && req.body.machineType);
   let valueUnit = (req.query && req.query.valueUnit) || (req.body && req.body.valueUnit);
   let value = (req.query && req.query.value) || (req.body && req.body.value);
 
+  let updateAttr = {};
+
+  if (!resId) throw new CdError(401, 'resId not input');
+
+  if (gpuType) updateAttr.gpuType = gpuType;
+
+  if (machineType) updateAttr.machineType = machineType;
 
   if (valueUnit) {
     if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng, should be one of Y,M,D,h,m,s .');
+    updateAttr.valueUnit = valueUnit;
   }
 
   if (value) { 
     if (!validator.isFloat(value)) throw new CdError(401, 'value is not a number(Integer, float)');
+    updateAttr.value = value;
   }
+
+  let resource = await checkResourceExist(resId);
+
+  resource.updateAttributes(updateAttr);
+
+  res.json(resource);
+});
+
+resourceAPI.deleteResource = asyncWrap(async (req, res, next) => {
+  let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
+  
+  if (!resId) throw new CdError(401, 'resId not input');
+  
+  let resource = await checkResourceExist(resId);
+
+  resource.updateAttributes({ deletedAt: moment().format() });  
+
+  res.json(resource);
 
 });
 
