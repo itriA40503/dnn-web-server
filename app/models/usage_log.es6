@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'usage_log'
   });
   UsageLog.associate = (models) => {
-    UsageLog.belongTo(models.schedule, { foreignKey: 'scheduleId' });
+    UsageLog.belongsTo(models.schedule, { foreignKey: 'scheduleId' });
   };
   return UsageLog;
 };
