@@ -60,8 +60,14 @@ const checkMachineExist = async (id) => {
   return machine;
 };
 
+const checkResourceExist = async (id) => {
+  let res = await db.findResourceInfoById(id);
+  if (!res) throw new CdError(401, 'Resource(id) not exist or has been deleted.');
+  return res;
+};
+
 machineAPI.getAllExistMachine = asyncWrap(async (req, res, next) => {
-  let machines = await db.getAllExistMachines();
+  let machines = await db.getAllExistMachines();  
   res.json(machines);
 });
 
@@ -71,16 +77,22 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   let gpuAmount = (req.query && req.query.gpu_amount) || (req.body && req.body.gpuAmount) || 1;
   let gpuType = (req.query && req.query.gpu_type) || (req.body && req.body.gpuType) || 'v100';
 
+  let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
+
+  if (!resId) throw new CdError(401, 'resId not input');
+
   if (gpuAmount) {
     if (!Number.isInteger(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
     else if (gpuAmount >= GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
   }
 
   let machineAttr = {
-    label: label,
-    name: name,
-    gpuAmount: gpuAmount,
-    gpuType: gpuType
+    label,
+    name,
+    gpuAmount,
+    gpuType,
+    resId,
+    // updatedAt: moment().add(8, 'hours').format(),
   };
   let machine = await db.getMachineByLabel(label);
   if (machine) {
@@ -88,7 +100,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
     await machine.updateAttributes(machineAttr);
   } else {
     machine = await Machine.create(machineAttr);
-  }
+  }  
   res.json(machine);
 });
 
