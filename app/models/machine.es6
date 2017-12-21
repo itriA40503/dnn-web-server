@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       field: 'status_id'
     },
     resId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'res_info',
@@ -155,6 +155,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   Machine.associate = (models) => {
     Machine.hasMany(models.schedule);
+    // Machine.belongsTo(models.resInfo, { foreignKey: 'resId' });
   };
   return Machine;
 };
