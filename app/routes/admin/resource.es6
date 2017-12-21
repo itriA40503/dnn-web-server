@@ -1,9 +1,10 @@
 import moment from 'moment';
+import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import { sequelize, resInfo as ResInfo } from '../../models/index';
-import validator from 'validator';
+
 
 const resourceAPI = {};
 
@@ -11,7 +12,7 @@ const timeFormat = ['Y', 'M', 'D', 'h', 'm', 's'];
 
 const checkResourceExist = async (id) => {
   let res = await db.findResourceInfoById(id);
-  if (!res) throw new CdError(401, 'Resource(id) not exist!!');
+  if (!res) throw new CdError(401, 'Resource(id) not exist or has been deleted.');
   return res;
 };
 
@@ -47,7 +48,7 @@ resourceAPI.createResource = asyncWrap(async (req, res, next) => {
 });
 
 resourceAPI.getResource = asyncWrap(async (req, res, next) => {
-  let resources = await db.getResourceInfo();
+  let resources = await db.getResourceInfo();  
   res.json(resources);
 });
 
