@@ -24,17 +24,17 @@ module.exports = (sequelize, DataTypes) => {
       field: 'count_value'
     },
     startedAt: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: true,
       field: 'started_at'
     },
     endedAt: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: true,
       field: 'ended_at'
     },
     createdAt: {
-      type: DataTypes.DATE,
+      type: DataTypes.TIME,
       allowNull: true,
       defaultValue: sequelize.fn('now'),
       field: 'created_at'
