@@ -79,6 +79,10 @@ resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
 
   let resource = await checkResourceExist(resId);
 
+  let currentMachineUseThisResource = await db.getMachineCurrentUseResouce(resId);
+
+  if (currentMachineUseThisResource.length > 0) throw new CdError(401, 'This resource has been used.');
+
   resource.updateAttributes(updateAttr);
 
   res.json(resource);
