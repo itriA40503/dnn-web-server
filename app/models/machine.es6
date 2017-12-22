@@ -85,7 +85,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         let result = {
-          where: where,
+          where: where,          
           attributes: [
             'id',
             'label',
@@ -97,6 +97,25 @@ module.exports = (sequelize, DataTypes) => {
           ]
         };
         return result;
+      },
+      detail: () => {
+        return {
+          include: [
+            { model: sequelize.models.resInfo.scope('normal') },
+          ],
+          attributes: [
+            'id',
+            'label',
+            'name',
+            'description',
+            'gpuAmount',
+            'gpuType',
+            'statusId',
+            'createdAt',
+            'updatedAt',
+            'deletedAt'
+          ]
+        };
       },
       thoseDeleted: () => {
         return {
@@ -150,12 +169,19 @@ module.exports = (sequelize, DataTypes) => {
             label: label
           }
         };
+      },
+      byResId: (resId) => {
+        return {
+          where: {
+            resId: resId
+          }
+        };
       }
     }
   });
   Machine.associate = (models) => {
     Machine.hasMany(models.schedule);
-    // Machine.belongsTo(models.resInfo, { foreignKey: 'resId' });
+    Machine.belongsTo(models.resInfo, { foreignKey: 'resId' });
   };
   return Machine;
 };
