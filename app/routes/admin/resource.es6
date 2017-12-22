@@ -53,7 +53,7 @@ resourceAPI.getResource = asyncWrap(async (req, res, next) => {
 });
 
 resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
-  let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
+  let resId = req.params.resId;  
   let gpuType = (req.query && req.query.gpuType) || (req.body && req.body.gpuType);
   let machineType = (req.query && req.query.machineType) || (req.body && req.body.machineType);
   let valueUnit = (req.query && req.query.valueUnit) || (req.body && req.body.valueUnit);
@@ -85,7 +85,7 @@ resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
 });
 
 resourceAPI.deleteResource = asyncWrap(async (req, res, next) => {
-  let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
+  let resId = req.params.resId;
   
   if (!resId) throw new CdError(401, 'resId not input');
   

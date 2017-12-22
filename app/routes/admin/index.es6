@@ -25,8 +25,8 @@ mailRouter.post('/', mail.checkMail);
 
 resourceRouter.post('/', resource.createResource);
 resourceRouter.get('/', resource.getResource);
-resourceRouter.put('/', resource.modifyResource);
-resourceRouter.delete('/', resource.deleteResource);
+resourceRouter.put('/:resId', resource.modifyResource);
+resourceRouter.delete('/:resId', resource.deleteResource);
 
 adminRouter.use('/machine', machineRouter);
 adminRouter.use('/machines', machinesRouter);
