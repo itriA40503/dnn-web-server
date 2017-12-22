@@ -79,7 +79,11 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
 
   let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
 
-  if (!resId) throw new CdError(401, 'resId not input');
+  if (!resId) { 
+    throw new CdError(401, 'resId not input');
+  } else {
+    await checkResourceExist(resId);
+  }
 
   if (gpuAmount) {
     if (!Number.isInteger(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
