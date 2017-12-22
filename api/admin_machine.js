@@ -189,3 +189,157 @@
  *     }
  *
  **/
+
+ /**
+ * @api {post} /admin/resource/ create resource
+ * @apiVersion 0.1.0
+ * @apiName  createResource
+ * @apiGroup Admin/resource
+ *
+ * @apiParam {String} gpuType Type of GPU
+ * @apiParam {String} machineType Type of Machine (DGX or x86)
+ * @apiParam {String} valueUnit The unit of value (should be Y,M,D,h,m,s)
+ * @apiParam {String} value The counting value
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *          "gpuType":"v100",
+ *          "machineType":"DGX",
+ *          "valueUnit":"D",
+ *          "value":"8"
+ *     }
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {get} /admin/resource/ get resource list
+ * @apiVersion 0.1.0
+ * @apiName  getResourceList
+ * @apiGroup Admin/resource
+ *
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *          {
+ *                "id":"11"
+ *                "gpuType":"v100",
+ *                "machineType":"DGX",
+ *                "valueUnit":"D",
+ *                "value":"8",
+ *                "createdAt":"2017-12-20T00:30:08.548Z",
+ *                "updatedAt":"2017-12-20T00:30:08.546Z"
+ *          },
+ *          ...
+ *     ]
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {put} /admin/resource/:resId update resource
+ * @apiVersion 0.1.0
+ * @apiName  updateResource
+ * @apiGroup Admin/resource
+ * 
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *          {
+ *                "id":"11"
+ *                "gpuType":"v100",
+ *                "machineType":"DGX",
+ *                "valueUnit":"D",
+ *                "value":"8",
+ *                "createdAt":"2017-12-20T00:30:08.548Z",
+ *                "updatedAt":"2017-12-20T00:30:08.546Z"
+ *          }
+ *     ]
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+  /**
+ * @api {delete} /admin/resource/:resId delete resource
+ * @apiVersion 0.1.0
+ * @apiName  deleteResource
+ * @apiGroup Admin/resource
+ * 
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     [
+ *          {
+ *                "id":"11"
+ *                "gpuType":"v100",
+ *                "machineType":"DGX",
+ *                "valueUnit":"D",
+ *                "value":"8",
+ *                "createdAt":"2017-12-20T00:30:08.548Z",
+ *                "updatedAt":"2017-12-20T00:30:08.546Z"
+ *                "deletedAt":"2017-12-20T00:30:08"
+ *          }
+ *     ]
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {post} /admin/mail/ send mail
+ * @apiVersion 0.1.0
+ * @apiName  sendCustomMail
+ * @apiGroup Admin/mail
+ *
+ * @apiParam {String} receiver Email receiver
+ * @apiParam {String} title Email title
+ * @apiParam {text} text Email text
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+       "Send mail"
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
