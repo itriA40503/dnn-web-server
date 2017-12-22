@@ -11,7 +11,7 @@ const config = {
       db: process.env.DNNDB_DBNAME || 'dnn',
       username: process.env.DNNDB_USERNAME || 'postgres',
       password: process.env.DNNDB_PASS || 'cditripost',
-      timeZone: '+08:00',
+      timezone: '+08:00',
       pool: {
         max: 5,
         min: 0,
@@ -64,7 +64,7 @@ const config = {
       db: process.env.DNNDB_DBNAME || 'dnn',
       username: process.env.DNNDB_USERNAME || 'postgres',
       password: process.env.DNNDB_PASS || 'cditripost',
-      timeZone: '+08:00',
+      timezone: '+08:00',
       pool: {
         max: 5,
         min: 0,
