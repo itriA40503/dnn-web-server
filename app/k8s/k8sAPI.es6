@@ -49,7 +49,8 @@ k8sAPI.createContainerUsingSchedule = async (schedule) => {
       url: conAPI,
       body: {
         machineId: schedule.machine.label,
-        gpuType: schedule.machine.gpuType,
+        // gpuType: schedule.machine.gpuType,
+        gpuType: schedule.machine.resIfo.gpuType,
         imgTag: `${schedule.image.name}:${schedule.image.label}`,
         account: schedule.username,
         pwd: schedule.password,
