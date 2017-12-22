@@ -151,7 +151,7 @@ db.getMachineById = (id) => {
 };
 
 db.getAllExistMachines = () => {
-  return Machine.scope('thoseExist').findAll();
+  return Machine.scope('detail', 'thoseExist').findAll();
 };
 
 db.getExistMachineById = (id) => {
