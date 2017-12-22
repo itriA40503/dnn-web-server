@@ -154,11 +154,13 @@ module.exports = (sequelize, DataTypes) => {
           include: [
             { model: sequelize.models.image.scope('normal') },
             { model: sequelize.models.container.scope('normal') },
-            { model: sequelize.models.machine.scope('normal') }
+            // { model: sequelize.models.machine.scope('normal') }
+            { model: sequelize.models.machine.scope('detail') }
           ],
           attributes: [
             'id',
             'statusId',
+            'machineId',
             'projectCode',
             'username',
             'password',
