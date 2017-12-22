@@ -129,6 +129,14 @@ db.getMachinesCurrentOccupiedSchedules = (machineId) => {
   ).findOne();
 };
 
+db.getMachineCurrentUseResouce = (resId) => {
+  return Machine.scope(
+    'normal',
+    'thoseExist',
+    { method: ['byResId', resId] }
+  ).findAll();
+};
+
 db.destoryAllPortsBySchedule = (scheduleId) => {
   return Port.destroy({
     where: {
