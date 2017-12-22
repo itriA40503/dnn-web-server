@@ -107,10 +107,17 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
 machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   let machineId = req.params.machine_id;
   let gpuAmount = (req.query && req.query.gpu_amount) || (req.body && req.body.gpuAmount);
-  let gpuType = (req.query && req.query.gpu_type) || (req.body && req.body.gpuType);
+  // let gpuType = (req.query && req.query.gpu_type) || (req.body && req.body.gpuType);
   let description = (req.query && req.query.description) || (req.body && req.body.description);
 
+  let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
+
   let updateAttr = {};
+  
+  if (resId) {
+    await checkResourceExist(resId);
+    updateAttr.resId = resId;
+  }  
 
   if (gpuAmount) {
     if (!Number.isInteger(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
@@ -118,9 +125,9 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
     updateAttr.gpuAmount = gpuAmount;
   }
 
-  if (gpuType) {
-    updateAttr.gpuType = gpuType;
-  }
+  // if (gpuType) {
+  //   updateAttr.gpuType = gpuType;
+  // }
 
   if (description) {
     updateAttr.description = description;
@@ -129,13 +136,13 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   let machine = await checkMachineExist(machineId);
   // 要先update db裡的機器資訊
   await machine.updateAttributes(updateAttr);
-
+  
   let currentScheduleOnMachine =
     await db.getMachinesCurrentOccupiedSchedules(machineId, moment().format());
+  
   if (currentScheduleOnMachine) {
     instantCreateContainer(currentScheduleOnMachine, 3);
   }
-
 
   res.json(machine);
 });
