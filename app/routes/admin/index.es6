@@ -2,6 +2,7 @@ import express from 'express';
 import admin from './admin';
 import machine from './machine';
 import mail from './mail';
+import user from './user';
 import resource from './resource';
 import jwtAuth from '../../middleware/jwtAuth';
 
@@ -11,6 +12,8 @@ const machineRouter = express.Router();
 const machinesRouter = express.Router();
 const resourceRouter = express.Router();
 const mailRouter = express.Router();
+const usersRouter = express.Router();
+const userRouter = express.Router();
 
 /* Todo: add admin authentication */
 
@@ -24,6 +27,13 @@ machinesRouter.get('/', machine.getAllExistMachine);
 
 mailRouter.post('/', jwtAuth.Admin, mail.checkMail);
 
+usersRouter.get('/detail', jwtAuth.Admin, user.getUserList);
+
+userRouter.post('/:userId/resource', jwtAuth.Admin, user.createAvailableRes);
+userRouter.get('/:userId/resources', jwtAuth.Admin, user.gerAvailableRes);
+userRouter.put('/:userId/resource/:resId', jwtAuth.Admin, user.modifyAvailableRes);
+userRouter.delete('/:userId/resource/:resId', jwtAuth.Admin, user.deleteAvailableRes);
+
 resourceRouter.post('/', resource.createResource);
 resourceRouter.get('/', resource.getResource);
 resourceRouter.put('/:resId', resource.modifyResource);
@@ -33,6 +43,8 @@ adminRouter.use('/machine', machineRouter);
 adminRouter.use('/machines', machinesRouter);
 adminRouter.use('/mail', mailRouter);
 adminRouter.use('/resource', resourceRouter);
+adminRouter.use('/users', usersRouter);
+adminRouter.use('/user', userRouter);
 
 router.use('/admin', adminRouter);
 
