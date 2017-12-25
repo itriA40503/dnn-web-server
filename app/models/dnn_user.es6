@@ -92,8 +92,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
   DnnUser.associate = (models) => {
-    DnnUser.hasMany(models.transaction);
-    DnnUser.hasMany(models.availableRes);
+    DnnUser.hasMany(models.transaction, { foreignKey: 'userId' });
+    DnnUser.hasMany(models.availableRes, { foreignKey: 'userId' });
   };
   return DnnUser;
 };
