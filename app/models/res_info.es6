@@ -71,8 +71,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
   ResInfo.associate = (models) => {
-    ResInfo.hasMany(models.availableRes);
-    ResInfo.hasMany(models.machine);
+    ResInfo.hasMany(models.availableRes, { foreignKey: 'resId' });
+    // ResInfo.hasMany(models.machine);
   };
   return ResInfo;
 };
