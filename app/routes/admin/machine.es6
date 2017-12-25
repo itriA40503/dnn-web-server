@@ -119,7 +119,8 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   let updateAttr = {};
   
   if (resId) {
-    await checkResourceExist(resId);
+    let resInfo = await checkResourceExist(resId);
+    updateAttr.gpuType = resInfo.gpuType;
     updateAttr.resId = resId;
   }  
 
