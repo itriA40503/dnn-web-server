@@ -19,7 +19,9 @@ export default asyncWrap(async (req, res, next) => {
   let reg = /^[A-Za-z0-9]+$/; // there's bug with g
 
   if (!reg.test(username)) throw new CdError(401, 'username or password format error', 40101);
-
+  
+  username = username.toUpperCase();
+  
   // username = username.replace(/[^\w]+/g, '');
   // password = password.replace(/[^\w]+/g, '');
 
