@@ -78,6 +78,7 @@
  *
  * @apiHeader {String} x-access-token Admin token
  * @apiParam {String} gpuAmount Gpu amount (1~4)
+ * @apiParam {String} resId Id of resource information
  * @apiParam {String} gpuType Gpu type GTX1080 or v100
  *
  * @apiSuccessExample Success-Response:
@@ -87,6 +88,7 @@
          name: 'm19',
          description: null,
          gpuAmount: 2,
+         resId: '3',
          gpuType: 'GTX1080',
          statusId: 1,     // 1: running 2:error 3: disable 4: destoryed
          updatedAt: '2017-09-30T02:09:43.615Z' }
@@ -295,18 +297,16 @@
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
- *     [
- *          {
- *                "id":"11"
- *                "gpuType":"v100",
- *                "machineType":"DGX",
- *                "valueUnit":"D",
- *                "value":"8",
- *                "createdAt":"2017-12-20T00:30:08.548Z",
- *                "updatedAt":"2017-12-20T00:30:08.546Z"
- *                "deletedAt":"2017-12-20T00:30:08"
- *          }
- *     ]
+ *     {
+ *            "id":"11"
+ *            "gpuType":"v100",
+ *            "machineType":"DGX",
+ *            "valueUnit":"D",
+ *            "value":"8",
+ *            "createdAt":"2017-12-20T00:30:08.548Z",
+ *            "updatedAt":"2017-12-20T00:30:08.546Z"
+ *            "deletedAt":"2017-12-20T00:30:08"
+ *     }
  *
  * @apiError  0 Parameter error.
  *
@@ -332,6 +332,31 @@
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
        "Send mail"
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {get} /admin/users/detail user detail
+ * @apiVersion 0.1.0
+ * @apiName  getUsers
+ * @apiGroup Admin/users
+ *
+* @apiHeader {String} x-access-token Admin token
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+       {
+             
+       }
  *
  * @apiError  0 Parameter error.
  *
