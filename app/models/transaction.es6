@@ -50,8 +50,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     }    
   });
-  // Transaction.associate = (models) => {
-  //   Transaction.belongsTo(models.dnnUser, { foreignKey: 'dnnUser' });
-  // };
+  Transaction.associate = (models) => {
+    Transaction.belongsTo(models.dnnUser, { foreignKey: 'userId' });
+  };
   return Transaction;
 };
