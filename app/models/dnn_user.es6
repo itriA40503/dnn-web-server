@@ -51,7 +51,45 @@ module.exports = (sequelize, DataTypes) => {
       field: 'type_id'
     }
   }, {
-    tableName: 'dnn_user'
+    tableName: 'dnn_user',
+    scopes: {
+      notDelete: () => {
+        return {
+          where: {
+            deletedAt: null
+          }
+        };
+      },
+      normal: () => {
+        return {
+          attributes: [
+            'id',
+            'itriId',
+            'mail',
+            'createdAt',
+            'updatedAt',           
+          ]
+        };
+      },
+      detail: () => {
+        return {
+          include: [
+            { model: sequelize.models.availableRes.scope('detail') },            
+            { model: sequelize.models.transaction.scope('normal') },
+          ],
+          attributes: [
+            'id',
+            'itriId',
+            'mail',
+            'salt',
+            'createdAt',
+            'updatedAt',
+            'deletedAt',
+            'typeId'
+          ]
+        };        
+      }
+    }
   });
   DnnUser.associate = (models) => {
     DnnUser.hasMany(models.transaction);
