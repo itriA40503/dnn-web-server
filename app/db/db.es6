@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
+import { availableRes as AvailableRes, dnnUser as User, schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
 
 const sequelize = Schedule.sequelize;
 
@@ -258,5 +258,14 @@ db.getResourceInfo = () => {
 db.findResourceInfoById = (id) => {
   return ResInfo.scope('normal', 'notDelete').findById(id);
 };
+
+db.getUserList = () => {
+  return User.scope('detail', 'notDelete').findAll();
+};
+
+db.checkUserExistById = (userId) => {
+  return User.findById(userId);
+};
+
 
 export default db;
