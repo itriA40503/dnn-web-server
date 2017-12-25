@@ -35,7 +35,20 @@ module.exports = (sequelize, DataTypes) => {
       field: 'created_at'
     }
   }, {
-    tableName: 'transaction'
+    tableName: 'transaction',
+    scopes: {
+      normal: () => {
+        return {
+          attributes: [
+            'id',  
+            'userId',        
+            'addValue',
+            'info',
+            'createdAt',           
+          ]
+        };
+      }
+    }    
   });
   // Transaction.associate = (models) => {
   //   Transaction.belongsTo(models.dnnUser, { foreignKey: 'dnnUser' });
