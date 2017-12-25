@@ -276,4 +276,12 @@ db.findAvailableResByUserIdAndResId = (userId, resId) => {
   ).findOne();
 };
 
+db.getAvailableResByUserId = (userId) => {
+  return AvailableRes.scope(
+    'detail',
+    'notDelete',
+    { method: ['byUserId', userId] }
+  ).findAll();
+};
+
 export default db;
