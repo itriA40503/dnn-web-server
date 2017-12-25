@@ -354,9 +354,163 @@
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
-       {
-             
-       }
+       [
+            {
+                  "id": "1",
+                  "itriId": "a40503",
+                  "mail": null,
+                  "salt": "b6d9252b39cf44350036191655496807",
+                  "createdAt": "2017-12-25T00:57:54.659Z",
+                  "updatedAt": "2017-12-25T00:57:54.665Z",
+                  "deletedAt": null,
+                  "typeId": 1,
+                  "transactions": [],
+                  "availableRes": []
+            },
+       ]
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {get} /admin/user/:userId/resources get user resources
+ * @apiVersion 0.1.0
+ * @apiName  getUserResource
+ * @apiGroup Admin/user
+ *
+ * @apiHeader {String} x-access-token Admin token
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+       [
+            {
+                  "id": "7",
+                  "resId": "3",
+                  "amount": 6,
+                  "createdAt": "2017-12-25T08:18:02.825Z",
+                  "updatedAt": "2017-12-25T08:18:02.822Z",
+                  "deletedAt": null,
+                  "resInfo": {
+                        "id": "3",
+                        "gpuType": "1080",
+                        "machineType": "x86",
+                        "valueUnit": "Y",
+                        "value": 12,
+                        "createdAt": "2017-12-22T03:33:10.413Z",
+                        "updatedAt": "2017-12-22T03:37:11.982Z"
+                  }
+            }
+       ]
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+/**
+ * @api {post} /admin/user/:userId/resource create user resource
+ * @apiVersion 0.1.0
+ * @apiName  createUserResource
+ * @apiGroup Admin/user
+ *
+ * @apiHeader {String} x-access-token Admin token
+ * 
+ * @apiParam {String} amount Amount of resouce
+ * @apiParam {String} resId Id of resource 
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+      {
+            "createdAt": "2017-12-25T09:16:38.280Z",
+            "id": "8",
+            "userId": "2",
+            "amount": 8,
+            "resId": "1",
+            "updatedAt": "2017-12-25T09:16:38.271Z",
+            "deletedAt": null
+      }
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {put} /admin/user/:userId/resource/:resId update user resource
+ * @apiVersion 0.1.0
+ * @apiName  updateUserResource
+ * @apiGroup Admin/user
+ *
+ * @apiHeader {String} x-access-token Admin token
+ * 
+ * @apiParam {String} amount Amount of resouce
+ * @apiParam {String} resId Id of new setting resource 
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+      {
+            "id": "8",
+            "resId": "3",
+            "userId": "2",
+            "amount": "8",
+            "createdAt": "2017-12-25T09:16:38.280Z",
+            "updatedAt": "2017-12-25T09:18:45.762Z",
+            "deletedAt": null
+      }
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {delete} /admin/user/:userId/resource/:resId delete user resource
+ * @apiVersion 0.1.0
+ * @apiName  deleteUserResource
+ * @apiGroup Admin/user
+ *
+ * @apiHeader {String} x-access-token Admin token
+ * 
+ * @apiParam {String} amount Amount of resouce
+ * @apiParam {String} resId Id of new setting resource 
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+      {
+            "id": "8",
+            "resId": "3",
+            "userId": "2",
+            "amount": 8,
+            "createdAt": "2017-12-25T09:16:38.280Z",
+            "updatedAt": "2017-12-25T09:20:40.023Z",
+            "deletedAt": "2017-12-25T17:20:40+08:00"
+      }
  *
  * @apiError  0 Parameter error.
  *
