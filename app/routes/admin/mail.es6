@@ -9,10 +9,10 @@ mailAPI.checkMail = asyncWrap(async (req, res, next) => {
   let title = (req.query && req.query.title) || (req.body && req.body.title) || 'checkMail';
   let text = (req.query && req.query.text) || (req.body && req.body.text) || 'send from server';
   
-  if (!receiver) throw new CdError(401, 'Receiver not exist!!');
+  if (!receiver) throw new CdError(401, 'Receiver not input!!');
   
-  sendMail(receiver, title, text);
-  res.json('Send mail');
+  await sendMail(receiver, title, text);  
+  res.json('sendMail');
 });
 
 export default mailAPI;
