@@ -21,12 +21,12 @@ schedulesRouter.get('/', schedule.get);
 schedulesRouter.get('/reserved', schedule.getReserved);
 schedulesRouter.get('/history', schedule.getHistory);
 
-userRouter.post('/report', jwtAuth, report);
+userRouter.post('/report', jwtAuth.User, report);
 userRouter.get('/signin', login);
-userRouter.use('/schedule', jwtAuth, scheduleRouter);
-userRouter.use('/schedules', jwtAuth, schedulesRouter);
+userRouter.use('/schedule', jwtAuth.User, scheduleRouter);
+userRouter.use('/schedules', jwtAuth.User, schedulesRouter);
 
-router.use ('/user', userRouter);
+router.use('/user', userRouter);
 
 export default router;
 

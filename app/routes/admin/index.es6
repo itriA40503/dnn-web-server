@@ -3,6 +3,7 @@ import admin from './admin';
 import machine from './machine';
 import mail from './mail';
 import resource from './resource';
+import jwtAuth from '../../middleware/jwtAuth';
 
 const router = express.Router();
 const adminRouter = express.Router();
@@ -21,7 +22,7 @@ machineRouter.delete('/:machine_id', machine.deleteMachine);
 
 machinesRouter.get('/', machine.getAllExistMachine);
 
-mailRouter.post('/', mail.checkMail);
+mailRouter.post('/', jwtAuth.Admin, mail.checkMail);
 
 resourceRouter.post('/', resource.createResource);
 resourceRouter.get('/', resource.getResource);
