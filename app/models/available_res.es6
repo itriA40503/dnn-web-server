@@ -49,7 +49,59 @@ module.exports = (sequelize, DataTypes) => {
       field: 'deleted_at'
     }
   }, {
-    tableName: 'available_res'
+    tableName: 'available_res',
+    scopes: {
+      normal: () => {
+        return {
+          attributes: [
+            'id',          
+            'resId',
+            'userId',
+            'amount',
+            'createdAt',
+            'updatedAt',
+            'deletedAt'         
+          ]
+        };
+      },
+      detail: () => {
+        return {
+          include: [
+            { model: sequelize.models.resInfo.scope('normal') },
+            // { model: sequelize.models.dnnUser.scope('normal') },
+          ],
+          attributes: [
+            'id',          
+            'resId',            
+            'amount',
+            'createdAt',
+            'updatedAt',
+            'deletedAt'        
+          ]
+        };
+      },
+      notDelete: () => {
+        return {
+          where: {
+            deletedAt: null
+          }          
+        };
+      },
+      byUserId: (userId) => {
+        return {
+          where: {
+            userId: userId          
+          }          
+        };
+      },
+      byResId: (resId) => {
+        return {
+          where: {
+            resId: resId
+          }          
+        };
+      }
+    }    
   });
   AvailableRes.associate = (models) => {
     AvailableRes.belongsTo(models.resInfo, { foreignKey: 'resId' });
