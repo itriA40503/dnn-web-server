@@ -267,5 +267,13 @@ db.checkUserExistById = (userId) => {
   return User.findById(userId);
 };
 
+db.findAvailableResByUserIdAndResId = (userId, resId) => {
+  return AvailableRes.scope(
+    'normal',
+    'notDelete', 
+    { method: ['byUserId', userId] },
+    { method: ['byResId', resId] }
+  ).findOne();
+};
 
 export default db;
