@@ -1,4 +1,5 @@
 import moment from 'moment';
+import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
@@ -87,7 +88,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   }
 
   if (gpuAmount) {
-    if (!Number.isInteger(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
+    if (!validator.isNumeric(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
     else if (gpuAmount >= GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
   }
 
