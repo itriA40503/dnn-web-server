@@ -81,8 +81,9 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
 
   if (!resId) { 
     throw new CdError(401, 'resId not input');
-  } else {
-    await checkResourceExist(resId);
+  } else {    
+    const resInfo = await checkResourceExist(resId);
+    gpuType = resInfo.gpuType;    
   }
 
   if (gpuAmount) {
@@ -119,7 +120,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   let updateAttr = {};
   
   if (resId) {
-    let resInfo = await checkResourceExist(resId);
+    const resInfo = await checkResourceExist(resId);
     updateAttr.gpuType = resInfo.gpuType;
     updateAttr.resId = resId;
   }  
