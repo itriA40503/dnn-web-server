@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'transaction',
+    timestamps: false, // Avoid auto gen updatedAt
     scopes: {
       normal: () => {
         return {
