@@ -1,7 +1,9 @@
 import moment from 'moment';
-import { transaction as Transaction, availableRes as AvailableRes, dnnUser as User, schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
+import { sequelize, usageLog as UsageLog, transaction as Transaction, availableRes as AvailableRes, dnnUser as User, schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
 
-const sequelize = Schedule.sequelize;
+const Op = sequelize.Op;
+
+// const sequelize = Schedule.sequelize;
 
 /* Todo: put functions to models separately */
 
@@ -289,6 +291,19 @@ db.getTransactionSumByUserId = (userId) => {
     'addValue',
     { method: ['byUserId', userId] }
   );
+};
+
+db.getUsageSumByUserId = (userId) => {
+  const schedules = Schedule.scope(
+    'id',    
+    { method: ['byUser', userId] }
+  ).findAll();
+  const aryId = schedules.map(obj => obj.id);
+  return UsageLog.sum(
+    'countValue',
+    { method: ['byId', aryId] }
+  );
+
 };
 
 export default db;
