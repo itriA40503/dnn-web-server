@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { availableRes as AvailableRes, dnnUser as User, schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
+import { transaction as Transaction, availableRes as AvailableRes, dnnUser as User, schedule as Schedule, port as Port, machine as Machine, image as Image, resInfo as ResInfo } from '../models/index';
 
 const sequelize = Schedule.sequelize;
 
@@ -282,6 +282,13 @@ db.getAvailableResByUserId = (userId) => {
     'notDelete',
     { method: ['byUserId', userId] }
   ).findAll();
+};
+
+db.getTransactionSumByUserId = (userId) => {
+  return Transaction.sum(
+    'addValue',
+    { method: ['byUserId', userId] }
+  );
 };
 
 export default db;
