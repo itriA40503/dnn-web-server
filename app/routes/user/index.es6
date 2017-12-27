@@ -2,6 +2,7 @@ import express from 'express';
 import login from './login';
 import report from './report';
 import schedule from './schedule';
+import resource from './resource';
 import jwtAuth from '../../middleware/jwtAuth';
 
 const rootRouter = express.Router();
@@ -9,6 +10,7 @@ const router = express.Router();
 const userRouter = express.Router();
 const scheduleRouter = express.Router();
 const schedulesRouter = express.Router();
+const resourceRouter = express.Router();
 
 scheduleRouter.get('/:schedule_id', schedule.getASchedule);
 scheduleRouter.post('/', schedule.create);
@@ -21,10 +23,13 @@ schedulesRouter.get('/', schedule.get);
 schedulesRouter.get('/reserved', schedule.getReserved);
 schedulesRouter.get('/history', schedule.getHistory);
 
+resourceRouter.get('/', resource.get);
+
 userRouter.post('/report', jwtAuth.User, report);
 userRouter.get('/signin', login);
 userRouter.use('/schedule', jwtAuth.User, scheduleRouter);
 userRouter.use('/schedules', jwtAuth.User, schedulesRouter);
+userRouter.use('/resources', jwtAuth.User, resourceRouter);
 
 router.use('/user', userRouter);
 
