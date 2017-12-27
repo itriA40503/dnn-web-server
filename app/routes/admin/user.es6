@@ -1,8 +1,9 @@
 import moment from 'moment';
+import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
-import { sequelize, availableRes as AvailableRes } from '../../models/index';
+import { sequelize, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
 
 const userAPI = {};
 
@@ -100,6 +101,34 @@ userAPI.deleteAvailableRes = asyncWrap(async (req, res, next) => {
   const deletedRes = await getModifyRes.updateAttributes({ deletedAt: moment().format() });
   
   res.json(deletedRes);
+
+});
+
+userAPI.createTrans = asyncWrap(async (req, res, next) => {
+  const userId = req.params.userId;
+  const addValue = (req.query && req.query.addValue) || (req.body && req.body.addValue);
+  const info = (req.query && req.query.info) || (req.body && req.body.info) || 'add value';  
+
+  if (userId) {
+    const user = await db.checkUserExistById(userId);
+    if (!user) throw new CdError(401, 'the user not exist.');
+  }
+
+  if (!addValue) {
+    throw new CdError(401, 'the value not input.');
+  } else {
+    if (!validator.isNumeric(addValue)) throw new CdError(401, 'the value should be number.');
+  }
+
+  const transAttr = {
+    userId,
+    addValue,
+    info
+  };
+
+  const newTransaction = await Transaction.create(transAttr);
+
+  res.json(newTransaction);
 
 });
 
