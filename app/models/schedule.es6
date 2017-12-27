@@ -155,7 +155,8 @@ module.exports = (sequelize, DataTypes) => {
             { model: sequelize.models.image.scope('normal') },
             { model: sequelize.models.container.scope('normal') },
             // { model: sequelize.models.machine.scope('normal') }
-            { model: sequelize.models.machine.scope('detail') }
+            { model: sequelize.models.machine.scope('detail') },
+            { model: sequelize.models.usageLog.scope('normal') }
           ],
           attributes: [
             'id',
@@ -350,6 +351,7 @@ module.exports = (sequelize, DataTypes) => {
     Schedule.belongsTo(models.image, { foreignKey: 'imageId' });
     Schedule.belongsTo(models.dnnUser, { foreignKey: 'userId' });
     Schedule.hasOne(models.container, { foreignKey: 'id' });
+    Schedule.hasMany(models.usageLog, { foreignKey: 'scheduleId' });
   };
   return Schedule;
 };
