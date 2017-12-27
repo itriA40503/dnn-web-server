@@ -48,6 +48,18 @@ module.exports = (sequelize, DataTypes) => {
             'createdAt',           
           ]
         };
+      },
+      onlyValue: () => {
+        return {
+          attributes: ['addValue']
+        };
+      },
+      byUserId: (userId) => {
+        return {
+          where: {
+            userId: userId
+          }
+        };
       }
     }    
   });
