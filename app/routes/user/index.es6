@@ -10,6 +10,7 @@ const router = express.Router();
 const userRouter = express.Router();
 const scheduleRouter = express.Router();
 const schedulesRouter = express.Router();
+const resourcesRouter = express.Router();
 const resourceRouter = express.Router();
 
 scheduleRouter.get('/:schedule_id', schedule.getASchedule);
@@ -23,13 +24,16 @@ schedulesRouter.get('/', schedule.get);
 schedulesRouter.get('/reserved', schedule.getReserved);
 schedulesRouter.get('/history', schedule.getHistory);
 
-resourceRouter.get('/', resource.get);
+resourcesRouter.get('/', resource.get);
+
+resourceRouter.get('/remind', resource.remind);
 
 userRouter.post('/report', jwtAuth.User, report);
 userRouter.get('/signin', login);
 userRouter.use('/schedule', jwtAuth.User, scheduleRouter);
 userRouter.use('/schedules', jwtAuth.User, schedulesRouter);
-userRouter.use('/resources', jwtAuth.User, resourceRouter);
+userRouter.use('/resources', jwtAuth.User, resourcesRouter);
+userRouter.use('/resource', jwtAuth.User, resourceRouter);
 
 router.use('/user', userRouter);
 
