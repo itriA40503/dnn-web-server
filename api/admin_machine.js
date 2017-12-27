@@ -384,7 +384,7 @@
  * @api {get} /admin/user/:userId/resources get user resources
  * @apiVersion 0.1.0
  * @apiName  getUserResource
- * @apiGroup Admin/user
+ * @apiGroup Admin/user/resource
  *
  * @apiHeader {String} x-access-token Admin token
  *
@@ -425,7 +425,7 @@
  * @api {post} /admin/user/:userId/resource create user resource
  * @apiVersion 0.1.0
  * @apiName  createUserResource
- * @apiGroup Admin/user
+ * @apiGroup Admin/user/resource
  *
  * @apiHeader {String} x-access-token Admin token
  * 
@@ -459,7 +459,7 @@
  * @api {put} /admin/user/:userId/resource/:resId update user resource
  * @apiVersion 0.1.0
  * @apiName  updateUserResource
- * @apiGroup Admin/user
+ * @apiGroup Admin/user/resource
  *
  * @apiHeader {String} x-access-token Admin token
  * 
@@ -493,7 +493,7 @@
  * @api {delete} /admin/user/:userId/resource/:resId delete user resource
  * @apiVersion 0.1.0
  * @apiName  deleteUserResource
- * @apiGroup Admin/user
+ * @apiGroup Admin/user/resource
  *
  * @apiHeader {String} x-access-token Admin token
  * 
@@ -510,6 +510,38 @@
             "createdAt": "2017-12-25T09:16:38.280Z",
             "updatedAt": "2017-12-25T09:20:40.023Z",
             "deletedAt": "2017-12-25T17:20:40+08:00"
+      }
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
+ /**
+ * @api {post} /admin/user/:userId/transaction create user transaction
+ * @apiVersion 0.1.0
+ * @apiName  createUserTransaction
+ * @apiGroup Admin/user/transaction
+ *
+ * @apiHeader {String} x-access-token Admin token
+ * 
+ * @apiParam {String} addValue value of increase point
+ * @apiParam {String} info infomation of the transaction 
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+      {
+        "createdAt": "2017-12-27T02:25:41.478Z",
+        "id": "5",
+        "userId": "2",
+        "addValue": -110,
+        "info": "add value"
       }
  *
  * @apiError  0 Parameter error.
