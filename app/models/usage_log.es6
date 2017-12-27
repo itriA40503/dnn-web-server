@@ -40,7 +40,36 @@ module.exports = (sequelize, DataTypes) => {
       field: 'created_at'
     }
   }, {
-    tableName: 'usage_log'
+    tableName: 'usage_log',
+    timestamps: false,
+    scopes: {
+      normal: () => {
+        return {
+          attributes: [
+            'id',
+            'scheduleId',
+            'countValue',
+            'startedAt',
+            'endedAt',
+            'createdAt',
+          ]
+        };
+      },
+      onlyValue: () => {
+        return {
+          attributes: [
+            'countValue'
+          ]
+        };
+      },
+      byId: (id) => {
+        return {
+          where: {
+            id: id
+          }
+        };
+      }
+    }    
   });
   UsageLog.associate = (models) => {
     UsageLog.belongsTo(models.schedule, { foreignKey: 'scheduleId' });
