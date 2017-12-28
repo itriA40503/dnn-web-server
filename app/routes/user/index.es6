@@ -27,6 +27,7 @@ schedulesRouter.get('/history', schedule.getHistory);
 resourcesRouter.get('/', resource.get);
 
 resourceRouter.get('/remind', resource.remind);
+resourceRouter.get('/calendar', resource.getCalendar);
 
 userRouter.post('/report', jwtAuth.User, report);
 userRouter.get('/signin', login);
