@@ -188,10 +188,20 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
   let resSchedule = await Schedule.scope('detail').findById(schedule.id);
 
+  // Create Usage Log
+  const countValue = -1 * (resSchedule.machine.resInfo.value * resSchedule.machine.gpuAmount);
+  const queryDays = endDate.diff(startDate, 'd') + 1;
+  const usageLogAtrr = {
+    scheduleId: resSchedule.id,
+    countValue: countValue * queryDays,
+    startedAt: startDate <= moment() ? moment().format() : resSchedule.startedAt
+  };
+  await UsageLog.create(usageLogAtrr);
+
   // 如果啟動時間是現在或之前的話立即啟動Container
   if (startDate <= moment()) {
     instantCreateContainer(resSchedule, 3);
-  }
+  }  
   
   return res.json(resSchedule);
 
