@@ -91,6 +91,7 @@ module.exports = (sequelize, DataTypes) => {
             'label',
             'name',
             'description',
+            'resId',
             'gpuAmount',
             'gpuType',
             'statusId'
@@ -108,6 +109,7 @@ module.exports = (sequelize, DataTypes) => {
             'label',
             'name',
             'description',
+            'resId',
             'gpuAmount',
             'gpuType',
             'statusId',
