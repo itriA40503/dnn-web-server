@@ -4,7 +4,8 @@ import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { sequelize, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
+import { checkDateRange } from '../../util/Checker';
+import { sequelize, usageLog as UsageLog, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
 
 const BOOKMAXIMUN = 100;
 
