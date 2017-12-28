@@ -83,14 +83,14 @@ schedule.getReserved = asyncWrap(async (req, res, next) => {
 });
 
 schedule.create = asyncWrap(async (req, res, next) => {
-  let userId = req.user.id;
-  let username = req.user.itriId;
-  let startQuery = req.query.start || (req.body && req.body.start);
-  let endQuery = req.query.end || (req.body && req.body.end);
-  let imageIdQuery = req.query.image_id || (req.body && req.body.imageId);
-  let customMachineId = req.query.machine_id || (req.body && req.body.machineId);
-  let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
-  let customGpuAmount = req.query.gpu_amount || (req.body && req.body.gpuAmount) || 1;
+  const userId = req.user.id;
+  const username = req.user.itriId;
+  const startQuery = req.query.start || (req.body && req.body.start);
+  const endQuery = req.query.end || (req.body && req.body.end);
+  const imageIdQuery = req.query.image_id || (req.body && req.body.imageId);
+  const customMachineId = req.query.machine_id || (req.body && req.body.machineId);
+  // let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
+  // let customGpuAmount = req.query.gpu_amount || (req.body && req.body.gpuAmount) || 1;
 
   if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(401, 'Lack of parameter');
 
@@ -107,8 +107,8 @@ schedule.create = asyncWrap(async (req, res, next) => {
   else if (startDate < moment().startOf('day')) throw new CdError(401, 'Start date must greater then today');
   else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(401, 'Period must smaller then 30 days');
 
-  let start = startDate.format();
-  let end = endDate.format();
+  const start = startDate.format();
+  const end = endDate.format();
 
   let timeOptions = {
     start: start,
