@@ -36,6 +36,14 @@ resourceAPI.remind = asyncWrap(async (req, res, next) => {
   if (!amount) throw new CdError(401, 'Amount not input');    
   if (!validator.isNumeric(amount)) throw new CdError(401, 'Amount is not a number');    
 
+  const checkAvailable = await db.findAvailableResByUserIdAndResId(user.id, resId);
+
+  if (!checkAvailable) {
+    throw new CdError(401, 'User can not use this resource');
+  } else {
+    if (checkAvailable.amount < amount) throw new CdError(401, 'User can not use this amount');
+  }
+
   const userTransValue = await db.getTransactionSumByUserId(user.id);  
   const userUsageValue = await db.getUsageSumByUserId(user.id);
   const values = resource.value * amount; 
