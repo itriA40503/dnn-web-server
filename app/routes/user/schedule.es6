@@ -117,11 +117,21 @@ schedule.create = asyncWrap(async (req, res, next) => {
   };
 
   let machineOptions = {};
-  if (!customMachineId) {
-    if (customGpu) machineOptions.gpuType = customGpu;
-    if (customGpuAmount) machineOptions.gpuAmount = customGpuAmount;
-  }
 
+  // machine id is necessary now
+  if (!customMachineId) {
+    throw new CdError(401, 'No input machine id.');    
+  } else {
+    const userAvailableRes = await db.getAvailableResByUserId(userId);
+    const machine = await Machine.scope('statusNormal', 'detail').findById(customMachineId);
+    const mapAvailable = userAvailableRes.map(obj => 
+      (obj.amount === machine.gpuAmount && obj.resId === machine.resId)
+    );
+    if (!mapAvailable) throw new CdError(401, 'The machine not available for user.');
+    const values = machine.resInfo.value * machine.gpuAmount;
+    const valueUnit = machine.resInfo.valueUnit;
+    await checkDateRange(userId, values, valueUnit, startDate, endDate);
+  }
 
   let [bookedSchedules, machines, images, overlapSchedules] =
     await Promise.all([
@@ -152,7 +162,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   if (availableSet.size === 0) throw new CdError('401', 'No available machine');
   if (customMachineId && !availableSet.has(customMachineId)) throw new CdError('401', 'No specific machine or is occupied');
 
- // let username = `user${userId}`;
+  // let username = `user${userId}`;
   let randomPassword = Math.random().toString(36).slice(-8);
   let machineArray = [...machineSet];
 
