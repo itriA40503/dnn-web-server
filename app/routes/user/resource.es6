@@ -4,6 +4,7 @@ import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
+import { checkPoint } from '../../util/Checker';
 import { sequelize, usageLog as UsageLog, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
 
 momentDurationFormat(moment);
@@ -77,13 +78,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
     if (checkAvailable.amount < amount) throw new CdError(401, 'User can not use this amount');
   }
 
-  const userTransValue = await db.getTransactionSumByUserId(user.id);  
-  const userUsageValue = await db.getUsageSumByUserId(user.id);
-  const values = resource.value * amount; 
-
-  const unitValue = Math.floor((userTransValue + userUsageValue) / (values));
-  
-  if (unitValue === 0) throw new CdError(401, 'Point is not enough to use');
+  const unitValue = await checkPoint(user.id, resource.value, amount);
 
   // availableDays
   const availableDays = moment.duration(unitValue, resource.valueUnit).format('d');
@@ -108,7 +103,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
     set.add(machine.id);
     return set;
   }, new Set());
-  console.log(machineSet);
+  
   let calendar = await [...Array(PERIOD).keys()].map((i) => {
 
     let startedDate = moment(start).add('days', i); // new Date(date.getTime() + (1000 * 86400 * i));  
