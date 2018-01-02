@@ -5,6 +5,12 @@ import CdError from './CdError';
 
 momentDurationFormat(moment);
 
+/**
+ * Check point is enough for user selected resource
+ * @param {string} userId - Id of user
+ * @param {string} values - value of resource
+ * @return {integer} unitValue
+ */
 export const checkPoint = async (userId, values) => {
 
   const userTransValue = await db.getTransactionSumByUserId(userId);  
@@ -19,13 +25,22 @@ export const checkPoint = async (userId, values) => {
   return unitValue;
 };
 
+/**
+ * Check Date range is enough.
+ * @param {string} userId - Id of user
+ * @param {string} values - value of resource
+ * @param {string} valueUnit - unit of value
+ * @param {moment} startDate - start of date
+ * @param {moment} endDate - end of date
+ * @return {object} queryDays&availableDays
+ */
 export const checkDateRange = async (userId, values, valueUnit, startDate, endDate) => {
   const unitValue = await checkPoint(userId, values);  
   // availableDays
   const availableDays = parseInt(moment.duration(unitValue, valueUnit).format('d'), 10);  
   const queryDays = startDate.diff(endDate, 'd') + 1;
   console.log(unitValue, valueUnit, availableDays, queryDays);
-  if (queryDays > availableDays) throw new CdError('401', 'Date range too large');
+  if (queryDays > availableDays) throw new CdError('401', 'Date range too large (point not enough)');
 
   return { queryDays, availableDays };
 };
