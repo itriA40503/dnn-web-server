@@ -308,28 +308,6 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   else if (schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted!');
 
   await serverJob.deleteASchedule(schedule);
-
-  // create Usage Log (return point)
-  const startDate = moment(schedule.startedAt);
-  const endDate = moment(schedule.endedAt);
-  const trueEndDate = moment();
-  let leftDays;
-  if (startDate > trueEndDate) {
-    leftDays = endDate.diff(startDate, 'd') + 1;
-  } else {
-    leftDays = endDate.diff(trueEndDate, 'd') + 1;
-  }
-  
-  const countValue = (schedule.machine.resInfo.value * schedule.machine.gpuAmount);
-  console.log(leftDays, countValue);
-  console.log(endDate.format(), trueEndDate.format());
-  const usageLogAtrr = {
-    scheduleId: schedule.id,
-    countValue: countValue * leftDays,
-    endedAt: trueEndDate.format()
-  };
-  await UsageLog.create(usageLogAtrr);
-
   res.json(schedule);
 
 });
