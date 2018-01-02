@@ -167,7 +167,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   let machineArray = [...machineSet];
 
   let schedule = await Schedule.scope('detail').create({
-    startedAt: start,
+    startedAt: startDate <= moment() ? moment().format() : start,
     endedAt: end,
     statusId: 1,
     machineId: customMachineId || machineArray[Math.floor(Math.random() * machineArray.length)],
