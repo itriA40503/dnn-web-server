@@ -4,7 +4,7 @@ import debug from 'debug';
 import db from '../db/db';
 import kuberAPI from '../k8s/k8sAPI';
 import K8SError from '../util/K8SError';
-import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
+import { usageLog as UsageLog, schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
 
 const TIME_START_SCHEDULES = 'time start schedules';
 const TIME_UPDATE_SCHEDULES = 'time udpate schedules';
@@ -118,6 +118,25 @@ serverJob.deleteASchedule = async (schedule, isExpired) => {
     if (schedule.statusId === 7 || schedule.statusId === 8) {
       kuberAPI.deleteContainerFromSchedule(scheduleP);
     }
+
+    // create Usage Log (return point)
+    const startDate = moment(schedule.startedAt);
+    const endDate = moment(schedule.endedAt);
+    const trueEndDate = moment();    
+    const usedHours = trueEndDate.diff(startDate, 'h') + 1;
+    const totalDays = endDate.diff(startDate, 'd') + 1;    
+    const valueOfDay = schedule.machine.resInfo.value * schedule.machine.gpuAmount;
+    const valueOfHour = (valueOfDay / 24);
+    const alreadyPayValue = (totalDays * valueOfDay);
+    const usedValue = (valueOfHour * usedHours);
+    const returnValue = (alreadyPayValue - usedValue);    
+
+    const usageLogAtrr = {
+      scheduleId: schedule.id,
+      countValue: Math.floor(returnValue),
+      endedAt: trueEndDate.format()
+    };
+    await UsageLog.create(usageLogAtrr);
 
     return true;
   } catch (err) {
