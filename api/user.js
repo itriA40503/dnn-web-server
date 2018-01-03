@@ -61,7 +61,7 @@
  */
 
  /**
- * @api {get} /user/resource User get resource remind
+ * @api {get} /user/resource/remind User get resource remind
  * @apiVersion 0.1.0
  * @apiName  UserGetResourceRemind
  * @apiGroup User/resource
@@ -74,6 +74,46 @@
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     "294 days"
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *               message: ""
+ *     }
+ */
+
+ /**
+ * @api {get} /user/resource/calendar User get calendar
+ * @apiVersion 0.1.0
+ * @apiName  UserGetcalendar
+ * @apiGroup User/resource
+ *
+ * @apiHeader {String} x-access-token Token
+ *
+ * @apiParam {String} amount Amount of resouce
+ * @apiParam {String} resId Id of resource 
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+    "availableCalendar": [
+        {
+            "date": "2018-01-03T01:02:51.563Z",
+            "available": [
+                "6"
+            ],
+            "availableNum": 1
+        },
+        {
+            "date": "2018-01-04T01:02:51.563Z",
+            "available": [
+                "6"
+            ],
+            "availableNum": 1
+        },
+        ...
+    ]
  *
  *
  * @apiErrorExample Error-Response:
