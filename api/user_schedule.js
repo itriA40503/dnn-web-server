@@ -67,7 +67,7 @@
 * @apiParam {String} end End date
  * @apiParam {int} imageId Which image to use
  * @apiParam {int} machineId Which machine to use
- * @apiParam {int} gpuType Target gpu. No use when machineId set.
+ * @apiParam {int} resId Id of resource.
  * @apiParam {int} gpuAmount Target machine gpu amount. No use when machineId set.
 *
 * @apiSuccessExample Success-Response:
