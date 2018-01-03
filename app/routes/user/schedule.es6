@@ -4,7 +4,7 @@ import db from '../../db/db';
 import asyncWrap from '../../util/asyncWrap';
 import CdError from '../../util/CdError';
 import paraChecker from '../../util/paraChecker';
-import { checkDateRange } from '../../util/Checker';
+import { checkDateRange, getAvailableDays, checkAvailableResource } from '../../util/Checker';
 import { sequelize, usageLog as UsageLog, dnnUser as User, schedule as Schedule, container as Container, image as Image, machine as Machine } from '../../models/index';
 
 const BOOKMAXIMUN = 100;
@@ -320,16 +320,19 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   if (!scheduleId) throw new CdError('401', 'Without schedule id');
   else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
 
-  let getScheduleById = id => Schedule.scope('normal').findOne({ where: { id: id } });
+  let getScheduleById = id => Schedule.scope('detail').findOne({ where: { id: id } });
 
   let schedule = await getScheduleById(scheduleId);
   if (!schedule) throw new CdError('401', 'No such schedule');
   else if (schedule.userId !== userId) throw new CdError('401', 'Not owner');
+  const resource = schedule.machine.resInfo;
+  const amount = schedule.machine.gpuAmount;
+  const availableDays = await getAvailableDays(userId, resource, amount);
 
-  let machineId = schedule.machineId;
-  let oldStartDate = moment(schedule.startedAt);
-  let oldEndDate = moment(schedule.endedAt);
-  let extendableEndDate = moment.max(oldStartDate, moment()).add(30, 'days').endOf('d');
+  const machineId = schedule.machineId;
+  const oldStartDate = moment(schedule.startedAt);
+  const oldEndDate = moment(schedule.endedAt);
+  let extendableEndDate = moment.max(oldStartDate, moment()).add(availableDays, 'days').endOf('d');
 
   let schedules = await db.getMachinesOccupiedSchedules(
     machineId,
