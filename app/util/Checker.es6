@@ -44,3 +44,20 @@ export const checkDateRange = async (userId, values, valueUnit, startDate, endDa
 
   return { queryDays, availableDays };
 };
+
+/**
+ * Check available resource
+ * @param {integer} userId - user id
+ * @param {integer} resId - resource id
+ * @param {integer} amount - amount of resource
+ */
+export const checkAvailableResource = async (userId, resId, amount) => {  
+  const checkAvailable = await db.findAvailableResByUserIdAndResId(userId, resId);
+
+  if (!checkAvailable) {
+    throw new CdError(401, 'User can not use this resource');
+  } else {
+    if (checkAvailable.amount < amount) throw new CdError(401, 'User can not use this amount');
+  }  
+};
+

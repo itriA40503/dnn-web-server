@@ -4,7 +4,7 @@ import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
-import { checkPoint } from '../../util/Checker';
+import { checkPoint, getAvailableDays, checkAvailableResource } from '../../util/Checker';
 import { sequelize, usageLog as UsageLog, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
 
 momentDurationFormat(moment);
@@ -37,25 +37,11 @@ resourceAPI.remind = asyncWrap(async (req, res, next) => {
   if (!amount) throw new CdError(401, 'Amount not input');    
   if (!validator.isNumeric(amount)) throw new CdError(401, 'Amount is not a number');    
 
-  const checkAvailable = await db.findAvailableResByUserIdAndResId(user.id, resId);
-
-  if (!checkAvailable) {
-    throw new CdError(401, 'User can not use this resource');
-  } else {
-    if (checkAvailable.amount < amount) throw new CdError(401, 'User can not use this amount');
-  }
-
-  const userTransValue = await db.getTransactionSumByUserId(user.id);  
-  const userUsageValue = await db.getUsageSumByUserId(user.id);
-  const values = resource.value * amount; 
-
-  const unitValue = Math.floor((userTransValue + userUsageValue) / (values));
+  await checkAvailableResource(user.id, resId, amount);
   
-  if (unitValue === 0) throw new CdError(401, 'Point is not enough to use');
+  const availableDays = await getAvailableDays(user.id, resource, amount);
 
-  const availableDays = moment.duration(unitValue, resource.valueUnit).format('d [days]');
-
-  res.json(availableDays);  
+  res.json(`${availableDays} days`);  
 
 });
 
