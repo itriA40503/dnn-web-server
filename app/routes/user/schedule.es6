@@ -124,13 +124,17 @@ schedule.create = asyncWrap(async (req, res, next) => {
   } else {
     const userAvailableRes = await db.getAvailableResByUserId(userId);
     const machine = await Machine.scope('statusNormal', 'detail').findById(customMachineId);
-    const mapAvailable = userAvailableRes.map(obj => 
+    const mapAvailable = userAvailableRes.filter(obj => 
       (obj.amount === machine.gpuAmount && obj.resId === machine.resId)
     );
-    if (!mapAvailable) throw new CdError(401, 'The machine not available for user.');
+
+    if (mapAvailable.length === 0) throw new CdError(401, 'The machine not available for user.');
     const values = machine.resInfo.value * machine.gpuAmount;
     const valueUnit = machine.resInfo.valueUnit;
+    const resId = machine.resInfo.id;
+    const amount = machine.gpuAmount;
     await checkDateRange(userId, values, valueUnit, startDate, endDate);
+    await checkAvailableResource(userId, resId, amount);
   }
 
   let [bookedSchedules, machines, images, overlapSchedules] =
