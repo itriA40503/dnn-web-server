@@ -61,3 +61,24 @@ export const checkAvailableResource = async (userId, resId, amount) => {
   }  
 };
 
+/**
+ * Get available days for the user
+ * @param {integer} userId - user id
+ * @param {resource} resource - resource
+ * @param {integer} amount - amount of resource
+ * @return {string} 
+ */
+export const getAvailableDays = async (userId, resource, amount) => {
+  const userTransValue = await db.getTransactionSumByUserId(userId);  
+  const userUsageValue = await db.getUsageSumByUserId(userId);
+  const values = resource.value * amount; 
+
+  const unitValue = Math.floor((userTransValue + userUsageValue) / (values));
+  
+  if (unitValue === 0) throw new CdError(401, 'Point is not enough to use');
+
+  const availableDays = moment.duration(unitValue, resource.valueUnit).format('d');
+
+  return availableDays;
+};
+
