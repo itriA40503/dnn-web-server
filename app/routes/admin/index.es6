@@ -34,6 +34,7 @@ userRouter.get('/:userId/resources', jwtAuth.Admin, user.getAvailableRes);
 userRouter.put('/:userId/resource/:resId', jwtAuth.Admin, user.modifyAvailableRes);
 userRouter.delete('/:userId/resource/:resId', jwtAuth.Admin, user.deleteAvailableRes);
 userRouter.post('/:userId/transaction', jwtAuth.Admin, user.createTrans);
+userRouter.post('/', jwtAuth.Admin, user.createUser);
 
 resourceRouter.post('/', resource.createResource);
 resourceRouter.get('/', resource.getResource);

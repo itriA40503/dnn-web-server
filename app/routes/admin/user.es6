@@ -104,6 +104,21 @@ userAPI.deleteAvailableRes = asyncWrap(async (req, res, next) => {
 
 });
 
+userAPI.createUser = asyncWrap(async (req, res, next) => {
+  let itriId = (req.query && req.query.itriId) || (req.body && req.body.itriId);
+  itriId = itriId.toUpperCase();
+  const userCheck = await DnnUser.scope({ method: ['byItriId', itriId] }).findOne();
+  if (userCheck) throw new CdError(401, 'the user already exist.');
+
+  const userAttr = {
+    itriId
+  };
+  const user = await DnnUser.create(userAttr);
+
+  res.json(user);
+
+});
+
 userAPI.createTrans = asyncWrap(async (req, res, next) => {
   const userId = req.params.userId;
   const addValue = (req.query && req.query.addValue) || (req.body && req.body.addValue);
