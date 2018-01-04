@@ -200,7 +200,7 @@
  *
  * @apiParam {String} gpuType Type of GPU
  * @apiParam {String} machineType Type of Machine (DGX or x86)
- * @apiParam {String} valueUnit The unit of value (should be d(days),w(weeks),M(months),y(years))
+ * @apiParam {String} valueUnit The unit of value should be d(days), w(weeks), M(months), y(years).
  * @apiParam {String} value The counting value
  *
  * @apiSuccessExample Success-Response:
