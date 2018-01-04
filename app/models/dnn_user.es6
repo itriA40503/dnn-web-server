@@ -88,6 +88,13 @@ module.exports = (sequelize, DataTypes) => {
             'typeId'
           ]
         };        
+      },
+      byItriId: (itriId) => {
+        return {
+          where: {
+            itriId: itriId
+          }
+        };
       }
     }
   });
