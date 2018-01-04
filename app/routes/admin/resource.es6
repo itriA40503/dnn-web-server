@@ -8,7 +8,7 @@ import { sequelize, resInfo as ResInfo } from '../../models/index';
 
 const resourceAPI = {};
 
-const timeFormat = ['Y', 'M', 'D', 'h', 'm', 's'];
+const timeFormat = ['y', 'years', 'M', 'months', 'w', 'weeks', 'd', 'days'];
 
 const checkResourceExist = async (id) => {
   let res = await db.findResourceInfoById(id);
@@ -27,7 +27,7 @@ resourceAPI.createResource = asyncWrap(async (req, res, next) => {
   if (!valueUnit) {
     throw new CdError(401, 'valueUnit not input');    
   } else {
-    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng, should be one of Y,M,D,h,m,s .');
+    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng, should be one of Y,M,w,d .');
   }
 
   if (!value) { 
