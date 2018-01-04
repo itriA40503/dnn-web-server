@@ -39,7 +39,7 @@ export default asyncWrap(async (req, res, next) => {
 
   const afterLdapAuthSuccess = async (itriId) => {
     try {
-      let [user, created] = await User.findOrCreate({
+      let [user, created] = await User.scope('notDelete').findOrCreate({
         where: { itriId: itriId },
         defaults: {
           salt: crypto.randomBytes(16).toString('hex')
