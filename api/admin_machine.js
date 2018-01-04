@@ -344,6 +344,40 @@
  *
  **/
 
+/**
+ * @api {post} /admin/user create user
+ * @apiVersion 0.1.0
+ * @apiName  createUser
+ * @apiGroup Admin/user
+ *
+ * @apiHeader {String} x-access-token Admin token
+ *
+ * @apiParam {string} itriId itri id
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+       {
+            "createdAt": "2018-01-04T02:01:29.163Z",
+            "typeId": 1,
+            "id": "9",
+            "itriId": "A20503",
+            "updatedAt": "2018-01-04T02:01:29.156Z",
+            "salt": null,
+            "mail": null,
+            "deletedAt": null
+        }
+ *
+ * @apiError  0 Parameter error.
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ *     {
+ *        "message": ""
+ *     }
+ *
+ **/
+
  /**
  * @api {get} /admin/users/detail user detail
  * @apiVersion 0.1.0
