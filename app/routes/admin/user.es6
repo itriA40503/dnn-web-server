@@ -12,7 +12,7 @@ userAPI.getUserList = asyncWrap(async (req, res, next) => {
   res.json(currentUserList);
 });
 
-userAPI.gerAvailableRes = asyncWrap(async (req, res, next) => {
+userAPI.getAvailableRes = asyncWrap(async (req, res, next) => {
   let userId = req.params.userId; 
   if (userId) {
     const user = await db.checkUserExistById(userId);

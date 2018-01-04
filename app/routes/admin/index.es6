@@ -30,7 +30,7 @@ mailRouter.post('/', jwtAuth.Admin, mail.checkMail);
 usersRouter.get('/detail', jwtAuth.Admin, user.getUserList);
 
 userRouter.post('/:userId/resource', jwtAuth.Admin, user.createAvailableRes);
-userRouter.get('/:userId/resources', jwtAuth.Admin, user.gerAvailableRes);
+userRouter.get('/:userId/resources', jwtAuth.Admin, user.getAvailableRes);
 userRouter.put('/:userId/resource/:resId', jwtAuth.Admin, user.modifyAvailableRes);
 userRouter.delete('/:userId/resource/:resId', jwtAuth.Admin, user.deleteAvailableRes);
 userRouter.post('/:userId/transaction', jwtAuth.Admin, user.createTrans);
