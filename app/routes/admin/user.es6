@@ -3,7 +3,7 @@ import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
-import { sequelize, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
+import { sequelize, dnnUser as DnnUser, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
 
 const userAPI = {};
 
