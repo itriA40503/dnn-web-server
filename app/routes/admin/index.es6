@@ -25,28 +25,28 @@ machineRouter.delete('/:machine_id', machine.deleteMachine);
 
 machinesRouter.get('/', machine.getAllExistMachine);
 
-mailRouter.post('/', jwtAuth.Admin, mail.checkMail);
+mailRouter.post('/', mail.checkMail);
 
-usersRouter.get('/detail', jwtAuth.Admin, user.getUserList);
+usersRouter.get('/detail', user.getUserList);
 
-userRouter.post('/:userId/resource', jwtAuth.Admin, user.createAvailableRes);
-userRouter.get('/:userId/resources', jwtAuth.Admin, user.getAvailableRes);
-userRouter.put('/:userId/resource/:resId', jwtAuth.Admin, user.modifyAvailableRes);
-userRouter.delete('/:userId/resource/:resId', jwtAuth.Admin, user.deleteAvailableRes);
-userRouter.post('/:userId/transaction', jwtAuth.Admin, user.createTrans);
-userRouter.post('/', jwtAuth.Admin, user.createUser);
+userRouter.post('/:userId/resource', user.createAvailableRes);
+userRouter.get('/:userId/resources', user.getAvailableRes);
+userRouter.put('/:userId/resource/:resId', user.modifyAvailableRes);
+userRouter.delete('/:userId/resource/:resId', user.deleteAvailableRes);
+userRouter.post('/:userId/transaction', user.createTrans);
+userRouter.post('/', user.createUser);
 
 resourceRouter.post('/', resource.createResource);
 resourceRouter.get('/', resource.getResource);
 resourceRouter.put('/:resId', resource.modifyResource);
 resourceRouter.delete('/:resId', resource.deleteResource);
 
-adminRouter.use('/machine', machineRouter);
-adminRouter.use('/machines', machinesRouter);
-adminRouter.use('/mail', mailRouter);
-adminRouter.use('/resource', resourceRouter);
-adminRouter.use('/users', usersRouter);
-adminRouter.use('/user', userRouter);
+adminRouter.use('/machine', jwtAuth.Admin, machineRouter);
+adminRouter.use('/machines', jwtAuth.Admin, machinesRouter);
+adminRouter.use('/mail', jwtAuth.Admin, mailRouter);
+adminRouter.use('/resource', jwtAuth.Admin, resourceRouter);
+adminRouter.use('/users', jwtAuth.Admin, usersRouter);
+adminRouter.use('/user', jwtAuth.Admin, userRouter);
 
 router.use('/admin', adminRouter);
 
