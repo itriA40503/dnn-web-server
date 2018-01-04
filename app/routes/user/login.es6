@@ -57,7 +57,8 @@ export default asyncWrap(async (req, res, next) => {
       }, req.app.get('jwtsecretkey'));
 
       res.json({
-        token: token
+        token: token,
+        type: user.typeId
       });
 
     } catch (err) {
