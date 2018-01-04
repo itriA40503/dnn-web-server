@@ -10,7 +10,8 @@
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIzIn0.xi1PUUhCfJLcX-YwUj-FtvBhcdD8FKwBZxZO9OeBNZg"
+ *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIzIn0.xi1PUUhCfJLcX-YwUj-FtvBhcdD8FKwBZxZO9OeBNZg",
+ *        "type": 1 // 1:normal 2:admin
  *     }
  *
  *
