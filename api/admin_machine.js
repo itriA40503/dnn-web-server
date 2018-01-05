@@ -197,6 +197,8 @@
  * @apiVersion 0.1.0
  * @apiName  createResource
  * @apiGroup Admin/resource
+ * 
+ * @apiHeader {String} x-access-token Admin token
  *
  * @apiParam {String} gpuType Type of GPU
  * @apiParam {String} machineType Type of Machine (DGX or x86)
@@ -229,7 +231,8 @@
  * @apiName  getResourceList
  * @apiGroup Admin/resource
  *
- *
+ * @apiHeader {String} x-access-token Admin token
+ * 
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     [
@@ -262,7 +265,13 @@
  * @apiName  updateResource
  * @apiGroup Admin/resource
  * 
+ * @apiHeader {String} x-access-token Admin token
  *
+ * @apiParam {String} gpuType Type of GPU
+ * @apiParam {String} machineType Type of Machine (DGX or x86)
+ * @apiParam {String} valueUnit The unit of value should be d(days), w(weeks), M(months), y(years).
+ * @apiParam {String} value The counting value
+ * 
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     [
@@ -294,6 +303,7 @@
  * @apiName  deleteResource
  * @apiGroup Admin/resource
  * 
+ * @apiHeader {String} x-access-token Admin token
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -325,6 +335,8 @@
  * @apiName  sendCustomMail
  * @apiGroup Admin/mail
  *
+ * @apiHeader {String} x-access-token Admin token
+ * 
  * @apiParam {String} receiver Email receiver
  * @apiParam {String} title Email title
  * @apiParam {text} text Email text
