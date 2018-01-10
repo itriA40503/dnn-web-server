@@ -68,7 +68,7 @@ resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
   if (machineType) updateAttr.machineType = machineType;
 
   if (valueUnit) {
-    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng, should be one of Y,M,D,h,m,s .');
+    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng,  should be one of Y,M,w,d .');
     updateAttr.valueUnit = valueUnit;
   }
 
