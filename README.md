@@ -32,32 +32,22 @@ $ npm run apidoc
 
 ## Environment Variables
 
-### NODE_ENV
-Set the mode to "development" or "production".
+Setting environment variables when start container.
 
-### DNNDB_HOST 
-This environment variable can be used to set the postgreSQL database host.
+| Environment Variables | Description |
+|----------|:-------------|
+| NODE_ENV |  Set the mode to `development` or `production`. |
+| DNNDB_HOST | This environment variable can be used to set the postgreSQL database host. |
+| DNNDB_PORT | This environment variable can be used to set the postgreSQL database port. | 
+| DNNDB_DBNAME | Database name. Default = `dnn`. |
+| DNNDB_USERNAME | Database usesername. |
+| DNNDB_PASS | Database password. |
+| K8S_API | K8S api url. Ex: `http://100.86.2.12:30554/kubeGpu`. |
+| MAIL_SERVER_HOST | SMTP server host. Default = `smtpx.itri.org.tw` |
+| MAIL_SERVER_PORT | SMTP server port. Default = `25` |
+| MAIL_SERVER_USERNAME | SMTP server username.|
+| MAIL_SERVER_PASS | SMTP server password. |
 
-### DNNDB_PORT
-This environment variable can be used to set the postgreSQL database port.
-
-### DNNDB_DBNAME
-Database name. Default = "dnn".
-
-### DNNDB_USERNAME
-
-### DNNDB_PASS
-
-### K8S_API
-K8S api url. Ex: "http://100.86.2.12:30554/kubeGpu".
-
-### MAIL_SERVER_HOST
-
-### MAIL_SERVER_PORT
-
-### MAIL_SERVER_USERNAME
-
-### MAIL_SERVER_PASS
 
 ## Docker Tutorial ##
 
