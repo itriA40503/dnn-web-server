@@ -239,7 +239,7 @@ schedule.update = asyncWrap(async (req, res, next) => {
   let extendableEndDate = moment.max(moment(oldStartDate), moment()).add(30, 'days').endOf('d');
 
   if (end) {
-    let newEndedAt = moment(end);
+    let newEndedAt = moment(end).endOf('day');
     if (!newEndedAt.isValid()) throw new CdError(401, 'Date format error');
     else if (newEndedAt < moment()) throw new CdError(401, 'End date should greater then current date');
     else if (newEndedAt < oldStartDate) throw new CdError(401, 'End date should greater then start date');
