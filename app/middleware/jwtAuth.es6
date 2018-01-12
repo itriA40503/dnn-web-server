@@ -14,8 +14,14 @@ jwtAuth.User = asyncWrap(async (req, res, next) => {
     throw new CdError(401, 'lack of access-token', 40100);
   }
 
-  let decoded = jwt.decode(token, req.app.get('jwtsecretkey'));
+  let decoded;
 
+  try {
+    decoded = jwt.decode(token, req.app.get('jwtsecretkey'));  
+  } catch (err) {
+    throw new CdError(401, 'token fail', 40101);
+  }  
+  
   if (!decoded) {
     throw new CdError(401, 'token fail', 40101);
   }
@@ -48,7 +54,13 @@ jwtAuth.Admin = asyncWrap(async (req, res, next) => {
     throw new CdError(401, 'lack of access-token', 40100);
   }
 
-  let decoded = jwt.decode(token, req.app.get('jwtsecretkey'));
+  let decoded;
+
+  try {
+    decoded = jwt.decode(token, req.app.get('jwtsecretkey'));  
+  } catch (err) {
+    throw new CdError(401, 'token fail', 40101);
+  }
 
   if (!decoded) {
     throw new CdError(401, 'token fail', 40101);
