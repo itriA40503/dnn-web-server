@@ -88,8 +88,8 @@ schedule.create = asyncWrap(async (req, res, next) => {
   const username = req.user.itriId;
   const startQuery = req.query.start || (req.body && req.body.start);
   const endQuery = req.query.end || (req.body && req.body.end);
-  const imageIdQuery = req.query.image_id || (req.body && req.body.imageId);
-  const customMachineId = req.query.machine_id || (req.body && req.body.machineId);
+  const imageIdQuery = req.query.imageId || (req.body && req.body.imageId);
+  const customMachineId = req.query.machineId || (req.body && req.body.machineId);
   // let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
   // let customGpuAmount = req.query.gpu_amount || (req.body && req.body.gpuAmount) || 1;
 
