@@ -324,7 +324,7 @@ schedule.getExtendableDate = asyncWrap(async (req, res, next) => {
   if (!scheduleId) throw new CdError('401', 'Without schedule id');
   else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
 
-  let getScheduleById = id => Schedule.scope('detail').findOne({ where: { id: id } });
+  let getScheduleById = id => Schedule.scope('detail', 'statusNormal').findOne({ where: { id: id } });
 
   let schedule = await getScheduleById(scheduleId);
   if (!schedule) throw new CdError('401', 'No such schedule');
