@@ -34,7 +34,7 @@ image.update = asyncWrap(async (req, res, next) => {
 
   let image = db.getImageByIdOrDigest(imageId);
 
-  if (!image) throw new CdError(401, 'No specify image.');
+  if (!image) throw new CdError(400, 'No specify image.');
 
   image.updateAttributes({
     description: description

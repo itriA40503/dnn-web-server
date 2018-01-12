@@ -93,20 +93,20 @@ schedule.create = asyncWrap(async (req, res, next) => {
   // let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
   // let customGpuAmount = req.query.gpu_amount || (req.body && req.body.gpuAmount) || 1;
 
-  if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(401, 'Lack of parameter');
+  if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(400, 'Lack of parameter', 40001);
 
   let startDate = moment(startQuery);
   let endDate = moment(endQuery);
 
-  if (!startDate.isValid() || !endDate.isValid()) throw new CdError(401, 'Wrong date format');
+  if (!startDate.isValid() || !endDate.isValid()) throw new CdError(400, 'Wrong date format', 40002);
 
   startDate = startDate.startOf('day');
   endDate = endDate.endOf('day');
 
-  if (startDate > endDate) throw new CdError(401, 'End date must greater then start date');
-  else if (endDate < moment()) throw new CdError(401, 'End date must greater then now');
-  else if (startDate < moment().startOf('day')) throw new CdError(401, 'Start date must greater then today');
-  else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(401, 'Period must smaller then 30 days');
+  if (startDate > endDate) throw new CdError(400, 'End date must greater then start date');
+  else if (endDate < moment()) throw new CdError(400, 'End date must greater then now');
+  else if (startDate < moment().startOf('day')) throw new CdError(400, 'Start date must greater then today');
+  else if (moment(startDate).add(31, 'days') < endDate) throw new CdError(400, 'Period must smaller then 30 days');
 
   const start = startDate.format();
   const end = endDate.format();
@@ -120,7 +120,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
   // machine id is necessary now
   if (!customMachineId) {
-    throw new CdError(401, 'No input machine id.');    
+    throw new CdError(400, 'No input machine id.', 40001);    
   } else {
     const userAvailableRes = await db.getAvailableResByUserId(userId);
     const machine = await Machine.scope('statusNormal', 'detail').findById(customMachineId);
@@ -150,7 +150,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   }
 
   if (!images.indexOf(imageIdQuery)) {
-    throw new CdError(401, 'image not exist');
+    throw new CdError(400, 'image not exist');
   }
 
   let machineSet = await new Set(
@@ -216,8 +216,8 @@ schedule.update = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
   let end = req.query.end || (req.body && req.body.end);
 
-  if (!scheduleId) throw new CdError('401', 'without schedule id');
-  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
+  if (!scheduleId) throw new CdError(400, 'without schedule id', 40002);
+  else if (Number.isInteger(scheduleId)) throw new CdError(400, 'schedule id must be a number', 40002);
 
   let setting = {
     projectCode: req.query.project_code
@@ -302,14 +302,14 @@ schedule.delete = asyncWrap(async (req, res, next) => {
   let scheduleId = req.params.schedule_id;
 
   if (!scheduleId) throw new CdError('401', 'without schedule id');
-  else if (Number.isInteger(scheduleId)) throw new CdError('401', 'schedule id must be a number');
+  else if (Number.isInteger(scheduleId)) throw new CdError(400, 'schedule id must be a number', 40002);
 
   let schedule = await Schedule.scope('detail').findById(scheduleId);
 
-  if (!schedule) throw new CdError(401, 'schedule not exist');
+  if (!schedule) throw new CdError(400, 'schedule not exist');
   else if (schedule.userId !== userId) throw new CdError(401, 'Not owner!');
-  else if (schedule.statusId === 4) throw new CdError(401, 'Schedule is already deleting!');
-  else if (schedule.statusId === 5) throw new CdError(401, 'Schedule have been deleted!');
+  else if (schedule.statusId === 4) throw new CdError(400, 'Schedule is already deleting!');
+  else if (schedule.statusId === 5) throw new CdError(400, 'Schedule have been deleted!');
 
   await serverJob.deleteASchedule(schedule);
   res.json(schedule);

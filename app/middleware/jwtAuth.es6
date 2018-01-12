@@ -20,7 +20,7 @@ jwtAuth.User = asyncWrap(async (req, res, next) => {
     throw new CdError(401, 'token fail', 40101);
   }
   if (decoded.expires < ((new Date()).getTime() / 1000)) {
-    throw new CdError(401, 'token expired', 40101);
+    throw new CdError(401, 'token expired', 40102);
   }
 
   /* 或許可以不要check */
@@ -36,7 +36,7 @@ jwtAuth.User = asyncWrap(async (req, res, next) => {
     req.user = user;
     next();
   } else {
-    throw new CdError(401, 'cant find user', 40102);
+    throw new CdError(401, 'cant find user', 40104);
   }
 
 });
@@ -54,10 +54,10 @@ jwtAuth.Admin = asyncWrap(async (req, res, next) => {
     throw new CdError(401, 'token fail', 40101);
   }
   if (decoded.expires < ((new Date()).getTime() / 1000)) {
-    throw new CdError(401, 'token expired', 40101);
+    throw new CdError(401, 'token expired', 40102);
   }
   if (decoded.authority !== 2) {
-    throw new CdError(401, 'No enough authority', 40101);
+    throw new CdError(401, 'No enough authority', 40103);
   }
 
   /* 或許可以不要check */
@@ -73,7 +73,7 @@ jwtAuth.Admin = asyncWrap(async (req, res, next) => {
     req.user = user;
     next();
   } else {
-    throw new CdError(401, 'cant find user', 40102);
+    throw new CdError(401, 'cant find user', 40104);
   }
 
 });

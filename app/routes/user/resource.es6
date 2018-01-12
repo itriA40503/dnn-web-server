@@ -13,7 +13,7 @@ const resourceAPI = {};
 
 const checkResourceExist = async (id) => {
   const res = await db.findResourceInfoById(id);
-  if (!res) throw new CdError(401, 'Resource(id) not exist or has been deleted.');
+  if (!res) throw new CdError(400, 'Resource(id) not exist or has been deleted.');
   return res;
 };
 
@@ -31,11 +31,11 @@ resourceAPI.remind = asyncWrap(async (req, res, next) => {
   const resId = (req.query && req.query.resId) || (req.body && req.body.resId);
   const amount = (req.query && req.query.amount) || (req.body && req.body.amount);  
 
-  if (!resId) throw new CdError(401, 'resId not input');
+  if (!resId) throw new CdError(401, 'resId not input', 40001);
   const resource = await checkResourceExist(resId);   
   
-  if (!amount) throw new CdError(401, 'Amount not input');    
-  if (!validator.isNumeric(amount)) throw new CdError(401, 'Amount is not a number');    
+  if (!amount) throw new CdError(401, 'Amount not input', 40001);    
+  if (!validator.isNumeric(amount)) throw new CdError(401, 'Amount is not a number', 40002);    
 
   await checkAvailableResource(user.id, resId, amount);
   
@@ -51,11 +51,11 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
   const resId = (req.query && req.query.resId) || (req.body && req.body.resId);
   const amount = (req.query && req.query.amount) || (req.body && req.body.amount);  
 
-  if (!resId) throw new CdError(401, 'resId not input');
+  if (!resId) throw new CdError(400, 'resId not input', 40001);
   const resource = await checkResourceExist(resId);   
   
-  if (!amount) throw new CdError(401, 'Amount not input');    
-  if (!validator.isNumeric(amount)) throw new CdError(401, 'Amount is not a number');    
+  if (!amount) throw new CdError(400, 'Amount not input', 40001);    
+  if (!validator.isNumeric(amount)) throw new CdError(400, 'Amount is not a number', 40002);    
   const checkAvailable = await db.findAvailableResByUserIdAndResId(user.id, resId);
 
   if (!checkAvailable) {
