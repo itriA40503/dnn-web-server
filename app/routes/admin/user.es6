@@ -106,6 +106,7 @@ userAPI.deleteAvailableRes = asyncWrap(async (req, res, next) => {
 
 userAPI.createUser = asyncWrap(async (req, res, next) => {
   let itriId = (req.query && req.query.itriId) || (req.body && req.body.itriId);
+  if (!itriId) throw new CdError(400, 'itriId not input.');
   itriId = itriId.toUpperCase();
   const userCheck = await DnnUser.scope({ method: ['byItriId', itriId] }).findOne();
   if (userCheck) throw new CdError(401, 'the user already exist.');
