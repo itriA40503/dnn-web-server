@@ -270,6 +270,30 @@ schedule.update = asyncWrap(async (req, res, next) => {
 
   let resSchedule = await Schedule.scope('detail').findById(affectedRows[0].id);
 
+
+  /* Create usage log */
+  // Origin Usage  
+  const countValue = -1 * (resSchedule.machine.resInfo.value * resSchedule.machine.gpuAmount);
+  const queryDays = oldEndDate.diff(oldStartDate, 'd') + 1;
+  const orgValue = countValue * queryDays;
+  // new Usage  
+  const newEndDate = moment(end).endOf('day');
+  const newCountValue = -1 * (resSchedule.machine.resInfo.value * resSchedule.machine.gpuAmount);
+  const newQueryDays = newEndDate.diff(oldStartDate, 'd') + 1;
+  const newValue = newCountValue * newQueryDays;
+
+  console.log(oldEndDate.format(), newEndDate.format());
+  console.log(queryDays, newQueryDays);
+  console.log(orgValue, newValue);
+
+  // returnValue
+  const returnValue = newValue - orgValue;  
+  const usageLogAtrr = {
+    scheduleId: resSchedule.id,
+    countValue: Math.floor(returnValue)    
+  };
+  await UsageLog.create(usageLogAtrr);
+
   res.json(resSchedule);
 
 });
