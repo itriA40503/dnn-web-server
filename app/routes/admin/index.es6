@@ -11,6 +11,7 @@ const adminRouter = express.Router();
 const machineRouter = express.Router();
 const machinesRouter = express.Router();
 const resourceRouter = express.Router();
+const resourcesRouter = express.Router();
 const mailRouter = express.Router();
 const usersRouter = express.Router();
 const userRouter = express.Router();
@@ -36,18 +37,20 @@ userRouter.delete('/:userId/resource/:resId', user.deleteAvailableRes);
 userRouter.post('/:userId/transaction', user.createTrans);
 userRouter.post('/', user.createUser);
 
+resourcesRouter.get('/', resource.getResource);
+
 resourceRouter.post('/', resource.createResource);
 resourceRouter.get('/', resource.getResource);
 resourceRouter.put('/:resId', resource.modifyResource);
 resourceRouter.delete('/:resId', resource.deleteResource);
 
-adminRouter.use('/machine', jwtAuth.Admin, machineRouter);
-adminRouter.use('/machines', jwtAuth.Admin, machinesRouter);
-adminRouter.use('/mail', jwtAuth.Admin, mailRouter);
-adminRouter.use('/resource', jwtAuth.Admin, resourceRouter);
-adminRouter.use('/users', jwtAuth.Admin, usersRouter);
-adminRouter.use('/user', jwtAuth.Admin, userRouter);
+adminRouter.use('/machine', machineRouter);
+adminRouter.use('/machines', machinesRouter);
+adminRouter.use('/resource', resourceRouter);
+adminRouter.use('/resources', resourcesRouter);
+adminRouter.use('/users', usersRouter);
+adminRouter.use('/user', userRouter);
 
-router.use('/admin', adminRouter);
+router.use('/admin', jwtAuth.Admin, adminRouter);
 
 export default router;
