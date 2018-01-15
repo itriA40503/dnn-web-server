@@ -75,7 +75,7 @@ machineAPI.getAllExistMachine = asyncWrap(async (req, res, next) => {
 machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   let label = (req.query && req.query.label) || (req.body && req.body.label);
   let name = (req.query && req.query.name) || (req.body && req.body.name) || label;
-  let gpuAmount = (req.query && req.query.gpu_amount) || (req.body && req.body.gpuAmount) || 1;
+  let gpuAmount = (req.query && req.query.gpuAmount) || (req.body && req.body.gpuAmount) || 1;
   let gpuType = (req.query && req.query.gpu_type) || (req.body && req.body.gpuType) || 'v100';
 
   let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
@@ -112,7 +112,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
 
 machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   let machineId = req.params.machine_id;
-  let gpuAmount = (req.query && req.query.gpu_amount) || (req.body && req.body.gpuAmount);
+  let gpuAmount = (req.query && req.query.gpuAmount) || (req.body && req.body.gpuAmount);
   // let gpuType = (req.query && req.query.gpu_type) || (req.body && req.body.gpuType);
   let description = (req.query && req.query.description) || (req.body && req.body.description);
 
