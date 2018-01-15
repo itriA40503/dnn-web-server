@@ -56,7 +56,7 @@ userAPI.createAvailableRes = asyncWrap(async (req, res, next) => {
 
 userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
   let userId = req.params.userId; 
-  let resId = req.params.resId; 
+  let resId = req.params.resId; // the user's availableRes ID
   let amount = (req.query && req.query.amount) || (req.body && req.body.amount);
   let newResId = (req.query && req.query.resId) || (req.body && req.body.resId);  
     
@@ -80,9 +80,11 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
 
   ResAttr.updateAt = moment().format();
 
-  const getModifyRes = await db.findAvailableResByUserIdAndResId(userId, resId);
+  const getModifyRes = await AvailableRes.findById(resId);
+  if (!getModifyRes) throw new CdError(400, 'the available resource (id) not exist');
 
-  if (!getModifyRes) throw new CdError(401, 'the available resource (id) not exist');
+  const repeateRes = await await db.findAvailableRes(userId, newResId, amount);
+  if (repeateRes) throw new CdError(400, 'the number of resource has been exist');
 
   const updatedRes = await getModifyRes.updateAttributes(ResAttr);
   
@@ -91,16 +93,17 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
 
 userAPI.deleteAvailableRes = asyncWrap(async (req, res, next) => {
   let userId = req.params.userId; 
-  let resId = req.params.resId; 
+  let resId = req.params.resId; // the user's availableRes ID
   
   if (userId) {
     const user = await db.checkUserExistById(userId);
     if (!user) throw new CdError(401, 'the user not exist.');
   }
 
-  const getModifyRes = await db.findAvailableResByUserIdAndResId(userId, resId);
+  const getModifyRes = await AvailableRes.findById(resId);
   if (!getModifyRes) throw new CdError(401, 'the available resource (id) not exist');  
-  
+  if (getModifyRes.deletedAt !== null) throw new CdError(401, 'the available resource has been deleted');  
+
   const deletedRes = await getModifyRes.updateAttributes({ deletedAt: moment().format() });
   
   res.json(deletedRes);
