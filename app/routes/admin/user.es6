@@ -32,18 +32,18 @@ userAPI.createAvailableRes = asyncWrap(async (req, res, next) => {
     
   if (userId) {
     const user = await db.checkUserExistById(userId);
-    if (!user) throw new CdError(401, 'the user not exist.');
+    if (!user) throw new CdError(400, 'the user not exist.');
   }
 
-  if (!amount) throw new CdError(401, 'amount not input');
+  if (!amount) throw new CdError(400, 'amount not input', 40001);
 
   if (resId) {
     const resource = await db.findResourceInfoById(resId);
-    if (!resource) throw new CdError(401, 'the resource (id) not exist');
-    const repeateRes = await db.findAvailableResByUserIdAndResId(userId, resId);    
-    if (repeateRes) throw new CdError(401, 'the resource (id) has been set');
+    if (!resource) throw new CdError(400, 'the resource (id) not exist');
+    const repeateRes = await db.findAvailableRes(userId, resId, amount);    
+    if (repeateRes) throw new CdError(400, 'the number of resource has been set');
   } else {
-    throw new CdError(401, 'the resource (id) not input');
+    throw new CdError(400, 'the resource (id) not input', 40001);
   }
   let ResAttr = {
     userId,
@@ -64,16 +64,19 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
 
   if (userId) {
     const user = await db.checkUserExistById(userId);
-    if (!user) throw new CdError(401, 'the user not exist.');
+    if (!user) throw new CdError(400, 'the user not exist.');
   }  
 
   if (newResId) {
     const resource = await db.findResourceInfoById(newResId);
-    if (!resource) throw new CdError(401, 'the update resource (id) not exist');
+    if (!resource) throw new CdError(400, 'the update resource (id) not exist');
     ResAttr.resId = newResId;
+  } else {
+    throw new CdError(400, 'the resource (id) is not input', 40001);
   }
 
-  if (amount) ResAttr.amount = amount;
+  if (!amount) throw new CdError(400, 'the amount of resource is not input', 40001);
+  ResAttr.amount = amount;
 
   ResAttr.updateAt = moment().format();
 
