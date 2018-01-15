@@ -282,9 +282,9 @@ schedule.update = asyncWrap(async (req, res, next) => {
   const newQueryDays = newEndDate.diff(oldStartDate, 'd') + 1;
   const newValue = newCountValue * newQueryDays;
 
-  console.log(oldEndDate.format(), newEndDate.format());
-  console.log(queryDays, newQueryDays);
-  console.log(orgValue, newValue);
+  // console.log(oldEndDate.format(), newEndDate.format());
+  // console.log(queryDays, newQueryDays);
+  // console.log(orgValue, newValue);
 
   // returnValue
   const returnValue = newValue - orgValue;  
