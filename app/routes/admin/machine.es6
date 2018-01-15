@@ -81,15 +81,17 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
 
   if (!resId) { 
-    throw new CdError(401, 'resId not input');
+    throw new CdError(400, 'resId not input', 4001);
   } else {    
     const resInfo = await checkResourceExist(resId);
     gpuType = resInfo.gpuType;    
   }
 
-  if (gpuAmount) {
-    if (!validator.isNumeric(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
-    else if (gpuAmount >= GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
+  if (!gpuAmount) {
+    throw new CdError(400, 'GpuAmount not input', 4001);    
+  } else {
+    if (!validator.isNumeric(gpuAmount)) throw new CdError(400, 'Gpu amount is not a number', 40002);
+    else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(400, 'Gpu amount must between 1~8');
   }
 
   let machineAttr = {
@@ -102,7 +104,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   };
   let machine = await db.getMachineByLabel(label);
   if (machine) {
-    if (machine.statusId !== 4) throw new CdError(401, 'Machine with same label already exist!');
+    if (machine.statusId !== 4) throw new CdError(400, 'Machine with same label already exist!');
     await machine.updateAttributes(machineAttr);
   } else {
     machine = await Machine.create(machineAttr);
@@ -127,8 +129,8 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   }  
 
   if (gpuAmount) {
-    if (!Number.isInteger(gpuAmount)) throw new CdError(401, 'Gpu amount is not a number');
-    else if (gpuAmount >= GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
+    if (!validator.isNumeric(gpuAmount)) throw new CdError(400, 'Gpu amount is not a number', 40002);
+    else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
     updateAttr.gpuAmount = gpuAmount;
   }
 
