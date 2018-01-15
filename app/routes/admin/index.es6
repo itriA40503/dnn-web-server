@@ -40,7 +40,7 @@ userRouter.post('/', user.createUser);
 resourcesRouter.get('/', resource.getResource);
 
 resourceRouter.post('/', resource.createResource);
-resourceRouter.get('/', resource.getResource);
+// resourceRouter.get('/', resource.getResource);
 resourceRouter.put('/:resId', resource.modifyResource);
 resourceRouter.delete('/:resId', resource.deleteResource);
 
