@@ -60,7 +60,9 @@
     "sha1": "^1.1.1",
     "sinon": "^4.0.0",
     "spdy": "^3.4.7",
-    "validator": "^9.2.0"
+    "swagger-ui-express": "^2.0.13",
+    "validator": "^9.2.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "babel-cli": "~6.24.1",

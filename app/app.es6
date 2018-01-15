@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import sassMiddleware from 'node-sass-middleware';
+
 // import passport from 'passport';
 // import session from 'express-session';
 // import flash from 'connect-flash';
@@ -14,7 +15,7 @@ import timeout from 'connect-timeout';
 import CdError from './util/CdError';
 import jwtAuth from './middleware/jwtAuth';
 import setupRouters from './routes';
-
+import setupApiDoc from './doc';
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.get('/', (req, res) => {
 app.use('/apidoc', express.static(path.join(__dirname, '../apidoc')));
 app.use('/portal', express.static(path.join(__dirname, '../portal')));
 
+setupApiDoc(app);
 setupRouters(app);
 
 // catch 404 and forward to error handler

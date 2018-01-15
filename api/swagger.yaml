@@ -1,0 +1,1422 @@
+swagger: '3.0'
+info:
+  description:
+    This is api service for ITRI dnn farm to manage the reservation schedule of depp-learning cluster.
+  version: 0.3.0
+  title: DNN Fram Api Document  
+  contact:
+    email: itriA40503@itri.org.tw
+host: 140.96.29.86:6363
+basePath: /
+tags:
+  - name: user signin
+    description: User signin to get token.
+  - name: user schedule
+    description: User schedule operation
+  - name: user resource
+    description: Get resource information and calendar information.
+  - name: admin user
+    description: Manage user's avaliable resources and user's transaction.
+  - name: admin machine
+    description: Manage machines.
+  - name: admin resource
+    description: Manage resources.
+  - name: image
+    description: To get image information.  
+schemes:
+  - http
+paths:
+  /user/resource/calendar:
+    get:
+      tags:
+        - user resource
+      summary: User get calendar
+      description: ''
+      operationId: calendarUser
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true
+        - in: query
+          name: amount
+          description: Amount of resource (gpu)
+          required: true
+        - in: query
+          name: resId
+          description: Id of resource (gpu)
+          required: true
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/AvailableCal'
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /user/resource/remind:
+    get:
+      tags:
+        - user resource
+      summary: User get available days
+      description: ''
+      operationId: daysUser
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true
+        - in: query
+          name: amount
+          description: Amount of resource (gpu)
+          required: true
+        - in: query
+          name: resId
+          description: Id of resource (gpu)
+          required: true
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: string
+            example: '249 days'
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /user/resources:
+    get:
+      tags:
+        - user resource      
+      summary: user get the available resources
+      description: ''
+      operationId: resourceUser
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AvaliableRes' 
+        '401':
+          description: Unauthorized
+  /user/signin:
+    get:
+      tags:
+        - user signin
+      summary: User signin.
+      description: ''
+      operationId: signinUser
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-username
+          description: Username (ITRI Id).
+          required: true  
+        - in: header
+          name: x-password
+          description: Password (ITRI Password).
+          required: true         
+      responses:
+        '200':      
+          description: successful operation    
+          schema:
+            $ref: '#/definitions/UserSignIn' 
+        '401':
+          description: Unauthorized          
+  /user/schedule:
+    post:
+      tags:
+        - user schedule
+      summary: create user schedule
+      description: ''
+      operationId: createSchdule
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: query
+          name: start
+          type: string
+          description: Start date (ISO-8601)
+          required: true                
+        - in: query
+          name: end
+          type: string
+          description: End date
+          required: true
+        - in: query
+          name: imageId
+          type: string
+          description: Which image to use
+          required: true  
+        - in: query
+          name: machineId
+          type: string
+          description: Which resource to use
+          required: true  
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Schedule' 
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/user/schedule/{id}':
+    put:
+      tags: 
+        - user schedule
+      summary: update user schedule
+      description: ''
+      operationId: updateSchdule
+      consumes:
+        - application/x-www-from-urlencoded        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true
+        - in: path
+          name: id
+          description: Id of schedule
+          required: true
+        - in: query
+          name: end
+          description: New end date of schedule
+          required: true
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Schedule'
+        '400':
+          description: Bad Request
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+    delete:
+      tags: 
+        - user schedule
+      summary: delete user schedule
+      description: ''
+      operationId: deleteSchdule
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true
+        - in: path
+          name: id
+          description: Id of schedule
+          required: true
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Schedule'
+        '400':
+          description: Bad Request
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/user/schedule/{id}/extendable':
+    get:
+      tags:
+        - user schedule
+      summary: create user schedule
+      description: ''
+      operationId: getExtendSchdule
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true
+        - in: path
+          name: id
+          description: Id of schedule
+          required: true
+      responses:
+        '200':
+          description: successful operation             
+          type: object
+          properties:
+            extendableLatestDate:
+              type: string
+              example: "2020-07-24T09:00.000Z"
+  /user/schedules/history:
+    get:
+      tags:
+        - user schedule
+      summary: get user history schedule
+      description: ''
+      operationId: getHistorySchdule
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true        
+      responses:
+        '200':
+          description: successful operation
+          type: object
+          properties:
+            historySchedules:
+              type: array
+              items:
+                $ref: '#/definitions/Schedule'
+  /user/schedules/reserved:
+    get:
+      tags:
+        - user schedule
+      summary: get user reserved schedule
+      description: ''
+      operationId: getReservedSchdule
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true        
+      responses:
+        '200':
+          description: successful operation
+          type: object
+          properties:
+            shedules:
+              type: array
+              items:
+                $ref: '#/definitions/Schedule'
+  /images:
+    get:
+      tags:
+        - image
+      summary: get the available images
+      description: ''
+      operationId: getImage
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/images' 
+        '401':
+          description: Unauthorized
+  '/image/{id}':
+    get:
+      tags:
+        - image
+      summary: get the image by id
+      description: ''
+      operationId: getImageById
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: id
+          description: The id of image
+          required: true 
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/image' 
+        '401':
+          description: Unauthorized
+    put:
+      tags:
+        - image
+      summary: update image by id
+      description: ''
+      operationId: putImageById
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: id
+          description: The id of image
+          required: true                
+        - in: body, query
+          name: description
+          description: The description of image
+          required: true  
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/image' 
+        '401':
+          description: Unauthorized
+  /admin/users/detail/:
+     get:
+      tags:
+        - admin user
+      summary: get users information
+      description: ''
+      operationId: getUserInfo
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/dnnUser' 
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /admin/user/:
+    post:
+      tags:
+        - admin user
+      summary: admin create user
+      description: '## This api will not check ITRI id exist (becasue of the password)'
+      operationId: createUser
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: query
+          name: itriId
+          type: string
+          description: Itri Id
+          required: true                 
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/dnnUser' 
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /admin/user/{userId}/transaction:
+    post:
+      tags:
+        - admin user
+      summary: admin create user transaction
+      description: '## Transaction can not be delete.'
+      operationId: createUserTransaction
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: userId
+          type: string
+          description: Id of user
+          required: true
+        - in: query
+          name: addValue
+          type: string
+          description: value of increase point
+          required: true
+        - in: query
+          name: info
+          type: string
+          description: infomation of the transaction
+          required: true
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/transaction' 
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/admin/user/{userId}/resource':
+    post:
+      tags:
+        - admin user
+      summary: admin create user available resource
+      description: ''
+      operationId: createAvaliableRes
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: userId
+          type: integer
+          description: User id
+          required: true
+        - in: query
+          name: amount
+          type: integer
+          description: Gpu amount of the machine
+          required: true
+        - in: query
+          name: resId
+          type: integer
+          description: resource id
+          required: true        
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/AvaliableRes' 
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/admin/user/{userId}/resources':
+    get:
+      tags:
+        - admin user
+      summary: get user's available resources
+      description: ''
+      operationId: getUserAvailableRes
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: userId
+          type: integer
+          description: User id
+          required: true     
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AvaliableRes' 
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired    
+  '/admin/user/{userId}/resource/{availResId}':
+    put:
+      tags:
+        - admin user
+      summary: admin update user available resource
+      description: ''
+      operationId: updateAvaliableRes
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: availResId
+          type: integer
+          description: the available resource id
+          required: true        
+        - in: path
+          name: userId
+          type: integer
+          description: User id
+          required: true
+        - in: query
+          name: resId
+          type: integer
+          description: Resource id
+          required: true
+        - in: query
+          name: amount
+          type: integer
+          description: Gpu amount of the machine
+          required: true        
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/AvaliableRes' 
+        '400':
+          description: Bad Request
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+    delete:
+      tags:
+        - admin user
+      summary: admin delete user available resource
+      description: ''
+      operationId: deleteAvaliableRes
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: path
+          name: availResId
+          type: integer
+          description: the available resource id
+          required: true
+        - in: path
+          name: userId
+          type: integer
+          description: User id
+          required: true     
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/AvaliableRes' 
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /admin/machines/:
+    get:
+      tags:
+        - admin machine
+      summary: get machine information
+      description: ''
+      operationId: getMachineInfo
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Machine' 
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /admin/machine/:
+    post:
+      tags:
+        - admin machine
+      summary: admin create machine
+      description: ''
+      operationId: createMachine
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true  
+        - in: query
+          name: label
+          type: string
+          description: Machine label
+          required: true        
+        - in: query
+          name: name
+          type: string
+          description: Machine name
+          required: true
+        - in: query
+          name: gpuAmount
+          type: integer
+          description: Gpu amount of the machine
+          required: true
+        - in: query
+          name: resId
+          type: integer
+          description: resource id
+          required: true        
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Machine' 
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/admin/machine/{machineId}':
+    put:
+      tags:
+        - admin machine
+      summary: admin update machine
+      description: ''
+      operationId: updateMachine
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true 
+        - in: path
+          name: machineId
+          type: integer
+          description: Id of machine
+          required: true 
+        - in: query
+          name: gpuAmount
+          type: integer
+          description: Gpu amount of the machine          
+        - in: query
+          name: resId
+          type: integer
+          description: resource id  
+        - in: query
+          name: description
+          type: string
+          description: Description of the machine          
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Machine' 
+        '400':
+          description: Bad Request
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+    delete:
+      tags:
+        - admin machine
+      summary: admin delete machine
+      description: '## Delete machine, schedules also delete !'
+      operationId: deleteMachine
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true 
+        - in: path
+          name: machineId
+          type: integer
+          description: Id of machine
+          required: true 
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Machine'         
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/admin/machine/{machineId}/enable':
+    put:
+      tags:
+        - admin machine
+      summary: admin enable machine
+      description: ''
+      operationId: enableMachine
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true 
+        - in: path
+          name: machineId
+          type: integer
+          description: Id of machine
+          required: true 
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Machine'         
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/admin/machine/{machineId}/disable':
+    put:
+      tags:
+        - admin machine
+      summary: admin disable machine
+      description: '## Disable machine, schedules also delete !'
+      operationId: disableMachine
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true 
+        - in: path
+          name: machineId
+          type: integer
+          description: Id of machine
+          required: true 
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/Machine'         
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /admin/resources:
+    get:
+      tags:
+        - admin resource
+      summary: admin get resources
+      description: ''
+      operationId: adminGetResource
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true         
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResInfo'        
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  /admin/resource:
+    post:
+      tags:
+        - admin resource
+      summary: admin create resources
+      description: ''
+      operationId: adminCreateResource
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true         
+        - in: query
+          name: gpuType
+          type: string
+          description: Type of GPU
+          required: true
+        - in: query
+          name: machineType
+          type: string
+          description: Type of machine
+          required: true
+        - in: query
+          name: valueUnit
+          type: string
+          description: The unit of value should be d(days), w(weeks), M(months), y(years).
+          required: true
+        - in: query
+          name: value
+          type: integer
+          description: Value(price) of resource.
+          required: true
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+              $ref: '#/definitions/ResInfo'        
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+  '/admin/resource/{resId}':
+    delete:
+      tags:
+        - admin resource
+      summary: admin delete resource
+      description: '## The using resource can not be delete.'
+      operationId: deleteResource
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true 
+        - in: path
+          name: resId
+          type: integer
+          description: Id of resource
+          required: true 
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+            $ref: '#/definitions/ResInfo'         
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+    put:
+      tags:
+        - admin resource
+      summary: admin update resources
+      description: ''
+      operationId: adminUpdateResource
+      consumes:
+        - application/x-www-from-urlencoded       
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true         
+        - in: query
+          name: gpuType
+          type: string
+          description: Type of GPU
+        - in: query
+          name: machineType
+          type: string
+          description: Type of machine
+        - in: query
+          name: valueUnit
+          type: string
+          description: The unit of value should be d(days), w(weeks), M(months), y(years).
+        - in: query
+          name: value
+          type: integer
+          description: Value(price) of resource.
+      responses:
+        '200':
+          description: successful operation             
+          schema:
+              $ref: '#/definitions/ResInfo'        
+        '400':
+          description: Bad Request
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
+definitions:
+  UserSignIn:
+    type: object
+    properties:
+      token: 
+        type: string
+        format: sh256
+        example: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiIyIiwiaXRyaUlkIjoiQTQwNTAzIiwiZXhwaXJlcyI6MTUyNDI5MTIwOC4xNjcsImF1dGhvcml0eSI6Mn0.CEhgz7IeNj06N4iRruF4qbBVedrBFtwsuVkDPMosYF8'
+      type:
+        type: integer
+        format: int
+        example: 1
+        description: 1 normal, 2 admin
+  AvaliableRes:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '9'
+      resId: 
+        type: string
+        example: '3'
+      amount:
+        type: integer
+        example: 2
+        description: The number of resuorce(GPU).
+      resInfo:
+        type: object
+        $ref: '#/definitions/ResInfo'
+      createdAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      updatedAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+  ResInfo:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '3'
+      gpuType:
+        type: string
+        example: '1080Ti'
+      machineType:
+        type: string
+        example: 'DGX'
+      valueUnit:
+        type: string
+        example: 'D'
+        description: The unit of value should be d(days), w(weeks), M(months), y(years).
+      value:
+        type: integer
+        format: int
+        example: 10
+        description: The resource value.
+      createdAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      updatedAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+  AvailableCal:
+    type: object
+    properties:
+      availabeCalendar:
+        type: array
+        items:
+          $ref: '#/definitions/calendar'
+  calendar:
+    type: object
+    properties:
+      date:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      available:
+        type: array        
+        example:
+          - "1"
+          - "3"
+          - "5"
+      availableNum:
+        type: integer
+        example: 3
+  image:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '7'
+      label:
+        type: string
+        example: 'caffe_2017may'
+      name:
+        type: string
+        example: 'caffe_2017may'  
+      path:
+        type: string
+        example: null
+      description:
+        type: string
+        example: 'caffe'
+  images:
+    type: object
+    properties:
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/image'
+  Container:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1
+      serviceIp:
+        type: string
+        example: null
+      podIp:
+        type: string
+        example: null
+      sshPort:
+        type: string
+        example: null
+      phase:
+        type: string
+        example: null
+      message:
+        type: string
+        example: null
+      createAt:
+        type: timestamp
+        example: null
+      ports:
+        type: arrary
+        example: []
+  Machine:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1
+      label:
+        type: string
+        example: 'm1'
+      name:
+        type: string
+        example: 'm1'
+      description:
+        type: string
+        example: null
+      gpuAmount:
+        type: string
+        example: 2
+      gpuType:
+        type: string
+        example: 'v100'
+      resId:
+        type: string
+        example: 2
+      statueId:
+        type: integer
+        example: 1
+      createdAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      updatedAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      deletedAt:
+        type: timestamp
+        example: null
+      resInfo:
+        $ref: '#/definitions/ResInfo'
+  Schedule:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1
+      statueId:
+        type: integer        
+        example: 1
+        description: '1: waiting 2: loading 3: running 4: deleting 5: deleted 6: canceled 7: error 8:creating 9: outdate 10: delete fail'
+      projectCode:
+        type: string
+        example: null
+      username:
+        type: string
+        example: A99999
+      password:
+        type: string
+        example: qwertyui
+      createdAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      updatedAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      canceledAt:
+        type: timestamp
+        example: null
+      expiredAt:
+        type: timestamp
+        example: null      
+      deletedAt:
+        type: timestamp
+        example: null
+      userId:
+        type: string
+        example: 2
+      usageLogs:
+        type: arrary
+        example: []
+      machine:
+        $ref: '#/definitions/Machine'
+      container:
+        $ref: '#/definitions/Container'
+      image:
+        $ref: '#/definitions/image'
+  dnnUser:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1
+      itriId:
+        type: string
+        example: A99999
+      mail:
+        type: string
+        example: null
+      salt:
+        type: string
+        example: null
+      createdAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'
+      updatedAt:
+        type: timestamp
+        example: '2017-12-20T00:30:08.548Z'      
+      deletedAt:
+        type: timestamp
+        example: null
+      typeId:
+        type: integer
+        example: 1
+      transactions:
+        type: array
+        items:
+          $ref: '#/definitions/transaction'
+      AvaliableRes:
+        type: array
+        items:
+          $ref: '#/definitions/AvaliableRes'
+  transaction:
+    type: object
+    properties:
+      id:
+        type: string
+        example: '5'
+      userId:
+        type: string
+        example: '5'
+      addValue:
+        type: integer
+        example: -110
+      info:
+        type: string
+        example: 'add value'
