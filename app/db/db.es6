@@ -278,6 +278,16 @@ db.findAvailableResByUserIdAndResId = (userId, resId) => {
   ).findOne();
 };
 
+db.findAvailableRes = (userId, resId, amount) => {
+  return AvailableRes.scope(
+    'normal',
+    'notDelete', 
+    { method: ['byAmount', amount] },
+    { method: ['byUserId', userId] },
+    { method: ['byResId', resId] }
+  ).findOne();
+};
+
 db.getAvailableResByUserId = (userId) => {
   return AvailableRes.scope(
     'detail',

@@ -100,6 +100,13 @@ module.exports = (sequelize, DataTypes) => {
             resId: resId
           }          
         };
+      },
+      byAmount: (amount) => {
+        return {
+          where: {
+            amount: amount
+          }          
+        };
       }
     }    
   });

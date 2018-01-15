@@ -56,7 +56,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
   
   if (!amount) throw new CdError(400, 'Amount not input', 40001);    
   if (!validator.isNumeric(amount)) throw new CdError(400, 'Amount is not a number', 40002);    
-  const checkAvailable = await db.findAvailableResByUserIdAndResId(user.id, resId);
+  const checkAvailable = await checkAvailableResource(user.id, resId, amount);
 
   if (!checkAvailable) {
     throw new CdError(401, 'User can not use this resource');
