@@ -1,10 +1,10 @@
 --
 -- ER/Studio Data Architect 8.5 SQL Code Generation
 -- Company :      itri
--- Project :      dnn20171031.DM1
+-- Project :      dnn20171221.DM1
 -- Author :       c
 --
--- Date Created : Monday, October 30, 2017 15:49:37
+-- Date Created : Thursday, December 21, 2017 15:17:57
 -- Target DBMS : PostgreSQL 8.0
 --
 
@@ -15,6 +15,24 @@
 CREATE TABLE admin_user(
     id    BIGSERIAL,
     CONSTRAINT "PK12" PRIMARY KEY (id)
+)
+;
+
+
+
+-- 
+-- TABLE: available_res 
+--
+
+CREATE TABLE available_res(
+    id            BIGSERIAL,
+    user_id       int8         NOT NULL,
+    res_id        int8         NOT NULL,
+    amount        int4,
+    created_at    timestamp    NOT NULL,
+    updated_at    timestamp,
+    deleted_at    timestamp,
+    CONSTRAINT "PK32" PRIMARY KEY (id)
 )
 ;
 
@@ -47,6 +65,7 @@ CREATE TABLE dnn_user(
     id            BIGSERIAL,
     itri_id       varchar(32)    NOT NULL,
     salt          varchar(32),
+    mail          varchar(64),
     created_at    timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at    timestamp,
     deleted_at    timestamp,
@@ -84,6 +103,7 @@ CREATE TABLE image(
 CREATE TABLE machine(
     id             BIGSERIAL,
     status_id      int4            NOT NULL,
+    res_id         int8            NOT NULL,
     name           varchar(64),
     label          varchar(10)     NOT NULL,
     description    varchar(256),
@@ -164,6 +184,25 @@ CREATE TABLE report(
 
 
 -- 
+-- TABLE: res_info 
+--
+
+CREATE TABLE res_info(
+    id              BIGSERIAL,
+    gpu_type        varchar(64),
+    machine_type    varchar(64),
+    value_unit      varchar(4),
+    value           float4,
+    created_at      timestamp      NOT NULL,
+    updated_at      timestamp,
+    deleted_at      timestamp,
+    CONSTRAINT "PK33" PRIMARY KEY (id)
+)
+;
+
+
+
+-- 
 -- TABLE: schedule 
 --
 
@@ -205,6 +244,39 @@ CREATE TABLE schedule_status(
 
 
 -- 
+-- TABLE: transaction 
+--
+
+CREATE TABLE transaction(
+    id            BIGSERIAL,
+    user_id       int8           NOT NULL,
+    add_value     float8,
+    info          varchar(64),
+    created_at    timestamp      NOT NULL,
+    CONSTRAINT "PK34" PRIMARY KEY (id)
+)
+;
+
+
+
+-- 
+-- TABLE: usage_log 
+--
+
+CREATE TABLE usage_log(
+    id             BIGSERIAL,
+    schedule_id    int8,
+    count_value    float8,
+    started_at     timestamp,
+    ended_at       timestamp,
+    created_at     timestamp,
+    CONSTRAINT "PK35" PRIMARY KEY (id)
+)
+;
+
+
+
+-- 
 -- TABLE: user_type 
 --
 
@@ -224,6 +296,21 @@ CREATE TABLE user_type(
 ALTER TABLE admin_user ADD CONSTRAINT "Refdnn_user18" 
     FOREIGN KEY (id)
     REFERENCES dnn_user(id)
+;
+
+
+-- 
+-- TABLE: available_res 
+--
+
+ALTER TABLE available_res ADD CONSTRAINT "Refdnn_user87" 
+    FOREIGN KEY (user_id)
+    REFERENCES dnn_user(id)
+;
+
+ALTER TABLE available_res ADD CONSTRAINT "Refres_info88" 
+    FOREIGN KEY (res_id)
+    REFERENCES res_info(id)
 ;
 
 
@@ -256,6 +343,11 @@ ALTER TABLE machine ADD CONSTRAINT "Refmachine_status2"
     REFERENCES machine_status(id)
 ;
 
+ALTER TABLE machine ADD CONSTRAINT "Refres_info94" 
+    FOREIGN KEY (res_id)
+    REFERENCES res_info(id)
+;
+
 
 -- 
 -- TABLE: port 
@@ -271,14 +363,14 @@ ALTER TABLE port ADD CONSTRAINT "Refcontainer27"
 -- TABLE: report 
 --
 
-ALTER TABLE report ADD CONSTRAINT "Refdnn_user41" 
-    FOREIGN KEY (user_id)
-    REFERENCES dnn_user(id)
-;
-
 ALTER TABLE report ADD CONSTRAINT "Refschedule40" 
     FOREIGN KEY (schedule_id)
     REFERENCES schedule(id)
+;
+
+ALTER TABLE report ADD CONSTRAINT "Refdnn_user41" 
+    FOREIGN KEY (user_id)
+    REFERENCES dnn_user(id)
 ;
 
 
@@ -311,6 +403,26 @@ ALTER TABLE schedule ADD CONSTRAINT "Refimage32"
     REFERENCES image(id)
 ;
 
+
+-- 
+-- TABLE: transaction 
+--
+
+ALTER TABLE transaction ADD CONSTRAINT "Refdnn_user91" 
+    FOREIGN KEY (user_id)
+    REFERENCES dnn_user(id)
+;
+
+
+-- 
+-- TABLE: usage_log 
+--
+
+ALTER TABLE usage_log ADD CONSTRAINT "Refschedule93" 
+    FOREIGN KEY (schedule_id)
+    REFERENCES schedule(id)
+;
+
 INSERT INTO machine_status (id, status) VALUES (1, 'normal');
 INSERT INTO machine_status (id, status) VALUES (2, 'error');
 INSERT INTO machine_status (id, status) VALUES (3, 'disable');
@@ -329,6 +441,4 @@ INSERT INTO schedule_status (id, status) VALUES (10, 'remove fail');
 
 INSERT INTO user_type (id, type) VALUES (1, 'normal');
 INSERT INTO user_type (id, type) VALUES (2, 'admin');
-
-
 
