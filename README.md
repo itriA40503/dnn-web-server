@@ -26,7 +26,8 @@ $ npm run test
 
 ## API doc ##
 
-### Only running on development mode.
+* Only running on development mode.
+* Set testing url on environment
 
 ## Environment Variables
 
