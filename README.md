@@ -26,9 +26,7 @@ $ npm run test
 
 ## API doc ##
 
-```bash
-$ npm run apidoc
-```
+### Only running on development mode.
 
 ## Environment Variables
 
@@ -43,6 +41,8 @@ Setting environment variables when start container.
 | DNNDB_USERNAME | Database usesername. |
 | DNNDB_PASS | Database password. |
 | K8S_API | K8S api url. Ex: `http://100.86.2.12:30554/kubeGpu`. |
+| APIDOC_HOST | Set testing url host of api document. Default=`140.96.29.86` |
+| APIDOC_PORT | Set testing url port of api document. Default=`6363` |
 | MAIL_SERVER_HOST | SMTP server host. Default = `smtpx.itri.org.tw` |
 | MAIL_SERVER_PORT | SMTP server port. Default = `25` |
 | MAIL_SERVER_USERNAME | SMTP server username.|
