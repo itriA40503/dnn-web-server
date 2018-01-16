@@ -11,7 +11,7 @@ import sassMiddleware from 'node-sass-middleware';
 // import session from 'express-session';
 // import flash from 'connect-flash';
 import timeout from 'connect-timeout';
-
+import config from './config';
 import CdError from './util/CdError';
 import jwtAuth from './middleware/jwtAuth';
 import setupRouters from './routes';
@@ -50,10 +50,10 @@ app.use(logger('detailed'));
 app.get('/', (req, res) => {
   res.render('index', { title: 'Express' });
 });
-app.use('/apidoc', express.static(path.join(__dirname, '../apidoc')));
+// app.use('/apidoc', express.static(path.join(__dirname, '../apidoc')));
 app.use('/portal', express.static(path.join(__dirname, '../portal')));
 
-setupApiDoc(app);
+if (config.apidoc) setupApiDoc(app);
 setupRouters(app);
 
 // catch 404 and forward to error handler

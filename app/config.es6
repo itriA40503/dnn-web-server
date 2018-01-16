@@ -19,6 +19,10 @@ const config = {
       },
       logging: false
     },
+    apidoc: {
+      host: process.env.APIDOC_HOST || '140.96.29.86',
+      port: process.env.APIDOC_PORT || '6363'
+    },
     kuber: {
       url: process.env.K8S_API || 'http://100.86.2.12:30554/kubeGpu'
     },

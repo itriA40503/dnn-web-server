@@ -6,7 +6,7 @@ info:
   title: DNN Fram Api Document  
   contact:
     email: itriA40503@itri.org.tw
-host: 140.96.29.86:6363
+host:
 basePath: /
 tags:
   - name: user signin
