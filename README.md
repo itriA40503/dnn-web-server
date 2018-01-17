@@ -3,6 +3,19 @@
 
 It's a project for managing the reservation schedule of deep-learning cluster.
 
+## Security header ##
+
+| Headers | enable |
+|---|:---:|
+| Content Security Policy | ✓ |
+| Controls browser DNS prefetching | ✓ |
+| Prevent clickjacking | ✓ |
+| Remove the X-Powered-By header | ✓ |
+| HTTP Strict Transport Security | ✓ |
+| Sets X-Download-Options for IE8+ | ✓ |
+| Keep clients from sniffing the MIME type | ✓ |
+| Adds some small XSS protections | ✓ |
+
 ## Requirement ##
 
 * node.js: 8.0.0+
