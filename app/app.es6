@@ -26,6 +26,14 @@ app.set('json spaces', 2);
 
 // Add security header
 app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'", 'www.youtube.com'],
+    styleSrc: ["'self'"],
+    imgSrc: ["'self'", 'www.youtube.com', '* data:'],    
+    scriptSrc: ["'self'", 'www.youtube.com', 's.ytimg.com']
+  }
+}));
 
 // app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 logger.format('detailed', (token, req, res) => {
