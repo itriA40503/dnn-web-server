@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import sassMiddleware from 'node-sass-middleware';
-
+import helmet from 'helmet';
 // import passport from 'passport';
 // import session from 'express-session';
 // import flash from 'connect-flash';
@@ -23,6 +23,9 @@ app.set('jwtsecretkey', 'KemonoFriends');
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'hbs');
 app.set('json spaces', 2);
+
+// Add security header
+app.use(helmet());
 
 // app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 logger.format('detailed', (token, req, res) => {
