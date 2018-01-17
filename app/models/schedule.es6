@@ -235,7 +235,7 @@ module.exports = (sequelize, DataTypes) => {
         return {
           where: {
             statusId: {
-              $in: [2, 3]
+              $in: [2, 3, 7]
             },
           }
         };
