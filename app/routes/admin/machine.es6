@@ -129,7 +129,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
   }  
 
   if (gpuAmount) {
-    if (!validator.isNumeric(gpuAmount)) throw new CdError(400, 'Gpu amount is not a number', 40002);
+    if (!validator.isNumeric(`${gpuAmount}`)) throw new CdError(400, 'Gpu amount is not a number', 40002);
     else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
     updateAttr.gpuAmount = gpuAmount;
   }
