@@ -28,8 +28,9 @@ app.set('json spaces', 2);
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    defaultSrc: ["'self'", 'www.youtube.com'],
-    styleSrc: ["'self'"],
+    defaultSrc: ["'self'", 'www.youtube.com', 'fonts.googleapis.com'],
+    styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+    fontSrc: ["'self'", 'fonts.gstatic.com data:'],
     imgSrc: ["'self'", 'www.youtube.com', '* data:'],    
     scriptSrc: ["'self'", 'www.youtube.com', 's.ytimg.com']
   }
