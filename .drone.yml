@@ -1,9 +1,19 @@
-pipeline:
-  build:    
-    image: node:${NODE_VERSION}
-    commands:
-      - npm install
-      - npm start
+build:    
+  image: node:${NODE_VERSION}
+  commands:
+    - apk update
+    - apk add tzdata
+    - cp /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+    - echo "Asia/Taipei" > /etc/timezone
+    - date
+    - apk del tzdata
+    - npm install pm2 -g
+    - npm install
+    - npm run build
+    - npm start
+  environment:
+    - DNNDB_HOST=140.96.29.86
+    - DNNDB_PORT=9877
 matrix:
  NODE_VERSION:
    - latest
