@@ -90,7 +90,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   if (!gpuAmount) {
     throw new CdError(400, 'GpuAmount not input', 4001);    
   } else {
-    if (!validator.isNumeric(gpuAmount)) throw new CdError(400, 'Gpu amount is not a number', 40002);
+    if (!validator.isNumeric(`${gpuAmount}`)) throw new CdError(400, 'Gpu amount is not a number', 40002);
     else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(400, 'Gpu amount must between 1~8');
   }
 

@@ -33,7 +33,7 @@ resourceAPI.createResource = asyncWrap(async (req, res, next) => {
   if (!value) { 
     throw new CdError(401, 'value not input');
   } else {    
-    if (!validator.isFloat(value)) throw new CdError(401, 'value is not a number(Integer, float)');
+    if (!validator.isFloat(`${value}`)) throw new CdError(401, 'value is not a number(Integer, float)');
   }  
 
   let ResAttr = {
@@ -73,7 +73,7 @@ resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
   }
 
   if (value) { 
-    if (!validator.isFloat(value)) throw new CdError(401, 'value is not a number(Integer, float)');
+    if (!validator.isFloat(`${value}`)) throw new CdError(401, 'value is not a number(Integer, float)');
     updateAttr.value = value;
   }
 

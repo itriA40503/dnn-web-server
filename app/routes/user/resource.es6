@@ -35,7 +35,7 @@ resourceAPI.remind = asyncWrap(async (req, res, next) => {
   const resource = await checkResourceExist(resId);   
   
   if (!amount) throw new CdError(401, 'Amount not input', 40001);    
-  if (!validator.isNumeric(amount)) throw new CdError(401, 'Amount is not a number', 40002);    
+  if (!validator.isNumeric(`${amount}`)) throw new CdError(401, 'Amount is not a number', 40002);    
 
   await checkAvailableResource(user.id, resId, amount);
   
@@ -55,7 +55,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
   const resource = await checkResourceExist(resId);   
   
   if (!amount) throw new CdError(400, 'Amount not input', 40001);    
-  if (!validator.isNumeric(amount)) throw new CdError(400, 'Amount is not a number', 40002);    
+  if (!validator.isNumeric(`${amount}`)) throw new CdError(400, 'Amount is not a number', 40002);    
   const checkAvailable = await checkAvailableResource(user.id, resId, amount);
 
   if (!checkAvailable) {

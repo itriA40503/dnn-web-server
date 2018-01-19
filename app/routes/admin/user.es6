@@ -139,7 +139,7 @@ userAPI.createTrans = asyncWrap(async (req, res, next) => {
   if (!addValue) {
     throw new CdError(401, 'the value not input.');
   } else {
-    if (!validator.isNumeric(addValue)) throw new CdError(401, 'the value should be number.');
+    if (!validator.isNumeric(`${addValue}`)) throw new CdError(401, 'the value should be number.');
   }
 
   const transAttr = {
