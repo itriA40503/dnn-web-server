@@ -144,7 +144,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
 
   let machine = await checkMachineExist(machineId);
   // 要先update db裡的機器資訊
-  await machine.updateAttributes(updateAttr);
+  let modifiedMachine = await machine.updateAttributes(updateAttr);
   
   let currentScheduleOnMachine =
     await db.getMachinesCurrentOccupiedSchedules(machineId, moment().format());
@@ -153,7 +153,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
     instantCreateContainer(currentScheduleOnMachine, 3);
   }
 
-  res.json(machine);
+  res.json(modifiedMachine);
 });
 
 // 工程師用
