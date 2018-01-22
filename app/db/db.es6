@@ -210,7 +210,7 @@ db.getImageById = (id) => {
 };
 
 db.getImageByIdOrDigest = (id) => {
-  return Image.scope({ method: ['byIdOrDigest', id] }).findOne();
+  return Image.scope('normal', { method: ['byIdOrDigest', id] }).findOne();
 };
 
 db.updateImage = (id, options) => {
