@@ -71,7 +71,8 @@ module.exports = (sequelize, DataTypes) => {
             // { model: sequelize.models.dnnUser.scope('normal') },
           ],
           attributes: [
-            'id',          
+            'id',
+            'userId',          
             'resId',            
             'amount',
             'createdAt',
