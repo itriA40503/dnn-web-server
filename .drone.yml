@@ -8,6 +8,10 @@ pipeline:
     image: node:${NODE_VERSION}
     commands:
       - npm run build
+  testing:    
+    image: node:${NODE_VERSION}
+    commands:
+      - npm test
 matrix:
  NODE_VERSION:
    - latest
