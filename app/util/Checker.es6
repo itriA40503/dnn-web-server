@@ -70,7 +70,7 @@ export const getAvailableDays = async (userId, resource, amount) => {
   const userTransValue = await db.getTransactionSumByUserId(userId);  
   const userUsageValue = await db.getUsageSumByUserId(userId);
   const values = resource.value * amount; 
-
+  // console.log(`${userId}, ${userTransValue}, ${userUsageValue}, ${values}`);
   const unitValue = Math.floor((userTransValue + userUsageValue) / (values));
   
   if (unitValue === 0) throw new CdError(401, 'Point is not enough to use');
