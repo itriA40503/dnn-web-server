@@ -9,7 +9,7 @@
     "clean": "rm -rf build",
     "practice": "node -r babel-register ./practice",
     "build": "babel ./app --ignore node_modules --out-dir build",
-    "test": "mocha --compilers js:babel-register test/",
+    "test": "mocha --compilers js:babel-register test/newTest.js",
     "start": "npm run apidoc && npm run build && node ./build/bin/www",
     "start_cron": "node ./build/cron/cronjob",
     "start_pm2": "pm2 startOrReload ecosystem.json",
