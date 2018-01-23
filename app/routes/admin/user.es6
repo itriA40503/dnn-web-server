@@ -80,8 +80,8 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
 
   ResAttr.updateAt = moment().format();
 
-  const getModifyRes = await AvailableRes.findById(resId);
-  if (!getModifyRes) throw new CdError(400, 'the available resource (id) not exist');
+  const getModifyRes = await AvailableRes.scope('notDelete').findById(resId);
+  if (!getModifyRes) throw new CdError(400, 'the available resource (id) not exist or has been deleted');
 
   const repeateRes = await await db.findAvailableRes(userId, newResId, amount);
   if (repeateRes) throw new CdError(400, 'the number of resource has been exist');
