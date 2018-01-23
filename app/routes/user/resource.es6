@@ -64,7 +64,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
     if (checkAvailable.amount < amount) throw new CdError(401, 'User can not use this amount');
   }
 
-  const unitValue = await checkPoint(user.id, resource.value, amount);
+  const unitValue = await checkPoint(user.id, (resource.value * amount));
 
   // availableDays
   const availableDays = moment.duration(unitValue, resource.valueUnit).format('d');
