@@ -38,7 +38,7 @@ export const checkDateRange = async (userId, values, valueUnit, startDate, endDa
   const unitValue = await checkPoint(userId, values);  
   // availableDays
   const availableDays = parseInt(moment.duration(unitValue, valueUnit).format('d'), 10);  
-  const queryDays = startDate.diff(endDate, 'd') + 1;
+  const queryDays = endDate.diff(startDate, 'd');
   console.log(unitValue, valueUnit, availableDays, queryDays);
   if (queryDays > availableDays) throw new CdError('401', 'Date range too large (point not enough)');
 
