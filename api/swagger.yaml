@@ -1116,6 +1116,11 @@ paths:
         - in: header
           name: x-access-token
           description: signin token.
+          required: true
+        - in: path
+          name: resId
+          type: integer
+          description: Id of resource
           required: true         
         - in: query
           name: gpuType
