@@ -162,9 +162,9 @@ schedule.create = asyncWrap(async (req, res, next) => {
     if (set.has(machineId)) set.delete(machineId);
     return set;
   }, machineSet);
-
+  // console.log(availableSet, customMachineId);
   if (availableSet.size === 0) throw new CdError('401', 'No available machine');
-  if (customMachineId && !availableSet.has(customMachineId)) throw new CdError('401', 'No specific machine or is occupied');
+  if (customMachineId && !availableSet.has(`${customMachineId}`)) throw new CdError('401', 'No specific machine or is occupied');
 
   // let username = `user${userId}`;
   let randomPassword = Math.random().toString(36).slice(-8);
