@@ -306,14 +306,15 @@ db.getTransactionSumByUserId = (userId) => {
 db.getUsageSumByUserId = (userId) => {
   const schedules = Schedule.scope(
     'id',    
-    { method: ['byUser', userId] }
-  ).findAll();
-  const aryId = schedules.map(obj => obj.id);
-  return UsageLog.sum(
-    'countValue',
-    { method: ['byId', aryId] }
-  );
-
+    { method: ['byUser', userId] },    
+  ).findAll();    
+  return schedules.map(obj => obj.id).then(res => UsageLog.sum('countValue', {
+    where: {
+      scheduleId: {
+        [Op.in]: res
+      }
+    }
+  }));  
 };
 
 export default db;
