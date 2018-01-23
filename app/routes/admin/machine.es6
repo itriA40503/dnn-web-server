@@ -53,8 +53,6 @@ const instantCreateContainer = async (schedule, times) => {
 
 const machineAPI = {};
 
-console.log(Machine);
-
 const checkMachineExist = async (id) => {
   let machine = await db.getExistMachineById(id);
   if (!machine) throw new CdError(401, 'Machine not exist!!');
