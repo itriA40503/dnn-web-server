@@ -299,7 +299,7 @@ db.getAvailableResByUserId = (userId) => {
 db.getTransactionSumByUserId = (userId) => {
   return Transaction.sum(
     'addValue',
-    { method: ['byUserId', userId] }
+    { where: { userId: userId } }
   );
 };
 
