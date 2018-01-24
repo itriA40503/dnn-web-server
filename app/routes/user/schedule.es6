@@ -129,11 +129,9 @@ schedule.create = asyncWrap(async (req, res, next) => {
     );
 
     if (mapAvailable.length === 0) throw new CdError(401, 'The machine not available for user.');
-    const values = machine.resInfo.value * machine.gpuAmount;
-    const valueUnit = machine.resInfo.valueUnit;
     const resId = machine.resInfo.id;
     const amount = machine.gpuAmount;
-    await checkDateRange(userId, values, valueUnit, startDate, endDate);
+    await checkDateRange(userId, resId, amount, startDate, endDate);
     await checkAvailableResource(userId, resId, amount);
   }
 
