@@ -818,6 +818,28 @@ describe('Api server testing', () => {
         });
       });
     });
+    describe('Machine', ()=> {
+      const getMachinesSetting = {
+        amount: machineSetting.gpuAmount,
+        resId: machineSetting.resId,
+        start: moment().format('YYYY-MM-DD'),
+        end: moment().add(5, 'days').format('YYYY-MM-DD'),
+      };
+      it('Get available machines', done => {
+        request
+        .get('/user/machines')
+        .set('x-access-token', userSetting.token)
+        .set('Accept', 'application/json')
+        .send(getMachinesSetting)
+        .end((err,res) => {          
+          res.should.have.status(200);
+          res.should.to.be.json;         
+          console.log(res.body);
+          res.body.machines.length.should.equal(1);  
+          done();
+        });
+      });
+    });
   });
 });
 
