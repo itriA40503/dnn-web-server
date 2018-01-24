@@ -24,15 +24,15 @@ machine.getMachineRemainInPeriod = asyncWrap(async (req, res, next) => {
   let endQuery = (req.query && req.query.end) || (req.body && req.body.end);
   let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
 
-  if (!startQuery || !endQuery) throw new CdError(401, 'lack of parameter');
+  if (!startQuery || !endQuery) throw new CdError(400, 'lack of parameter', 40001);
 
   let start = moment(startQuery);
   let end = moment(endQuery);
 
-  if (!start.isValid() || !end.isValid()) throw new CdError(401, 'date parameter error', 0);
+  if (!start.isValid() || !end.isValid()) throw new CdError(400, 'date parameter error', 40002);
   start.startOf('d');
   end.endOf('d');
-  if (start > end) throw new CdError(401, 'end date should greater than start date');
+  if (start > end) throw new CdError(400, 'end date should greater than start date');
 
   let machineWhere = {};
   if (customGpu) machineWhere = { where: { gpuType: customGpu } };
