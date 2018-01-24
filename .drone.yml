@@ -9,10 +9,13 @@ pipeline:
       - nsp check
   build:    
     image: node:${NODE_VERSION}
+    environment:
+      - DNNDB_HOST=140.96.29.86
+      - DNNDB_PORT=9877
     commands:
       - npm run build
   testing:
-    image: node:${NODE_VERSION}
+    image: node:${NODE_VERSION}    
     commands:
       - npm test
 matrix:
