@@ -8,7 +8,8 @@ pipeline:
     image: node:${NODE_VERSION}
     commands:
       - npm run build
-  testing:    
+  testing:
+    parallel: false
     image: node:${NODE_VERSION}
     commands:
       - npm test
