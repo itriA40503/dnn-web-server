@@ -328,7 +328,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')        
         .end((err,res) => {
           console.log(`length:${res.body.length}`);
-          res.body.should.have.lengthOf.above(1);
+          res.body.should.have.lengthOf.above(0);
           res.body.should.include.deep.members([resourceFromApi]);          
           res.should.have.status(200);
           res.should.to.be.json;          
