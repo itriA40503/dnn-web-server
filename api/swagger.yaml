@@ -13,6 +13,8 @@ tags:
     description: User signin to get token.
   - name: user schedule
     description: User schedule operation
+  - name: user machine
+    description: Get available machines.
   - name: user resource
     description: Get resource information and calendar information.
   - name: admin user
@@ -375,6 +377,58 @@ paths:
               type: array
               items:
                 $ref: '#/definitions/Schedule'
+  /user/machines:
+    get:
+      tags:
+        - user machine
+      summary: User get available machines
+      description: ''
+      operationId: daysUser
+      consumes:
+        - application/json        
+      produces:        
+        - application/json
+      parameters:
+        - in: header
+          name: x-access-token
+          description: signin token.
+          required: true
+        - in: query
+          name: amount
+          description: Amount of resource (gpu)
+          required: true
+        - in: query
+          name: resId
+          description: Id of resource (gpu)
+          required: true
+        - in: query
+          name: start
+          description: Start date
+          required: true
+        - in: query
+          name: end
+          description: End date
+          required: true
+      responses:
+        '200':      
+          description: successful operation             
+          schema:
+            type: arrary
+            example: ["1","8"]
+        '400':
+          description: Bad Request
+        '40001':
+          description: lack of parameter
+        '40002':
+          description: wrong format
+        '401':
+          description: Unauthorized
+        '40100':
+          description: lack of access-token
+        '40101':
+          description: token fail
+        '40102':
+          description: token expired
   /images:
     get:
       tags:
