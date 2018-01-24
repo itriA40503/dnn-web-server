@@ -9,13 +9,12 @@ pipeline:
     commands:
       - npm run build
   testing:
-    parallel: false
     image: node:${NODE_VERSION}
     commands:
       - npm test
 matrix:
  NODE_VERSION:
    - latest
-   - "8.6.0"
-   - "9.4.0"
+  #  - "8.6.0"
+  #  - "9.4.0"
 branches: develop
