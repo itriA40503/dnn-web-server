@@ -3,7 +3,12 @@ pipeline:
     image: node:${NODE_VERSION}
     commands:
       - npm install pm2 -g
+      - npm install -g nsp
       - npm install
+  nsp_check:
+    image: node:${NODE_VERSION}
+    commands:
+      - nsp check
   build:    
     image: node:${NODE_VERSION}
     commands:
