@@ -280,7 +280,7 @@ db.findAvailableResByUserIdAndResId = (userId, resId) => {
 
 db.findAvailableRes = (userId, resId, amount) => {
   return AvailableRes.scope(
-    'normal',
+    'detail',
     'notDelete', 
     { method: ['byAmount', amount] },
     { method: ['byUserId', userId] },
