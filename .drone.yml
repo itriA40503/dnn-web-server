@@ -5,6 +5,7 @@ pipeline:
       - npm install pm2 -g
       - npm install -g nsp
       - npm install
+      - nsp --version
       - nsp check
   build:    
     image: node:${NODE_VERSION}
