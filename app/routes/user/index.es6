@@ -3,6 +3,7 @@ import login from './login';
 import report from './report';
 import schedule from './schedule';
 import resource from './resource';
+import machine from './machine';
 import jwtAuth from '../../middleware/jwtAuth';
 
 const rootRouter = express.Router();
@@ -12,6 +13,7 @@ const scheduleRouter = express.Router();
 const schedulesRouter = express.Router();
 const resourcesRouter = express.Router();
 const resourceRouter = express.Router();
+const machinesRouter = express.Router();
 
 scheduleRouter.get('/:schedule_id', schedule.getASchedule);
 scheduleRouter.post('/', schedule.create);
@@ -29,12 +31,15 @@ resourcesRouter.get('/', resource.get);
 resourceRouter.get('/remind', resource.remind);
 resourceRouter.get('/calendar', resource.getCalendar);
 
+machinesRouter.get('/', machine.getMachineRemainInPeriod);
+
 userRouter.post('/report', jwtAuth.User, report);
 userRouter.get('/signin', login);
 userRouter.use('/schedule', jwtAuth.User, scheduleRouter);
 userRouter.use('/schedules', jwtAuth.User, schedulesRouter);
 userRouter.use('/resources', jwtAuth.User, resourcesRouter);
 userRouter.use('/resource', jwtAuth.User, resourceRouter);
+userRouter.use('/machines', jwtAuth.User, machinesRouter);
 
 router.use('/user', userRouter);
 
