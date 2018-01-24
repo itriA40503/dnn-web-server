@@ -8,13 +8,13 @@ pipeline:
       - nsp --version
       - nsp check
   build:    
-    image: node:${NODE_VERSION}
-    environment:
-      - DNNDB_DBNAME=dnn2      
+    image: node:${NODE_VERSION}       
     commands:
       - npm run build
   testing:
-    image: node:${NODE_VERSION}    
+    image: node:${NODE_VERSION} 
+    environment:
+      - DNNDB_DBNAME=dnn2      
     commands:
       - npm test
 matrix:
