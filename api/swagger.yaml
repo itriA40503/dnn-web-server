@@ -100,7 +100,7 @@ paths:
           description: successful operation             
           schema:
             type: string
-            example: '249 days'
+            example: '249'
         '400':
           description: Bad Request
         '40001':
