@@ -328,10 +328,11 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')        
         .end((err,res) => {
           //console.log(`length:${res.body.length}`);
-          console.log(resourceFromApi);
-          console.log(res.body);
+          // console.log(resourceFromApi);
+          // console.log(res.body);
           res.body.should.have.lengthOf.above(0);
-          res.body.should.include.deep.members([resourceFromApi]);          
+          const getObj = res.body.find(obj => obj.id === resourceFromApi.id);
+          checkObj(resourceFromApi, getObj);       
           res.should.have.status(200);
           res.should.to.be.json;          
           done();
