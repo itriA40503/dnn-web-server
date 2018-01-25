@@ -41,7 +41,7 @@ resourceAPI.remind = asyncWrap(async (req, res, next) => {
   
   const availableDays = await getAvailableDays(user.id, resource, amount);
 
-  res.json(`${availableDays} days`);  
+  res.json(`${availableDays}`);  
 
 });
 

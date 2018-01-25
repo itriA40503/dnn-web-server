@@ -685,7 +685,7 @@ describe('Api server testing', () => {
           //console.log(res.body);         
           res.should.have.status(200);
           res.should.to.be.json;
-          res.body.should.equal('44 days');
+          res.body.should.equal('44');
           done();
         });
       });
