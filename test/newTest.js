@@ -298,7 +298,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(settingResource)
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(settingResource, res.body);
@@ -313,7 +313,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(modifyResource)
         .end((err,res) => {
-          console.log(res.body);          
+          //console.log(res.body);          
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(modifyResource, res.body);
@@ -327,7 +327,9 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(`length:${res.body.length}`);
+          //console.log(`length:${res.body.length}`);
+          console.log(resourceFromApi);
+          console.log(res.body);
           res.body.should.have.lengthOf.above(0);
           res.body.should.include.deep.members([resourceFromApi]);          
           res.should.have.status(200);
@@ -341,7 +343,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           resourceFromApi = res.body;
@@ -367,7 +369,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(settingMachine)
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(settingMachine, res.body);
@@ -382,7 +384,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(modifyMachine)
         .end((err,res) => {
-          console.log(res.body);          
+          //console.log(res.body);          
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(modifyMachine, res.body);
@@ -396,7 +398,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(`length:${res.body.length}`);
+          //console.log(`length:${res.body.length}`);
           res.body.should.have.lengthOf.above(0);          
           const getObj = res.body.find(obj => obj.id === machineFromApi.id);          
           checkObj(machineFromApi, getObj);
@@ -411,7 +413,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(res.body);          
+          //console.log(res.body);          
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.have.property('statusId', 3);
@@ -425,7 +427,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(res.body);          
+          //console.log(res.body);          
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.have.property('statusId', 1);
@@ -439,7 +441,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.have.property('statusId', 4);
@@ -471,7 +473,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(settingUser)
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(settingUser, res.body);
@@ -486,7 +488,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(settingTransacton)
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(settingTransacton, res.body);
@@ -501,7 +503,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(settingAvailRes)
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(settingAvailRes, res.body);
@@ -516,7 +518,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(modifyAvailRes)
         .end((err,res) => {
-          console.log(res.body);          
+          //console.log(res.body);          
           res.should.have.status(200);
           res.should.to.be.json;
           checkObj(modifyAvailRes, res.body);
@@ -530,12 +532,12 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(`length:${res.body.length}`);
+          //console.log(`length:${res.body.length}`);
           res.body.should.have.lengthOf.above(0);
           res.should.have.status(200);
           res.should.to.be.json;          
           const getObj = res.body.find(obj => obj.id === availableResFromApi.id);          
-          console.log(getObj);
+          ////console.log(getObj);
           checkObj(availableResFromApi, getObj);
           done();
         });
@@ -546,7 +548,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.have.property('deletedAt').not.equal(null);
@@ -560,7 +562,7 @@ describe('Api server testing', () => {
         .set('x-access-token', adminSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(`length:${res.body.length}`);
+          //console.log(`length:${res.body.length}`);
           res.body.should.have.lengthOf.above(2);
           res.should.have.status(200);
           res.should.to.be.json;
@@ -580,7 +582,7 @@ describe('Api server testing', () => {
       .set('Accept', 'application/json')
       .send(modifyImage)
       .end((err,res) => {
-        console.log(res.body);          
+        //console.log(res.body);          
         res.should.have.status(200);
         res.should.to.be.json;
         checkObj(modifyImage, res.body.image);
@@ -593,7 +595,7 @@ describe('Api server testing', () => {
       .set('x-access-token', userSetting.token)
       .set('Accept', 'application/json')        
       .end((err,res) => {
-        console.log(res.body);        
+        //console.log(res.body);        
         res.should.have.status(200);
         res.should.to.be.json;
         checkObj(imageSetting, res.body);
@@ -611,7 +613,7 @@ describe('Api server testing', () => {
         res.body.should.have.property('images');
         const images = res.body.images;             
         const getObj = images.find(obj => obj.id === imageSetting.id);
-        console.log(getObj);
+        //console.log(getObj);
         checkObj(imageSetting, getObj);        
         done();
       });
@@ -626,7 +628,7 @@ describe('Api server testing', () => {
         .set('x-password', userSetting.password)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.have.property('type',1);          
@@ -640,7 +642,7 @@ describe('Api server testing', () => {
         .set('x-password', adminSetting.password)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(res.body);
+          //console.log(res.body);
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.have.property('type',2);          
@@ -663,11 +665,11 @@ describe('Api server testing', () => {
         .set('x-access-token', userSetting.token)
         .set('Accept', 'application/json')        
         .end((err,res) => {
-          console.log(`length:${res.body.length}`);         
+          //console.log(`length:${res.body.length}`);         
           res.should.have.status(200);
           res.should.to.be.json;          
           const getObj = res.body.find(obj => obj.id === availableResSetting.id);          
-          console.log(getObj);
+          //console.log(getObj);
           checkObj(availableResFromApi, getObj);
           done();
         });
@@ -679,7 +681,7 @@ describe('Api server testing', () => {
         .set('Accept', 'application/json')
         .send(remindSetting)
         .end((err,res) => {
-          console.log(res.body);         
+          //console.log(res.body);         
           res.should.have.status(200);
           res.should.to.be.json;
           res.body.should.equal('44 days');
@@ -695,8 +697,8 @@ describe('Api server testing', () => {
         .end((err,res) => {          
           res.should.have.status(200);
           res.should.to.be.json;
-          console.log(`length:${res.body.availableCalendar.length}`);
-          console.log(res.body.availableCalendar[0]);
+          //console.log(`length:${res.body.availableCalendar.length}`);
+          //console.log(res.body.availableCalendar[0]);
           done();
         });
       });
@@ -713,7 +715,7 @@ describe('Api server testing', () => {
               res.should.to.be.json;
               res.body.should.have.property('schedules');
               res.body.should.have.property('historySchedules');
-              console.log(res.body);
+              //console.log(res.body);
               done();
             });
         });
@@ -727,7 +729,7 @@ describe('Api server testing', () => {
               res.should.to.be.json;
               res.body.should.not.have.property('schedules');
               res.body.should.have.property('historySchedules');
-              console.log(res.body);
+              //console.log(res.body);
               done();
             });
         });
@@ -741,7 +743,7 @@ describe('Api server testing', () => {
               res.should.to.be.json;
               res.body.should.have.property('schedules');
               res.body.should.not.have.property('historySchedules');
-              console.log(res.body);
+              //console.log(res.body);
               done();
             });
         });
@@ -760,7 +762,7 @@ describe('Api server testing', () => {
           .set('Accept', 'application/json')
           .send(scheduleOptions)
           .end((err, res) => {
-            console.log(res.body);
+            //console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
             res.body.should.have.property('id')
@@ -777,7 +779,7 @@ describe('Api server testing', () => {
             .set('x-access-token', userSetting.token)
             .set('Accept', 'application/json')
             .end((err, res) => {
-              console.log(res.body);
+              //console.log(res.body);
               res.should.have.status(200);
               res.should.to.be.json;
               res.body.should.have.property('extendableLatestDate')
@@ -795,7 +797,7 @@ describe('Api server testing', () => {
             .set('Accept', 'application/json')
             .send(scheduleOptions)
             .end((err, res) => {
-              console.log(res.body);
+              //console.log(res.body);
               res.should.have.status(200);
               res.should.to.be.json;
               res.body.should.have.property('id')
@@ -811,7 +813,7 @@ describe('Api server testing', () => {
               .set('Accept', 'application/json')
               .end((err, res) => {
                 res.should.have.status(200);
-                console.log(res.body)
+                //console.log(res.body)
                 done();
               })
           });
@@ -834,7 +836,7 @@ describe('Api server testing', () => {
         .end((err,res) => {          
           res.should.have.status(200);
           res.should.to.be.json;         
-          console.log(res.body);
+          //console.log(res.body);
           res.body.machines.length.should.equal(1);  
           done();
         });
