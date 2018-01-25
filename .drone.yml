@@ -4,12 +4,9 @@ pipeline:
     commands:
       - npm install pm2 -g
       - npm install -g nsp
-      - npm install      
-  nsp_check:
-    image: node:${NODE_VERSION}
-    commands:
-      - /usr/local/bin/nsp --version
-      - /usr/local/bin/nsp check
+      - npm install
+      - nsp --version
+      - nsp check
   build:    
     image: node:${NODE_VERSION}       
     commands:
