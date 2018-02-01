@@ -12,7 +12,7 @@ const timeFormat = ['y', 'years', 'M', 'months', 'w', 'weeks', 'd', 'days'];
 
 const checkResourceExist = async (id) => {
   let res = await db.findResourceInfoById(id);
-  if (!res) throw new CdError(401, 'Resource(id) not exist or has been deleted.');
+  if (!res) throw new CdError(400, 'Resource(id) not exist or has been deleted.');
   return res;
 };
 
@@ -91,7 +91,7 @@ resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
 resourceAPI.deleteResource = asyncWrap(async (req, res, next) => {
   let resId = req.params.resId;
   
-  if (!resId) throw new CdError(401, 'resId not input');
+  if (!resId) throw new CdError(400, 'resId not input', 40001);
   
   let resource = await checkResourceExist(resId);
 
