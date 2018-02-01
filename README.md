@@ -61,6 +61,7 @@ Setting environment variables when start container.
 | MAIL_SERVER_PORT | SMTP server port. Default = `25` |
 | MAIL_SERVER_USERNAME | SMTP server username.|
 | MAIL_SERVER_PASS | SMTP server password. |
+| LOGGER_ENABLE | Enable logger. |
 
 
 ## Docker Tutorial ##
