@@ -16,6 +16,7 @@ pipeline:
     environment:
       - DNNDB_HOST=140.96.29.86
       - DNNDB_PORT=9877
+      - LOGGER_ENABLE=false
       # - DNNDB_DBNAME=dnn
     commands:
       - npm test
