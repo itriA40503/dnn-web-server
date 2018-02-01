@@ -25,13 +25,13 @@ resourceAPI.createResource = asyncWrap(async (req, res, next) => {
   if (!gpuType) throw new CdError(400, 'gpyType not input', 40001);
   if (!machineType) throw new CdError(400, 'machineType not input', 40001);
   if (!valueUnit) {
-    throw new CdError(400, 'valueUnit not input');    
+    throw new CdError(400, 'valueUnit not input', 40001);    
   } else {
     if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(400, 'valueUnit is worng, should be one of Y,M,w,d .', 40002);
   }
 
   if (!value) { 
-    throw new CdError(400, 'value not input');
+    throw new CdError(400, 'value not input', 40001);
   } else {    
     if (!validator.isFloat(`${value}`)) throw new CdError(400, 'value is not a number(Integer, float)', 40002);
   }  
@@ -61,19 +61,19 @@ resourceAPI.modifyResource = asyncWrap(async (req, res, next) => {
 
   let updateAttr = {};
 
-  if (!resId) throw new CdError(401, 'resId not input');
+  if (!resId) throw new CdError(400, 'resId not input', 40001);
 
   if (gpuType) updateAttr.gpuType = gpuType;
 
   if (machineType) updateAttr.machineType = machineType;
 
   if (valueUnit) {
-    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng,  should be one of Y,M,w,d .');
+    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(400, 'valueUnit is worng,  should be one of Y,M,w,d .', 40002);
     updateAttr.valueUnit = valueUnit;
   }
 
   if (value) { 
-    if (!validator.isFloat(`${value}`)) throw new CdError(401, 'value is not a number(Integer, float)');
+    if (!validator.isFloat(`${value}`)) throw new CdError(400, 'value is not a number(Integer, float)', 40002);
     updateAttr.value = value;
   }
 
