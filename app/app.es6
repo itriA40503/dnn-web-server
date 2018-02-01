@@ -79,7 +79,7 @@ app.use((err, req, res, next) => {
   const errorView = 'error';
   res.status(status);
 
-  if (status !== 401 && status !== 404) console.log(err);
+  if (status !== 400 && status !== 401 && status !== 404) console.log(err);
 
   const responseMessage = {
     code: err.errorCode || status,
