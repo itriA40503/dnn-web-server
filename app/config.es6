@@ -56,7 +56,7 @@ const config = {
       }
     },
     logger: {
-      enable: process.env.LOGGER_ENABLE || true 
+      disable: process.env.LOGGER_DISABLE || false 
     }
   },
   production: {
@@ -112,7 +112,7 @@ const config = {
       }
     },
     logger: {
-      enable: process.env.LOGGER_ENABLE || true 
+      disable: process.env.LOGGER_DISABLE || true 
     }
   }
 };

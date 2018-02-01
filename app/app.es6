@@ -57,7 +57,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(timeout(12000));
 
 // register logging middleware and use custom logging format
-if (config.logger.enable) app.use(logger('detailed'));
+if (!config.logger.disable) app.use(logger('detailed'));
 
 app.get('/', (req, res) => {
   res.render('index', { title: 'Express' });
