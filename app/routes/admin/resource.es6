@@ -22,18 +22,18 @@ resourceAPI.createResource = asyncWrap(async (req, res, next) => {
   let valueUnit = (req.query && req.query.valueUnit) || (req.body && req.body.valueUnit);
   let value = (req.query && req.query.value) || (req.body && req.body.value);
   
-  if (!gpuType) throw new CdError(401, 'gpyType not input');
-  if (!machineType) throw new CdError(401, 'machineType not input');
+  if (!gpuType) throw new CdError(400, 'gpyType not input', 40001);
+  if (!machineType) throw new CdError(400, 'machineType not input', 40001);
   if (!valueUnit) {
-    throw new CdError(401, 'valueUnit not input');    
+    throw new CdError(400, 'valueUnit not input');    
   } else {
-    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(401, 'valueUnit is worng, should be one of Y,M,w,d .');
+    if (!timeFormat.find(elm => elm === valueUnit)) throw new CdError(400, 'valueUnit is worng, should be one of Y,M,w,d .', 40002);
   }
 
   if (!value) { 
-    throw new CdError(401, 'value not input');
+    throw new CdError(400, 'value not input');
   } else {    
-    if (!validator.isFloat(`${value}`)) throw new CdError(401, 'value is not a number(Integer, float)');
+    if (!validator.isFloat(`${value}`)) throw new CdError(400, 'value is not a number(Integer, float)', 40002);
   }  
 
   let ResAttr = {
