@@ -87,47 +87,47 @@ describe('Api server testing', () => {
   before( done => {
     (async () => {
       try{
-        console.log("test before");
+        //console.log("test before");
 
-        console.log("image create");
+        //console.log("image create");
         await Image.create(imageSetting);
 
-        console.log("admin create");
+        //console.log("admin create");
         await User.create({
           id: adminSetting.id,
           itriId: adminSetting.itriId,
           typeId:2
         }); 
 
-        console.log("User create");
+        //console.log("User create");
         await User.create({
           id: userSetting.id,
           itriId: userSetting.itriId,
           typeId:1
         });
 
-        console.log("Resource create");
+        //console.log("Resource create");
         await ResInfo.create(resourceSetting);
 
-        console.log("Machine create");
+        //console.log("Machine create");
         await Machine.create(machineSetting);
 
-        console.log("Transaction create")
+        //console.log("Transaction create")
         await Transaction.create(transactionSetting);
 
-        console.log("Available resource create");
+        //console.log("Available resource create");
         await AvailableRes.create(availableResSetting);
 
         done();
       }catch(err){
-        console.log(err);
+        //console.log(err);
       }
     })();
   });
   after( done => {
     (async () => {
       try { 
-        console.log("test after");
+        //console.log("test after");
         const schedules = await Schedule.scope('detail').findAll({
           where: {userId: userSetting.id},
         });
@@ -135,118 +135,118 @@ describe('Api server testing', () => {
           sId.push(schedule.id);
           return sId;
         },[]);
-        console.log("remove port form container created");
+        //console.log("remove port form container created");
         await Port.destroy({
           force: true,
           where: {
             containerId: scheduleIds
           }
         });
-        console.log("remove container form schdeule created");
+        //console.log("remove container form schdeule created");
         await Container.destroy({
           force: true,
           where: {
             id: scheduleIds
           }
         });
-        console.log("remove usageLog form schdeule created");
+        //console.log("remove usageLog form schdeule created");
         await UsageLog.destroy({
           force: true,
           where: {
             scheduleId: scheduleIds
           }
         });
-        console.log("remove schdeule form api created");
+        //console.log("remove schdeule form api created");
         await Schedule.destroy({
           force: true,
           where: {
             id: scheduleIds
           }})
-        console.log("remove schedule form api created");
+        //console.log("remove schedule form api created");
         await Schedule.destroy({
           force: true,
           where: {
             id: scheduleFromApi.id
           }
         });
-        console.log("remove image");
+        //console.log("remove image");
         await Image.destroy({
           force: true,
           where: {
             id: imageSetting.id
           }
         });
-        console.log('remove available resource');
+        //console.log('remove available resource');
         await AvailableRes.destroy({
           force: true,
           where: {
             id: availableResSetting.id
           }
         });        
-        console.log('remove available resource form api created');
+        //console.log('remove available resource form api created');
         await AvailableRes.destroy({
           force: true,
           where: {
             id: availableResFromApi.id
           }
         });
-        console.log('remove transaction')
+        //console.log('remove transaction')
         await Transaction.destroy({
           force: true,
           where: {
             id: transactionSetting.id
           }
         });
-        console.log('remove transaction form api created')
+        //console.log('remove transaction form api created')
         await Transaction.destroy({
           force: true,
           where: {
             id: transactionFromApi.id
           }
         });
-        console.log('remove machine')
+        //console.log('remove machine')
         await Machine.destroy({
           force: true,
           where: {
             id: machineSetting.id
           }
         });
-        console.log('remove machine form api created')
+        //console.log('remove machine form api created')
         await Machine.destroy({
           force: true,
           where: {
             id: machineFromApi.id
           }
         });
-        console.log('remove resource')
+        //console.log('remove resource')
         await ResInfo.destroy({
           force: true,
           where: {
             id: resourceSetting.id
           }
         });
-        console.log('remove resource form api created')
+        //console.log('remove resource form api created')
         await ResInfo.destroy({
           force: true,
           where: {
             id: resourceFromApi.id
           }
         });
-        console.log('remove user')
+        //console.log('remove user')
         await User.destroy({
           force: true,
           where: {
             itriId: userSetting.itriId
           }
         });
-        console.log('remove user from api created')
+        //console.log('remove user from api created')
         await User.destroy({
           force: true,
           where: {
             itriId: userFromApi.itriId
           }
         });
-        console.log('remove admin')
+        //console.log('remove admin')
         await User.destroy({
           force: true,
           where: {
@@ -255,7 +255,7 @@ describe('Api server testing', () => {
         });
         done();
       } catch (err) {
-        console.log(err);
+        //console.log(err);
         done();
       }
     })();
@@ -305,7 +305,7 @@ describe('Api server testing', () => {
           .set('Accept', 'application/json')
           .send(settingResource)
           .end((err,res) => {
-            //console.log(res.body);
+            ////console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
             checkObj(settingResource, res.body);
@@ -320,7 +320,7 @@ describe('Api server testing', () => {
           .set('Accept', 'application/json')
           .send(modifyResource)
           .end((err,res) => {
-            //console.log(res.body);          
+            ////console.log(res.body);          
             res.should.have.status(200);
             res.should.to.be.json;
             checkObj(modifyResource, res.body);
@@ -334,9 +334,9 @@ describe('Api server testing', () => {
           .set('x-access-token', adminSetting.token)
           .set('Accept', 'application/json')        
           .end((err,res) => {
-            //console.log(`length:${res.body.length}`);
-            // console.log(resourceFromApi);
-            // console.log(res.body);
+            ////console.log(`length:${res.body.length}`);
+            // //console.log(resourceFromApi);
+            // //console.log(res.body);
             res.body.should.have.lengthOf.above(0);
             const getObj = res.body.find(obj => obj.id === resourceFromApi.id);
             checkObj(resourceFromApi, getObj);       
@@ -351,7 +351,7 @@ describe('Api server testing', () => {
           .set('x-access-token', adminSetting.token)
           .set('Accept', 'application/json')
           .end((err,res) => {
-            //console.log(res.body);
+            ////console.log(res.body);
             res.should.have.status(200);
             res.should.to.be.json;
             resourceFromApi = res.body;
