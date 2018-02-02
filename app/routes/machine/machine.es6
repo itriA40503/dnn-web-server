@@ -64,7 +64,7 @@ machine.getMachineRemainInMonth = asyncWrap(async (req, res, next) => {
   /* let date = new Date();
   date.setHours(0, 0, 0, 0);*/
   let start = moment();
-  let end = moment().add('d', PERIOD);
+  let end = moment().add(PERIOD, 'd');
 
   let machineWhere = {};
   if (customGpu) machineWhere = { where: { gpuType: customGpu } };

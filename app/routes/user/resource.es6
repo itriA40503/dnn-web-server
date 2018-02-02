@@ -73,7 +73,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
   date.setHours(0, 0, 0, 0);*/
 
   const start = moment();
-  const end = moment().add('d', PERIOD);
+  const end = moment().add(PERIOD, 'd');
   
   const machineWhere = {
     resId: resId,
@@ -92,7 +92,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
   
   let calendar = await [...Array(PERIOD).keys()].map((i) => {
 
-    let startedDate = moment(start).add('days', i); // new Date(date.getTime() + (1000 * 86400 * i));  
+    let startedDate = moment(start).add(i, 'days'); // new Date(date.getTime() + (1000 * 86400 * i));  
     let endedDate = moment(startedDate).endOf('days'); // new Date(startedDate.getTime() + (1000 * 86399));
     let usedSet = schedules.reduce((set, schedule) => {
       if (moment(schedule.startedAt) <= endedDate && moment(schedule.endedAt) >= startedDate) {
