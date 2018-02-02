@@ -4,6 +4,7 @@ import debug from 'debug';
 import db from '../db/db';
 import kuberAPI from '../k8s/k8sAPI';
 import K8SError from '../util/K8SError';
+import config from '../config';
 import { usageLog as UsageLog, schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
 
 const TIME_START_SCHEDULES = 'time start schedules';
@@ -12,6 +13,8 @@ const TIME_DELETE_SCHEDULES = 'time delete schedules';
 const START_A_SCHEDULE = 'start a schedule';
 const UPDATE_A_SCHEDULE = 'update a schedule';
 const DELETE_A_SCHEDULE = 'delete a schedule';
+
+const isLoggerDisable = config.logger.disable;
 
 /* Todo: run jobs by using queue, pm2 should use gracecfulReload for kue.js (options) */
 
@@ -99,7 +102,7 @@ serverJob.updateASchedule = async (schedule) => {
 };
 
 serverJob.deleteASchedule = async (schedule, isExpired) => {
-  console.log(`delete schedule:${schedule.id} Machine:${schedule.machine.id}`);
+  if (!isLoggerDisable) console.log(`delete schedule:${schedule.id} Machine:${schedule.machine.id}`);
   try {
     let scheduleP = await schedule.get({ plain: true });
     if (schedule.statusId === 2 || schedule.statusId === 3) {

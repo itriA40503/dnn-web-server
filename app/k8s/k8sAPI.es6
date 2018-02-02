@@ -8,6 +8,7 @@ import K8SError from '../util/K8SError';
 import { schedule as Schedule, container as Container, machine as Machine, image as Image, port as Port } from '../models/index';
 
 const debug = Debug('kuber-api');
+const isLoggerDisable = config.logger.disable;
 const kubeConfig = config.kuber;
 const kubeUrl = kubeConfig.url;
 // const kubeUrl2 = ' http://140.96.27.42:30554/kubeGpu';
@@ -20,7 +21,7 @@ const imagesAPI = `${kubeUrl}/images`;
 const k8sAPI = {};
 
 k8sAPI.createUserVolumeUsingITRIID = async (itriId) => {
-  console.log(`ITRI id ${itriId}: creating storage volume`);
+  if (!isLoggerDisable) console.log(`ITRI id ${itriId}: creating storage volume`);
   try {
     let options = {
       method: 'POST',
@@ -35,9 +36,9 @@ k8sAPI.createUserVolumeUsingITRIID = async (itriId) => {
     let response = await request(options);
     return response;
   } catch (err) {
-    console.error(`ITRI id ${itriId}: create storage volume failed`);
+    if (!isLoggerDisable) console.error(`ITRI id ${itriId}: create storage volume failed`);
     /* 這裡寄信 */
-    throw new K8SError(err.message);
+    if (!isLoggerDisable) throw new K8SError(err.message);
   }
 };
 
