@@ -126,7 +126,10 @@ $ docker commit <container name> <imagename:tag>
 * Base on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
 
 ## Authors ##
-* Baka Wang
+* A40503 (0.2.5 - )
+* Kevin Huang (0.2.5 - )
+* Yenhsuan (0.2.5 - )
+* Baka Wang (Creator)(- 0.2.5)
 
 ## Change log ##
 
