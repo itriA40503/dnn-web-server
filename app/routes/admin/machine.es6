@@ -55,13 +55,13 @@ const machineAPI = {};
 
 const checkMachineExist = async (id) => {
   let machine = await db.getExistMachineById(id);
-  if (!machine) throw new CdError(401, 'Machine not exist!!');
+  if (!machine) throw new CdError(400, 'Machine not exist!!');
   return machine;
 };
 
 const checkResourceExist = async (id) => {
   let res = await db.findResourceInfoById(id);
-  if (!res) throw new CdError(401, 'Resource(id) not exist or has been deleted.');
+  if (!res) throw new CdError(400, 'Resource(id) not exist or has been deleted.');
   return res;
 };
 
@@ -79,14 +79,14 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
   let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
 
   if (!resId) { 
-    throw new CdError(400, 'resId not input', 4001);
-  } else {    
+    throw new CdError(400, 'resId not input', 40001);
+  } else {  
     const resInfo = await checkResourceExist(resId);
     gpuType = resInfo.gpuType;    
   }
 
   if (!gpuAmount) {
-    throw new CdError(400, 'GpuAmount not input', 4001);    
+    throw new CdError(400, 'GpuAmount not input', 40001);    
   } else {
     if (!validator.isNumeric(`${gpuAmount}`)) throw new CdError(400, 'Gpu amount is not a number', 40002);
     else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(400, 'Gpu amount must between 1~8');
