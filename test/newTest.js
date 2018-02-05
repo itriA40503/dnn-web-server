@@ -297,7 +297,7 @@ describe('Api server testing', () => {
         value: 5
       };
       describe('Success case', () => {
-        it('create', done => {
+        it('Create', done => {
           request
           .post('/admin/resource')
           .set('x-access-token', adminSetting.token)
@@ -312,7 +312,7 @@ describe('Api server testing', () => {
             done();
           });
         });
-        it('update', done => {
+        it('Update', done => {
           request
           .put(`/admin/resource/${resourceFromApi.id}`)
           .set('x-access-token', adminSetting.token)
@@ -327,7 +327,7 @@ describe('Api server testing', () => {
             done();
           });
         });
-        it('get', done => {
+        it('Get', done => {
           request
           .get(`/admin/resources/`)
           .set('x-access-token', adminSetting.token)
@@ -344,7 +344,7 @@ describe('Api server testing', () => {
             done();
           });
         });
-        it('delete', done => {
+        it('Delete', done => {
           request
           .delete(`/admin/resource/${resourceFromApi.id}`)
           .set('x-access-token', adminSetting.token)
@@ -359,12 +359,11 @@ describe('Api server testing', () => {
         });
       });      
       describe('Fail case', () => {
-        describe('create fail', () => {
+        describe('Create fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
-              .post('/admin/resource')
-              // .set('x-access-token', userSetting.token)
+              .post('/admin/resource')             
               .set('Accept', 'application/json')
               .send(settingResource)
               .end((err,res) => {
@@ -459,12 +458,11 @@ describe('Api server testing', () => {
             });
           });
         });
-        describe('get fail', () => {
+        describe('Get fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
-              .get('/admin/resources')
-              // .set('x-access-token', userSetting.token)
+              .get('/admin/resources')             
               .set('Accept', 'application/json')
               .end((err,res) => {
                 // //console.log(res.body);
@@ -516,12 +514,11 @@ describe('Api server testing', () => {
             });
           });
         });
-        describe('delete fail', () => {
+        describe('Delete fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
-              .delete('/admin/resource/878787878')
-              // .set('x-access-token', userSetting.token)
+              .delete('/admin/resource/878787878')              
               .set('Accept', 'application/json')
               .end((err,res) => {
                 // //console.log(res.body);
@@ -588,12 +585,11 @@ describe('Api server testing', () => {
             });
           });
         });        
-        describe('update fail', () => {
+        describe('Update fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
-              .put('/admin/resource/878787878')
-              // .set('x-access-token', userSetting.token)
+              .put('/admin/resource/878787878')              
               .set('Accept', 'application/json')
               .end((err,res) => {
                 // //console.log(res.body);
@@ -690,6 +686,9 @@ describe('Api server testing', () => {
         resId: 99999,
         gpuAmount: 2        
       };
+      const failTestMachine = {        
+        gpuAmount: 'Undertale',        
+      }; 
       const modifyMachine = {
         description: 'ModifiedMachine',
         gpuAmount: 2        
@@ -784,12 +783,11 @@ describe('Api server testing', () => {
         });
       });
       describe('Fail case', () => {
-        describe('create fail', () => {
+        describe('Create fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
               .post('/admin/machine')
-              // .set('x-access-token', userSetting.token)
               .set('Accept', 'application/json')
               .send(settingMachine)
               .end((err,res) => {
@@ -843,7 +841,414 @@ describe('Api server testing', () => {
               });
             });
           });
-        });        
+          describe('lack of parameter', () => {
+            Object.keys(settingMachine).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const settingMachineLack = Object.assign({}, settingMachine, tmp);        
+                request
+                .post('/admin/machine')
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(settingMachineLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestMachine).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestMachine[key];
+                const newSettingMachine = Object.assign({}, settingMachine, tmp);        
+                request
+                .post('/admin/machine')
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newSettingMachine)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('not exist', () => {
+            it('Resource(id) not exist', done => {
+              let failTestMachine = Object.assign({}, settingMachine);
+              failTestMachine.resId = 878787878;
+              request
+              .post('/admin/machine')
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(failTestMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+          });
+        });
+        describe('Update fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}`)              
+              .set('Accept', 'application/json')
+              .send(modifyMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .send(modifyMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .send(modifyMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(modifyMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestMachine).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestMachine[key];
+                const newSettingMachine = Object.assign({}, settingMachine, tmp);                
+                request
+                .put(`/admin/machine/${machineSetting.id}`)
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newSettingMachine)
+                .end((err,res) => {                
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('not exist', () => {
+            it('Machine not exist', done => {
+              request
+              .put(`/admin/machine/8787878`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('Resource(id) not exist', done => {
+              let failTestMachine = Object.assign({}, settingMachine);
+              failTestMachine.resId = 878787878;
+              request
+              .put(`/admin/machine/${machineSetting.id}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(failTestMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+          });
+        });
+        describe('Get fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .get(`/admin/machines/`)           
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .get(`/admin/machines/`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .get(`/admin/machines/`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });
+            it('No enough authority', done => {
+              request
+              .get(`/admin/machines/`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+        });
+        describe('Disable', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/disable`)        
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/disable`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/disable`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });
+            it('No enough authority', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/disable`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+        });
+        describe('Enable', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/enable`)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/enable`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/enable`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });
+            it('No enough authority', done => {
+              request
+              .put(`/admin/machine/${machineFromApi.id}/enable`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingMachine)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+        });
+        describe('Delete', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .delete(`/admin/machine/${machineFromApi.id}`)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .delete(`/admin/machine/${machineFromApi.id}`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .delete(`/admin/machine/${machineFromApi.id}`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });
+            it('No enough authority', done => {
+              request
+              .delete(`/admin/machine/${machineFromApi.id}`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('not exist', () => {
+            it('Machine not exist', done => {
+              request
+              .delete(`/admin/machine/${87878787}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+          });
+        });
       });
     });
     describe('User maintain', () => {
@@ -1273,7 +1678,4 @@ const checkErrorMsg = (res, code) => {
       res.message.should.equal('No enough authority');
       break;
   }
-}
-const checkToken = requestApi => {
-  
 }
