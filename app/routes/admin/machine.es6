@@ -78,6 +78,8 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
 
   let resId = (req.query && req.query.resId) || (req.body && req.body.resId);
 
+  if (!label) throw new CdError(400, 'label not input', 40001);
+  if (!name) throw new CdError(400, 'name not input', 40001);
   if (!resId) { 
     throw new CdError(400, 'resId not input', 40001);
   } else {  
