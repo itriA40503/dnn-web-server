@@ -34,7 +34,7 @@ $ npm run start_pm2
 ## Testing ##
 
 ```bash
-$ npm run test
+$ npm test
 ```
 
 ## API doc ##
