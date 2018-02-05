@@ -119,6 +119,13 @@ $ docker push 100.86.2.10:32190/<target imagename:tag>
 $ docker commit <container name> <imagename:tag>
 ```
 
+## Check Vulnerabilities ##
+
+```bash
+$ npm install -g nsp
+$ nsp check
+```
+
 ## Language ##
 * ECMAScript 6
 
