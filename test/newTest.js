@@ -1067,7 +1067,7 @@ describe('Api server testing', () => {
             });
           });
         });
-        describe('Disable', () => {
+        describe('Disable fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
@@ -1123,7 +1123,7 @@ describe('Api server testing', () => {
             });
           });
         });
-        describe('Enable', () => {
+        describe('Enable fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
@@ -1179,7 +1179,7 @@ describe('Api server testing', () => {
             });
           });
         });
-        describe('Delete', () => {
+        describe('Delete fail', () => {
           describe('token', () => {
             it('lack of access-token', done => {
               request
