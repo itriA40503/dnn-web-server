@@ -33,6 +33,10 @@ ADD ./dnn-web-server /dnnserver
 RUN npm install
 # Build app
 RUN npm run build
+# Running testing
+RUN npm test
+# Generate coverage report
+RUN npm run report_coverage
 # Set log rotate time.
 RUN pm2 set pm2-logrotate:rotateInterval '0 0 1 * * *'
 # Set max log files' amount
