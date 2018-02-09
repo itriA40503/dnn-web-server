@@ -54,7 +54,7 @@ app.use(sassMiddleware({
 }));
 
 if (!config.report.coverage.disable) app.use('/report/coverage', express.static(path.join(__dirname, '../test/coverage/lcov-report')));
-if (!config.report.testing.disable) app.use('/report/testing', express.static(path.join(__dirname, '../test/report')));
+if (!config.report.testing.disable) app.use('/report/testing', express.static(path.join(__dirname, '../test/testing')));
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(timeout(12000));
