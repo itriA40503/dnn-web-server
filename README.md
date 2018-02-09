@@ -94,12 +94,17 @@ $ sudo service docker restart
 
 $ cp docker/server/Dockerfile ../../../Dockerfile
 
-### Build project image ###
+### Build image from project ###
 
 ```bash
 $ cd /<parent directory of project root>
-$ docker build -t <imagename:tag> .
+$ docker build -t <imagename:tag> --build-arg dnndbhost=<db host> --build-arg dnndbport=<db port> .
 ```
+
+| Build-time variables | Description |
+|----------|:-------------|
+|dnndbhost|Database host|
+|dnndbport|Database port|
 
 ### Build database image ###
 
