@@ -57,6 +57,14 @@ const config = {
     },
     logger: {
       disable: process.env.LOGGER_DISABLE || false 
+    },
+    report: {
+      testing: {
+        disable: false
+      },
+      coverage: {
+        disable: false
+      }      
     }
   },
   production: {
@@ -113,6 +121,14 @@ const config = {
     },
     logger: {
       disable: process.env.LOGGER_DISABLE || true 
+    },
+    report: {
+      testing: {
+        disable: true
+      },
+      coverage: {
+        disable: true
+      }      
     }
   }
 };
