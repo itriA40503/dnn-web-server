@@ -4,6 +4,16 @@ MAINTAINER Baka Wang
 # change work directory
 WORKDIR /dnnserver
 
+ARG dnndbhost
+
+ARG dnndbport
+
+ENV DNNDB_HOST=$dnndbhost
+
+ENV DNNDB_PORT=$dnndbport
+
+ENV LOGGER_DISABLE=false
+
 RUN apk update
 
 RUN apk add tzdata
