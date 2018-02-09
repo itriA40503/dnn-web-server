@@ -3,3 +3,7 @@ apidoc/
 build/
 node_modules/
 portal/
+coverage/
+.nyc_output/
+test/coverage/
+test/testing/
