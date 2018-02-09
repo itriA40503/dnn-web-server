@@ -37,7 +37,7 @@ $ npm run start_pm2
 $ npm test
 ```
 
-## API doc ##
+## API document ##
 
 * Only running on development mode.
 * Set testing url on environment
