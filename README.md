@@ -42,6 +42,22 @@ $ npm test
 * Only running on development mode.
 * Set testing url on environment
 
+## Testing & Coverage Report ##
+
+* Only running on development mode.
+1. Execute
+```bash
+npm run build
+npm test
+npm run report_coverage
+```
+2. Open browser
+
+| Url | Description |
+|:----------:|:-------------|
+| `<Your IP>:<Your Port>/report/testing` | Tesing results |
+| `<Your IP>:<Your Port>/report/coverage` | Coverage results |
+
 ## Environment Variables
 
 Setting environment variables when start container.
