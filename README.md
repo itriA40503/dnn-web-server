@@ -78,6 +78,7 @@ Setting environment variables when start container.
 | MAIL_SERVER_USERNAME | SMTP server username.|
 | MAIL_SERVER_PASS | SMTP server password. |
 | LOGGER_DISABLE | Disable logger. |
+| GPU_MAXIMUM | Set the maximum gpu. Default = 8 |
 
 
 ## Docker Tutorial ##

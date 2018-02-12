@@ -65,6 +65,11 @@ const config = {
       coverage: {
         disable: false
       }      
+    },
+    resource: {
+      gpu: {
+        maximum: process.env.GPU_MAXIMUM || 8,
+      }
     }
   },
   production: {
@@ -129,6 +134,11 @@ const config = {
       coverage: {
         disable: true
       }      
+    },
+    resource: {
+      gpu: {
+        maximum: process.env.GPU_MAXIMUM || 8,
+      }
     }
   }
 };
