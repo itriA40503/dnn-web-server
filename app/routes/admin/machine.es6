@@ -5,8 +5,7 @@ import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import serverJob from '../../queue/job';
 import { machine as Machine } from '../../models/index';
-
-const GPU_MAXIMUM = 8;
+import { CheckAmount } from '../../util/Checker';
 
 const instantUpdateContainer = async (schedule, times) => {
   let tryTimes = times;
@@ -87,12 +86,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
     gpuType = resInfo.gpuType;    
   }
 
-  if (!gpuAmount) {
-    throw new CdError(400, 'GpuAmount not input', 40001);    
-  } else {
-    if (!validator.isNumeric(`${gpuAmount}`)) throw new CdError(400, 'Gpu amount is not a number', 40002);
-    else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(400, 'Gpu amount must between 1~8');
-  }
+  await CheckAmount(gpuAmount);  
 
   let machineAttr = {
     label,
@@ -126,12 +120,8 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
     updateAttr.resId = resId;
   }  
 
-  if (gpuAmount) {
-    if (!validator.isNumeric(`${gpuAmount}`)) throw new CdError(400, 'Gpu amount is not a number', 40002);
-    else if (gpuAmount > GPU_MAXIMUM || gpuAmount <= 0) throw new CdError(401, 'Gpu amount must between 1~8');
-    updateAttr.gpuAmount = gpuAmount;
-  }
-
+  await CheckAmount(gpuAmount);
+  
   if (description) {
     updateAttr.description = description;
   }

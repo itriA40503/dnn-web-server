@@ -1,7 +1,11 @@
+import validator from 'validator';
 import moment from 'moment';
 import momentDurationFormat from 'moment-duration-format';
 import db from '../db/db';
 import CdError from './CdError';
+import config from '../config';
+
+const GPU_MAXIMUM = config.resource.gpu.maximum;
 
 momentDurationFormat(moment);
 
@@ -84,3 +88,17 @@ export const getAvailableDays = async (userId, resource, amount) => {
   return availableDays;
 };
 
+/**
+ * Check gpu amount
+ * @param {integer} amount - gpu amount
+ * @return {integer} 
+ */
+export const CheckAmount = (amount) => {
+  if (!amount) {
+    throw new CdError(400, 'GpuAmount not input', 40001);
+  } else {
+    if (!validator.isNumeric(`${amount}`)) throw new CdError(400, 'Gpu amount is not a number', 40002);
+    else if (amount > GPU_MAXIMUM || amount <= 0) throw new CdError(400, `Gpu amount must between 1~${GPU_MAXIMUM}`);
+  }
+  return amount;
+};
