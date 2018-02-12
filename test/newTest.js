@@ -1253,7 +1253,7 @@ describe('Api server testing', () => {
     });
     describe('User maintain', () => {
       const settingUser = {
-        itriId: 'SUCKCOMPANY'
+        itriId: 'FRISK'
       };
       const settingTransacton = {
         addValue: 8787,
@@ -1267,107 +1267,205 @@ describe('Api server testing', () => {
         amount: 4,   
         resId:resourceSetting.id     
       };
-      it('Create user', done => {
-        request
-        .post('/admin/user')
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')
-        .send(settingUser)
-        .end((err,res) => {
-          ////console.log(res.body);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          checkObj(settingUser, res.body);
-          userFromApi = res.body;
-          done();
+      describe('Success case', () => {
+        it('Create user', done => {
+          request
+          .post('/admin/user')
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')
+          .send(settingUser)
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            checkObj(settingUser, res.body);
+            userFromApi = res.body;
+            done();
+          });
+        });
+        it('Create user transaction', done => {
+          request
+          .post(`/admin/user/${userFromApi.id}/transaction`)
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')
+          .send(settingTransacton)
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            checkObj(settingTransacton, res.body);
+            transactionFromApi = res.body;
+            done();
+          });
+        });
+        it('Create user available resource', done => {
+          request
+          .post(`/admin/user/${userFromApi.id}/resource`)
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')
+          .send(settingAvailRes)
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            checkObj(settingAvailRes, res.body);
+            availableResFromApi = res.body;
+            done();
+          });
+        });
+        it('Update user available resource', done => {
+          request
+          .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')
+          .send(modifyAvailRes)
+          .end((err,res) => {
+            ////console.log(res.body);          
+            res.should.have.status(200);
+            res.should.to.be.json;
+            checkObj(modifyAvailRes, res.body);
+            availableResFromApi = res.body;
+            done();
+          });
+        });
+        it('Get user available resource', done => {
+          request
+          .get(`/admin/user/${userFromApi.id}/resources`)
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')        
+          .end((err,res) => {
+            ////console.log(`length:${res.body.length}`);
+            res.body.should.have.lengthOf.above(0);
+            res.should.have.status(200);
+            res.should.to.be.json;          
+            const getObj = res.body.find(obj => obj.id === availableResFromApi.id);          
+            //////console.log(getObj);
+            checkObj(availableResFromApi, getObj);
+            done();
+          });
+        });
+        it('Delete user available resource', done => {
+          request
+          .delete(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.should.have.property('deletedAt').not.equal(null);
+            availableResFromApi = res.body;
+            done();
+          });
+        });
+        it('Get users information', done => {
+          request
+          .get(`/admin/users/detail`)
+          .set('x-access-token', adminSetting.token)
+          .set('Accept', 'application/json')        
+          .end((err,res) => {
+            ////console.log(`length:${res.body.length}`);
+            res.body.should.have.lengthOf.above(2);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            done();
+          });
         });
       });
-      it('Create user transaction', done => {
-        request
-        .post(`/admin/user/${userFromApi.id}/transaction`)
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')
-        .send(settingTransacton)
-        .end((err,res) => {
-          ////console.log(res.body);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          checkObj(settingTransacton, res.body);
-          transactionFromApi = res.body;
-          done();
-        });
-      });
-      it('Create user available resource', done => {
-        request
-        .post(`/admin/user/${userFromApi.id}/resource`)
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')
-        .send(settingAvailRes)
-        .end((err,res) => {
-          ////console.log(res.body);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          checkObj(settingAvailRes, res.body);
-          availableResFromApi = res.body;
-          done();
-        });
-      });
-      it('Update user available resource', done => {
-        request
-        .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')
-        .send(modifyAvailRes)
-        .end((err,res) => {
-          ////console.log(res.body);          
-          res.should.have.status(200);
-          res.should.to.be.json;
-          checkObj(modifyAvailRes, res.body);
-          availableResFromApi = res.body;
-          done();
-        });
-      });
-      it('Get user available resource', done => {
-        request
-        .get(`/admin/user/${userFromApi.id}/resources`)
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')        
-        .end((err,res) => {
-          ////console.log(`length:${res.body.length}`);
-          res.body.should.have.lengthOf.above(0);
-          res.should.have.status(200);
-          res.should.to.be.json;          
-          const getObj = res.body.find(obj => obj.id === availableResFromApi.id);          
-          //////console.log(getObj);
-          checkObj(availableResFromApi, getObj);
-          done();
-        });
-      });
-      it('Delete user available resource', done => {
-        request
-        .delete(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')
-        .end((err,res) => {
-          ////console.log(res.body);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          res.body.should.have.property('deletedAt').not.equal(null);
-          availableResFromApi = res.body;
-          done();
-        });
-      });
-      it('Get users information', done => {
-        request
-        .get(`/admin/users/detail`)
-        .set('x-access-token', adminSetting.token)
-        .set('Accept', 'application/json')        
-        .end((err,res) => {
-          ////console.log(`length:${res.body.length}`);
-          res.body.should.have.lengthOf.above(2);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          done();
+      describe('Fail case', () => {
+        describe('Create user fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .post('/admin/user')
+              .set('Accept', 'application/json')
+              .send(settingUser)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .post('/admin/user')
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .send(settingUser)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .post('/admin/user')
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .send(settingUser)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .post('/admin/user')
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingUser)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('lack of parameter', () => {
+            Object.keys(settingUser).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const settingUserLack = Object.assign({}, settingUser, tmp);        
+                request
+                .post('/admin/user')
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(settingUserLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('already exist', () => {
+            it('itriId already exist', done => {
+              request
+              .post('/admin/user')
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send({itriId: userSetting.itriId})
+              .end((err,res) => {
+                //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;                
+                done();
+              });
+            });
+          });
         });
       });
     });
