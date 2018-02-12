@@ -133,13 +133,13 @@ userAPI.createTrans = asyncWrap(async (req, res, next) => {
 
   if (userId) {
     const user = await db.checkUserExistById(userId);
-    if (!user) throw new CdError(401, 'the user not exist.');
+    if (!user) throw new CdError(400, 'the user not exist.');
   }
 
   if (!addValue) {
-    throw new CdError(401, 'the value not input.');
+    throw new CdError(400, 'the value not input.', 40001);
   } else {
-    if (!validator.isNumeric(`${addValue}`)) throw new CdError(401, 'the value should be number.');
+    if (!validator.isNumeric(`${addValue}`)) throw new CdError(400, 'the value should be number.', 40002);
   }
 
   const transAttr = {
