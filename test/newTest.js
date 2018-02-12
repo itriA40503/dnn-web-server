@@ -1259,6 +1259,9 @@ describe('Api server testing', () => {
         addValue: 8787,
         info: 'organizationIsAwful'
       };
+      const failTestTransacton = {
+        addValue: 'papyrus'
+      };
       const settingAvailRes = {
         amount: 2,
         resId:resourceSetting.id
@@ -1466,6 +1469,128 @@ describe('Api server testing', () => {
               });
             });
           });
+        });
+        describe('Create user transaction fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/transaction`)
+              .set('Accept', 'application/json')
+              .send(settingTransacton)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/transaction`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .send(settingTransacton)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/transaction`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .send(settingTransacton)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/transaction`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingTransacton)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('lack of parameter', () => {
+            it(`lack addValue`, done => {
+              const tmp = {};
+              tmp['addValue'] = null;
+              const settingTransactonLack = Object.assign({}, settingTransacton, tmp);        
+              request
+              .post(`/admin/user/${userFromApi.id}/transaction`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingTransactonLack)
+              .end((err,res) => {              
+                res.should.have.status(400);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40001);          
+                done();
+              });     
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestTransacton).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestTransacton[key];
+                const newSettingTransacton = Object.assign({}, settingTransacton, tmp);                
+                request
+                .post(`/admin/user/${userFromApi.id}/transaction`)
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newSettingTransacton)
+                .end((err,res) => {                
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('not exist', () => {
+            it('user not exist', done => {
+              request
+              .post(`/admin/user/${87878787}/transaction`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+          });
+        });
+        describe('Create user available resource fail', () => {
+        });
+        describe('Update user available resource fail', () => {
+        });
+        describe('Get user available resource fail', () => {
+        });
+        describe('Delete user available resource fail', () => {
+        });
+        describe('Get users information fail', () => {
         });
       });
     });
