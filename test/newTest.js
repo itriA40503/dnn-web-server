@@ -2079,49 +2079,213 @@ describe('Api server testing', () => {
     const modifyImage = {
       description: 'bayonetta2'
     };
-    it('update image', done => {
-      request
-      .put(`/image/${imageSetting.id}`)
-      .set('x-access-token', userSetting.token)
-      .set('Accept', 'application/json')
-      .send(modifyImage)
-      .end((err,res) => {
-        ////console.log(res.body);          
-        res.should.have.status(200);
-        res.should.to.be.json;
-        checkObj(modifyImage, res.body.image);
-        done();
+    describe('Success case', () => {
+      it('update image', done => {
+        request
+        .put(`/image/${imageSetting.id}`)
+        .set('x-access-token', userSetting.token)
+        .set('Accept', 'application/json')
+        .send(modifyImage)
+        .end((err,res) => {
+          ////console.log(res.body);          
+          res.should.have.status(200);
+          res.should.to.be.json;
+          checkObj(modifyImage, res.body.image);
+          done();
+        });
+      });
+      it('get image by id', done => {
+        request
+        .get(`/image/${imageSetting.id}`)
+        .set('x-access-token', userSetting.token)
+        .set('Accept', 'application/json')        
+        .end((err,res) => {
+          ////console.log(res.body);        
+          res.should.have.status(200);
+          res.should.to.be.json;
+          checkObj(imageSetting, res.body);
+          done();
+        });
+      });
+      it('get images', done => {
+        request
+        .get(`/images`)
+        .set('x-access-token', userSetting.token)
+        .set('Accept', 'application/json')        
+        .end((err,res) => {        
+          res.should.have.status(200);
+          res.should.to.be.json;
+          res.body.should.have.property('images');
+          const images = res.body.images;             
+          const getObj = images.find(obj => obj.id === imageSetting.id);
+          ////console.log(getObj);
+          checkObj(imageSetting, getObj);        
+          done();
+        });
       });
     });
-    it('get image by id', done => {
-      request
-      .get(`/image/${imageSetting.id}`)
-      .set('x-access-token', userSetting.token)
-      .set('Accept', 'application/json')        
-      .end((err,res) => {
-        ////console.log(res.body);        
-        res.should.have.status(200);
-        res.should.to.be.json;
-        checkObj(imageSetting, res.body);
-        done();
+    describe('Fail case', () => {
+      describe('update image fail', () => {
+        describe('token', () => {
+          it('lack of access-token', done => {
+            request
+            .put(`/image/${imageSetting.id}`)
+            .set('Accept', 'application/json')
+            .send(modifyImage)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40100);          
+              done();
+            });
+          });
+          it('token fail', done => {
+            request
+            .put(`/image/${imageSetting.id}`)
+            .set('x-access-token', userSetting.token+'0123456')
+            .set('Accept', 'application/json')
+            .send(modifyImage)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40101);          
+              done();
+            });
+          });
+          it('token expired', done => {
+            request
+            .put(`/image/${imageSetting.id}`)
+            .set('x-access-token', userSetting.expired)
+            .set('Accept', 'application/json')
+            .send(modifyImage)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40102);          
+              done();
+            });
+          });          
+        });
+        describe('not exist', () => { 
+          it('image not exist', done => {
+            request
+            .put(`/image/${87878787}`)
+            .set('x-access-token', adminSetting.token)
+            .set('Accept', 'application/json')
+            .send(modifyImage)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(400);
+              res.should.to.be.json;
+              // checkErrorMsg(res.body, 40100);          
+              done();
+            });
+          });                     
+        });
       });
-    });
-    it('get images', done => {
-      request
-      .get(`/images`)
-      .set('x-access-token', userSetting.token)
-      .set('Accept', 'application/json')        
-      .end((err,res) => {        
-        res.should.have.status(200);
-        res.should.to.be.json;
-        res.body.should.have.property('images');
-        const images = res.body.images;             
-        const getObj = images.find(obj => obj.id === imageSetting.id);
-        ////console.log(getObj);
-        checkObj(imageSetting, getObj);        
-        done();
+      describe('get image by id fail', () => {
+        describe('token', () => {
+          it('lack of access-token', done => {
+            request
+            .get(`/image/${imageSetting.id}`)
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40100);          
+              done();
+            });
+          });
+          it('token fail', done => {
+            request
+            .get(`/image/${imageSetting.id}`)
+            .set('x-access-token', userSetting.token+'0123456')
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40101);          
+              done();
+            });
+          });
+          it('token expired', done => {
+            request
+            .get(`/image/${imageSetting.id}`)
+            .set('x-access-token', userSetting.expired)
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40102);          
+              done();
+            });
+          });          
+        });
+        describe('not exist', () => { 
+          it('image not exist', done => {
+            request
+            .get(`/image/${87878787}`)
+            .set('x-access-token', adminSetting.token)
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(400);
+              res.should.to.be.json;
+              // checkErrorMsg(res.body, 40100);          
+              done();
+            });
+          });                     
+        });
       });
-    });
+      describe('get images fail', () => {
+        describe('token', () => {
+          it('lack of access-token', done => {
+            request
+            .get(`/images`)
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40100);          
+              done();
+            });
+          });
+          it('token fail', done => {
+            request
+            .get(`/images`)
+            .set('x-access-token', userSetting.token+'0123456')
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40101);          
+              done();
+            });
+          });
+          it('token expired', done => {
+            request
+            .get(`/images`)
+            .set('x-access-token', userSetting.expired)
+            .set('Accept', 'application/json')            
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40102);          
+              done();
+            });
+          });          
+        });
+      });
+    });    
   });
   describe('User', () => {
     describe('Signin', () => {
