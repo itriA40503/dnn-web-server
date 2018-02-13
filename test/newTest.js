@@ -1266,6 +1266,9 @@ describe('Api server testing', () => {
         amount: 2,
         resId:resourceSetting.id
       };
+      const failTestAvailRes = {
+        amount: 'sans',        
+      }
       const modifyAvailRes = {
         amount: 4,   
         resId:resourceSetting.id     
@@ -1583,6 +1586,136 @@ describe('Api server testing', () => {
           });
         });
         describe('Create user available resource fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/resource`)
+              .set('Accept', 'application/json')
+              .send(settingAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/resource`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .send(settingAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/resource`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .send(settingAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .post(`/admin/user/${userFromApi.id}/resource`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('lack of parameter', () => {
+            Object.keys(settingAvailRes).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const settingAvailResLack = Object.assign({}, settingAvailRes, tmp);        
+                request
+                .post(`/admin/user/${userFromApi.id}/resource`)
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(settingAvailResLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestAvailRes).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestAvailRes[key];
+                const newSettingAvailRes = Object.assign({}, settingAvailRes, tmp);                
+                request
+                .post(`/admin/user/${userFromApi.id}/resource`)
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newSettingAvailRes)
+                .end((err,res) => {                
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('not exist', () => { 
+            it('user not exist', done => {
+              request
+              .post(`/admin/user/${878787878}/resource`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(settingAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('resource(id) not exist', done => {
+              request
+              .post(`/admin/user/${userSetting.id}/resource`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send({
+                amount: 2,
+                resId:878787878
+              })
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+          });
         });
         describe('Update user available resource fail', () => {
         });
