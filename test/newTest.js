@@ -2018,6 +2018,59 @@ describe('Api server testing', () => {
           });
         });
         describe('Get users information fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .get(`/admin/users/detail`)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .get(`/admin/users/detail`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .get(`/admin/users/detail`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .get(`/admin/users/detail`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });          
         });
       });
     });
