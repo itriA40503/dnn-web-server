@@ -17,7 +17,7 @@ userAPI.getAvailableRes = asyncWrap(async (req, res, next) => {
   let userId = req.params.userId; 
   if (userId) {
     const user = await db.checkUserExistById(userId);
-    if (!user) throw new CdError(401, 'the user not exist.');
+    if (!user) throw new CdError(400, 'the user not exist.');
   }
 
   const userAvailableRes = await db.getAvailableResByUserId(userId);
