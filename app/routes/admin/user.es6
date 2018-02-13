@@ -92,17 +92,17 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
 });
 
 userAPI.deleteAvailableRes = asyncWrap(async (req, res, next) => {
-  let userId = req.params.userId; 
-  let resId = req.params.resId; // the user's availableRes ID
+  const userId = req.params.userId; 
+  const resId = req.params.resId; // the user's availableRes ID
   
   if (userId) {
     const user = await db.checkUserExistById(userId);
-    if (!user) throw new CdError(401, 'the user not exist.');
+    if (!user) throw new CdError(400, 'the user not exist.');
   }
 
   const getModifyRes = await AvailableRes.findById(resId);
-  if (!getModifyRes) throw new CdError(401, 'the available resource (id) not exist');  
-  if (getModifyRes.deletedAt !== null) throw new CdError(401, 'the available resource has been deleted');  
+  if (!getModifyRes) throw new CdError(400, 'the available resource (id) not exist');  
+  if (getModifyRes.deletedAt !== null) throw new CdError(400, 'the available resource has been deleted');  
 
   const deletedRes = await getModifyRes.updateAttributes({ deletedAt: moment().format() });
   
