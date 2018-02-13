@@ -75,9 +75,8 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
   } else {
     throw new CdError(400, 'the resource (id) is not input', 40001);
   }
-
-  if (!amount) throw new CdError(400, 'the amount of resource is not input', 40001);
-  ResAttr.amount = amount;
+    
+  ResAttr.amount = await CheckAmount(amount);
 
   ResAttr.updateAt = moment().format();
 
