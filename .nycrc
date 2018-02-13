@@ -9,6 +9,7 @@
     "app/mailer/*",
     "app/routes/admin/mail.es6",
     "app/routes/user/report.es6",
+    "app/routes/schedule",
     "app/routes/statistic",
     "app/routes/machine",
     "app/util/paraChecker.js",

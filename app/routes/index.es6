@@ -7,9 +7,9 @@ import statisticR from './statistic';
 
 export default (app) => {
   app.use('/', userR);
-  app.use('/', scheduleR);
+  // app.use('/', scheduleR);
   app.use('/', machineR);
   app.use('/', imageR);
   app.use('/', adminR);
-  app.use('/', statisticR);
+  // app.use('/', statisticR);
 };
