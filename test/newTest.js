@@ -1273,6 +1273,9 @@ describe('Api server testing', () => {
         amount: 4,   
         resId:resourceSetting.id     
       };
+      const failTestModifyAvailRes = {
+        amount: 'WatersOfMegalovania'
+      };
       describe('Success case', () => {
         it('Create user', done => {
           request
@@ -1718,6 +1721,148 @@ describe('Api server testing', () => {
           });
         });
         describe('Update user available resource fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('Accept', 'application/json')
+              .send(modifyAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')
+              .send(modifyAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')
+              .send(modifyAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(modifyAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('lack of parameter', () => {
+            Object.keys(modifyAvailRes).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const modifyAvailResLack = Object.assign({}, modifyAvailRes, tmp);        
+                request
+                .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(modifyAvailResLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestModifyAvailRes).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestModifyAvailRes[key];
+                const newSettingAvailRes = Object.assign({}, modifyAvailRes, tmp);                
+                request
+                .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newSettingAvailRes)
+                .end((err,res) => {                
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('not exist', () => { 
+            it('user not exist', done => {
+              request
+              .put(`/admin/user/${8787878}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(modifyAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('availableRes(id) not exist', done => {
+              request
+              .put(`/admin/user/${userFromApi.id}/resource/${878787878}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(modifyAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('new availableRes(id) not exist', done => {              
+              const newSettingAvailRes = Object.assign({}, modifyAvailRes, { resId:8787878 });
+              request
+              .put(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')
+              .send(newSettingAvailRes)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });            
+          });
         });
         describe('Get user available resource fail', () => {
         });
