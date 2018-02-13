@@ -7,7 +7,7 @@ const image = {};
 image.getByIdOrDigest = asyncWrap(async (req, res, next) => {
   let id = req.params.image_id;
   let image = await db.getImageByIdOrDigest(id);
-  if (!image) throw new CdError(401, 'No specific image.');
+  if (!image) throw new CdError(400, 'No specific image.');
 
   res.json(image);
 });
