@@ -1935,6 +1935,87 @@ describe('Api server testing', () => {
           });
         });
         describe('Delete user available resource fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .delete(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .delete(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)           
+              .set('x-access-token', adminSetting.token+'0123456')
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .delete(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', adminSetting.expired)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });  
+            it('No enough authority', done => {
+              request
+              .delete(`/admin/user/${userFromApi.id}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40103);          
+                done();
+              });
+            });
+          });
+          describe('not exist', () => { 
+            it('user not exist', done => {
+              request
+              .delete(`/admin/user/${8787878787}/resource/${availableResFromApi.id}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });   
+            it('resource(id) not exist', done => {
+              request
+              .delete(`/admin/user/${userFromApi.id}/resource/${878787878}`)
+              .set('x-access-token', adminSetting.token)
+              .set('Accept', 'application/json')              
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(400);
+                res.should.to.be.json;
+                // checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });        
+          });
         });
         describe('Get users information fail', () => {
         });
