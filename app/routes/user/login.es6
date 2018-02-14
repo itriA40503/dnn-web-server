@@ -14,11 +14,11 @@ export default asyncWrap(async (req, res, next) => {
   /* Todo: encrypt password between server and client */
   let password = (req.body && req.body.password) || (req.query && req.query.password) || req.headers['x-password'];
 
-  if ((!username || !password)) throw new CdError(401, 'missing username or password', 40100);
+  if ((!username || !password)) throw new CdError(400, 'Username or password not input', 40001);
 
   let reg = /^[A-Za-z0-9]+$/; // there's bug with g
 
-  if (!reg.test(username)) throw new CdError(401, 'username or password format error', 40101);
+  if (!reg.test(username)) throw new CdError(400, 'username format error', 40002);
   
   username = username.toUpperCase();
   
