@@ -120,7 +120,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
   // machine id is necessary now
   if (!customMachineId) {
-    throw new CdError(400, 'No input machine id.', 40001);    
+    throw new CdError(400, 'Machine id not input.', 40001);    
   } else {
     const userAvailableRes = await db.getAvailableResByUserId(userId);
     const machine = await Machine.scope('statusNormal', 'detail').findById(customMachineId);
