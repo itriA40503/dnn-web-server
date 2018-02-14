@@ -124,6 +124,7 @@ schedule.create = asyncWrap(async (req, res, next) => {
   } else {
     const userAvailableRes = await db.getAvailableResByUserId(userId);
     const machine = await Machine.scope('statusNormal', 'detail').findById(customMachineId);
+    if (!machine) throw new CdError(400, 'machine(id) not exist');
     const mapAvailable = userAvailableRes.filter(obj => 
       (obj.amount === machine.gpuAmount && obj.resId === machine.resId)
     );
