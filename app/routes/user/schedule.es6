@@ -146,9 +146,10 @@ schedule.create = asyncWrap(async (req, res, next) => {
 
   if (bookedSchedules.length > BOOKMAXIMUN) {
     throw new CdError(401, 'schedule reservations exceed maximum number');
-  }
-
-  if (!images.indexOf(imageIdQuery)) {
+  }  
+  
+  const findImage = images.map(e => e.id).includes(`${imageIdQuery}`);
+  if (!findImage) {
     throw new CdError(400, 'image not exist');
   }
 
