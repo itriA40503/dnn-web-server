@@ -93,12 +93,12 @@ schedule.create = asyncWrap(async (req, res, next) => {
   // let customGpu = req.query.gpu_type || (req.body && req.body.gpuType);
   // let customGpuAmount = req.query.gpu_amount || (req.body && req.body.gpuAmount) || 1;
 
-  if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(400, 'Lack of parameter', 40001);
+  if (!startQuery || !endQuery || !imageIdQuery) throw new CdError(400, 'Parameter not input', 40001);
+
+  if (!moment(startQuery, moment.ISO_8601).isValid() || !moment(endQuery, moment.ISO_8601).isValid()) throw new CdError(400, 'Wrong date format', 40002);
 
   let startDate = moment(startQuery);
   let endDate = moment(endQuery);
-
-  if (!startDate.isValid() || !endDate.isValid()) throw new CdError(400, 'Wrong date format', 40002);
 
   startDate = startDate.startOf('day');
   endDate = endDate.endOf('day');
