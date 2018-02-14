@@ -5,7 +5,7 @@ import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import serverJob from '../../queue/job';
 import { machine as Machine } from '../../models/index';
-import { CheckAmount } from '../../util/Checker';
+import { checkAmount } from '../../util/Checker';
 
 const instantUpdateContainer = async (schedule, times) => {
   let tryTimes = times;
@@ -86,7 +86,7 @@ machineAPI.createMachine = asyncWrap(async (req, res, next) => {
     gpuType = resInfo.gpuType;    
   }
 
-  await CheckAmount(gpuAmount);  
+  await checkAmount(gpuAmount);  
 
   let machineAttr = {
     label,
@@ -120,7 +120,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
     updateAttr.resId = resId;
   }  
 
-  await CheckAmount(gpuAmount);
+  await checkAmount(gpuAmount);
   
   if (description) {
     updateAttr.description = description;

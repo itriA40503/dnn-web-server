@@ -93,7 +93,7 @@ export const getAvailableDays = async (userId, resource, amount) => {
  * @param {integer} amount - gpu amount
  * @return {integer} 
  */
-export const CheckAmount = (amount) => {
+export const checkAmount = (amount) => {
   if (!amount) {
     throw new CdError(400, 'GpuAmount not input', 40001);
   } else {

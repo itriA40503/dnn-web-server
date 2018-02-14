@@ -4,7 +4,7 @@ import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
 import { sequelize, dnnUser as DnnUser, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
-import { CheckAmount } from '../../util/Checker';
+import { checkAmount } from '../../util/Checker';
 
 const userAPI = {};
 
@@ -36,7 +36,7 @@ userAPI.createAvailableRes = asyncWrap(async (req, res, next) => {
     if (!user) throw new CdError(400, 'the user not exist.');
   }
 
-  await CheckAmount(amount);
+  await checkAmount(amount);
   
   if (resId) {
     const resource = await db.findResourceInfoById(resId);
@@ -76,7 +76,7 @@ userAPI.modifyAvailableRes = asyncWrap(async (req, res, next) => {
     throw new CdError(400, 'the resource (id) is not input', 40001);
   }
     
-  ResAttr.amount = await CheckAmount(amount);
+  ResAttr.amount = await checkAmount(amount);
 
   ResAttr.updateAt = moment().format();
 
