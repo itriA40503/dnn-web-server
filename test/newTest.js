@@ -2640,95 +2640,62 @@ describe('Api server testing', () => {
       });
     });
     describe('Schedule', ()=> {
-      describe('Get schedule list', () => {
-        it('All', done => {
-          request
-            .get('/user/schedules')
-            .set('x-access-token', userSetting.token)
-            .set('Accept', 'application/json')
-            .end((err,res) => {
-              res.should.have.status(200);
-              res.should.to.be.json;
-              res.body.should.have.property('schedules');
-              res.body.should.have.property('historySchedules');
-              ////console.log(res.body);
-              done();
-            });
+      let extendableLatestDate;
+      describe('Success case', () => {
+        describe('Get schedule list', () => {
+          it('All', done => {
+            request
+              .get('/user/schedules')
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                res.should.have.status(200);
+                res.should.to.be.json;
+                res.body.should.have.property('schedules');
+                res.body.should.have.property('historySchedules');
+                ////console.log(res.body);
+                done();
+              });
+          });
+          it('History', done => {
+            request
+              .get('/user/schedules/history')
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                res.should.have.status(200);
+                res.should.to.be.json;
+                res.body.should.not.have.property('schedules');
+                res.body.should.have.property('historySchedules');
+                ////console.log(res.body);
+                done();
+              });
+          });
+          it('In Progress', done => {
+            request
+              .get('/user/schedules/reserved')
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .end((err,res) => {
+                res.should.have.status(200);
+                res.should.to.be.json;
+                res.body.should.have.property('schedules');
+                res.body.should.not.have.property('historySchedules');
+                ////console.log(res.body);
+                done();
+              });
+          });
         });
-        it('History', done => {
-          request
-            .get('/user/schedules/history')
-            .set('x-access-token', userSetting.token)
-            .set('Accept', 'application/json')
-            .end((err,res) => {
-              res.should.have.status(200);
-              res.should.to.be.json;
-              res.body.should.not.have.property('schedules');
-              res.body.should.have.property('historySchedules');
-              ////console.log(res.body);
-              done();
-            });
-        });
-        it('In Progress', done => {
-          request
-            .get('/user/schedules/reserved')
-            .set('x-access-token', userSetting.token)
-            .set('Accept', 'application/json')
-            .end((err,res) => {
-              res.should.have.status(200);
-              res.should.to.be.json;
-              res.body.should.have.property('schedules');
-              res.body.should.not.have.property('historySchedules');
-              ////console.log(res.body);
-              done();
-            });
-        });
-      });
-      describe('Create', () => {
-        const scheduleOptions = {
-          start: scheduleSetting.start.format(),
-          end: scheduleSetting.end.format(),
-          imageId: imageSetting.id,
-          machineId: machineSetting.id
-        };
-        it('Create a schedule', done => {
-          request
-          .post('/user/schedule')
-          .set('x-access-token', userSetting.token)
-          .set('Accept', 'application/json')
-          .send(scheduleOptions)
-          .end((err, res) => {
-            ////console.log(res.body);
-            res.should.have.status(200);
-            res.should.to.be.json;
-            res.body.should.have.property('id')
-            scheduleFromApi = res.body;
-            done();
-          })
-        });
-      });
-      describe('Update schedule', () => {
-        let extendableLatestDate;
-        it('Get schedule extendable date', done => {
-          request
-            .get(`/user/schedule/${scheduleFromApi.id}/extendable`)
-            .set('x-access-token', userSetting.token)
-            .set('Accept', 'application/json')
-            .end((err, res) => {
-              ////console.log(res.body);
-              res.should.have.status(200);
-              res.should.to.be.json;
-              res.body.should.have.property('extendableLatestDate')
-              extendableLatestDate = res.body.extendableLatestDate;
-              done();
-            })
-        });
-        it('Update schedule', done => {
-          let scheduleOptions = {
-            end: moment(extendableLatestDate).format() || scheduleSetting.end.add(2,'d').format(),
-          }
-          request
-            .put(`/user/schedule/${scheduleFromApi.id}`)
+        describe('Create', () => {
+          const scheduleOptions = {
+            start: scheduleSetting.start.format(),
+            end: scheduleSetting.end.format(),
+            imageId: imageSetting.id,
+            machineId: machineSetting.id
+          };
+          it('Create a schedule', done => {
+            request
+            .post('/user/schedule')
             .set('x-access-token', userSetting.token)
             .set('Accept', 'application/json')
             .send(scheduleOptions)
@@ -2740,21 +2707,441 @@ describe('Api server testing', () => {
               scheduleFromApi = res.body;
               done();
             })
-        });        
-      });
-      describe('Delete schedule', () => {
-        it('Delete schedule', done => {    
-          request
-            .delete(`/user/schedule/${scheduleFromApi.id}`)
-            .set('x-access-token', userSetting.token)
-            .set('Accept', 'application/json')
-            .end((err, res) => {
-              res.should.have.status(200);
-              ////console.log(res.body)
-              done();
-            })
+          });
+        });
+        describe('Update schedule', () => {          
+          it('Get schedule extendable date', done => {
+            request
+              .get(`/user/schedule/${scheduleFromApi.id}/extendable`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .end((err, res) => {
+                ////console.log(res.body);
+                res.should.have.status(200);
+                res.should.to.be.json;
+                res.body.should.have.property('extendableLatestDate')
+                extendableLatestDate = res.body.extendableLatestDate;
+                done();
+              })
+          });
+          it('Update schedule', done => {
+            let scheduleOptions = {
+              end: moment(extendableLatestDate).format() || scheduleSetting.end.add(2,'d').format(),
+            }
+            request
+              .put(`/user/schedule/${scheduleFromApi.id}`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .send(scheduleOptions)
+              .end((err, res) => {
+                ////console.log(res.body);
+                res.should.have.status(200);
+                res.should.to.be.json;
+                res.body.should.have.property('id')
+                scheduleFromApi = res.body;
+                done();
+              })
+          });          
+        });
+        describe('Delete schedule', () => {
+          it('Delete schedule', done => {    
+            request
+              .delete(`/user/schedule/${scheduleFromApi.id}`)
+              .set('x-access-token', userSetting.token)
+              .set('Accept', 'application/json')
+              .end((err, res) => {
+                res.should.have.status(200);
+                ////console.log(res.body)
+                done();
+              })
+          });
         });
       });
+      describe('Fail case', () => {
+        describe('Get schedule list Fail', () => {
+          describe('All Fail', () => {
+            describe('token', () => {
+              it('lack of access-token', done => {
+                request
+                .get('/user/schedules')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40100);          
+                  done();
+                });
+              });
+              it('token fail', done => {
+                request
+                .get('/user/schedules')
+                .set('x-access-token', userSetting.token+'0123456')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40101);          
+                  done();
+                });
+              });
+              it('token expired', done => {
+                request
+                .get('/user/schedules')
+                .set('x-access-token', userSetting.expired)
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40102);          
+                  done();
+                });
+              });          
+            });
+          });
+          describe('History Fail', () => {
+            describe('token', () => {
+              it('lack of access-token', done => {
+                request
+                .get('/user/schedules/history')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40100);          
+                  done();
+                });
+              });
+              it('token fail', done => {
+                request
+                .get('/user/schedules/history')
+                .set('x-access-token', userSetting.token+'0123456')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40101);          
+                  done();
+                });
+              });
+              it('token expired', done => {
+                request
+                .get('/user/schedules/history')
+                .set('x-access-token', userSetting.expired)
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40102);          
+                  done();
+                });
+              });          
+            });
+          });
+          describe('In Progress Fail', () => {
+            describe('token', () => {
+              it('lack of access-token', done => {
+                request
+                .get('/user/schedules/reserved')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40100);          
+                  done();
+                });
+              });
+              it('token fail', done => {
+                request
+                .get('/user/schedules/reserved')
+                .set('x-access-token', userSetting.token+'0123456')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40101);          
+                  done();
+                });
+              });
+              it('token expired', done => {
+                request
+                .get('/user/schedules/reserved')
+                .set('x-access-token', userSetting.expired)
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40102);          
+                  done();
+                });
+              });          
+            });
+          });
+        });
+        describe('Create Fail', ()=> {
+          const scheduleOptions = {
+            start: scheduleSetting.start.format(),
+            end: scheduleSetting.end.format(),
+            imageId: imageSetting.id,
+            machineId: machineSetting.id
+          };
+          const failTestScheduleOptions = {
+            start: 'Toriel',
+            end: 'Asgore',
+          };
+          const failTestScheduleOptions2 = {
+            start: '2999-13-11',
+            end: '2999-11-43',
+          };
+          const dateValidScheduleOptions = {
+            start: scheduleSetting.start.add(-1000, 'd').format(),
+            end: scheduleSetting.start.add(-1000, 'd').format(),
+          };
+          const notExistScheduleOptions = {
+            imageId: 87878787878,
+            machineId: 8787878787
+          };
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .post('/user/schedule')
+              .set('Accept', 'application/json')
+              .send(scheduleOptions)            
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .post('/user/schedule')
+              .set('x-access-token', userSetting.token+'0123456')
+              .set('Accept', 'application/json')  
+              .send(scheduleOptions)          
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .post('/user/schedule')
+              .set('x-access-token', userSetting.expired)
+              .set('Accept', 'application/json')
+              .send(scheduleOptions)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });          
+          });
+          describe('lack of parameter', () => {
+            Object.keys(scheduleOptions).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const scheduleOptionsLack = Object.assign({}, scheduleOptions, tmp);        
+                request
+                .post('/user/schedule')
+                .set('x-access-token', userSetting.token)
+                .set('Accept', 'application/json')
+                .send(scheduleOptionsLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestScheduleOptions).map( key => {
+              it(`wrong format - ${key} - ${failTestScheduleOptions[key]}`, done => {
+                const tmp = {};
+                tmp[key] = failTestScheduleOptions[key];
+                const newScheduleOptions = Object.assign({}, scheduleOptions, tmp);        
+                request
+                .post('/user/schedule')
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newScheduleOptions)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+            Object.keys(failTestScheduleOptions2).map( key => {
+              it(`wrong format - ${key} - ${failTestScheduleOptions2[key]}`, done => {
+                const tmp = {};
+                tmp[key] = failTestScheduleOptions2[key];
+                const newScheduleOptions = Object.assign({}, scheduleOptions, tmp);        
+                request
+                .post('/user/schedule')
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newScheduleOptions)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });            
+          });
+          describe('date valid', () => {
+            Object.keys(dateValidScheduleOptions).map( key => {
+              it(`wrong format - ${key} - ${dateValidScheduleOptions[key]}`, done => {
+                const tmp = {};
+                tmp[key] = dateValidScheduleOptions[key];
+                const newScheduleOptions = Object.assign({}, scheduleOptions, tmp);        
+                request
+                .post('/user/schedule')
+                .set('x-access-token', adminSetting.token)
+                .set('Accept', 'application/json')
+                .send(newScheduleOptions)
+                .end((err,res) => {                  
+                  res.should.have.status(400);
+                  res.should.to.be.json;                           
+                  done();
+                });     
+              });
+            });
+          });
+          describe('not exist', () => {
+            Object.keys(notExistScheduleOptions).map( key => {
+              it(`${key} not exist`, done => {                
+                const tmp = {};
+                tmp[key] = notExistScheduleOptions[key];
+                const newScheduleOptions = Object.assign({}, scheduleOptions, tmp);                
+                request
+                .post('/user/schedule')
+                .set('x-access-token', userSetting.token)
+                .set('Accept', 'application/json')
+                .send(newScheduleOptions)
+                .end((err,res) => {                  
+                  res.should.have.status(400);
+                  res.should.to.be.json;                  
+                  done();
+                });
+              });
+            });
+          });
+        });
+        describe('Update schedule', () => {
+          describe('Get schedule extendable date fail', () => {
+            describe('token', () => {
+              it('lack of access-token', done => {
+                request
+                .get(`/user/schedule/${scheduleFromApi.id}/extendable`)
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40100);          
+                  done();
+                });
+              });
+              it('token fail', done => {
+                request
+                .get(`/user/schedule/${scheduleFromApi.id}/extendable`)
+                .set('x-access-token', userSetting.token+'0123456')
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40101);          
+                  done();
+                });
+              });
+              it('token expired', done => {
+                request
+                .get(`/user/schedule/${scheduleFromApi.id}/extendable`)
+                .set('x-access-token', userSetting.expired)
+                .set('Accept', 'application/json')            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40102);          
+                  done();
+                });
+              });          
+            });            
+          });
+          describe('Update schedule fail', () => {
+            let scheduleOptions = {
+              end: moment(extendableLatestDate).format() || scheduleSetting.end.add(2,'d').format(),
+            }
+            describe('token', () => {
+              it('lack of access-token', done => {
+                request
+                .put(`/user/schedule/${scheduleFromApi.id}`)
+                .set('Accept', 'application/json') 
+                .send(scheduleOptions)           
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40100);          
+                  done();
+                });
+              });
+              it('token fail', done => {
+                request
+                .put(`/user/schedule/${scheduleFromApi.id}`)
+                .set('x-access-token', userSetting.token+'0123456')
+                .set('Accept', 'application/json')
+                .send(scheduleOptions)            
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40101);          
+                  done();
+                });
+              });
+              it('token expired', done => {
+                request
+                .put(`/user/schedule/${scheduleFromApi.id}`)
+                .set('x-access-token', userSetting.expired)
+                .set('Accept', 'application/json') 
+                .send(scheduleOptions)           
+                .end((err,res) => {
+                  // //console.log(res.body);
+                  res.should.have.status(401);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40102);          
+                  done();
+                });
+              });          
+            });
+          });
+        });
+      });      
     });
     describe('Machine', ()=> {
       const getMachinesSetting = {
@@ -2763,18 +3150,65 @@ describe('Api server testing', () => {
         start: moment().format('YYYY-MM-DD'),
         end: moment().add(5, 'days').format('YYYY-MM-DD'),
       };
-      it('Get available machines', done => {
-        request
-        .get('/user/machines')
-        .set('x-access-token', userSetting.token)
-        .set('Accept', 'application/json')
-        .send(getMachinesSetting)
-        .end((err,res) => {          
-          res.should.have.status(200);
-          res.should.to.be.json;         
-          ////console.log(res.body);
-          res.body.machines.length.should.equal(1);  
-          done();
+      describe('Success case', () => {
+        it('Get available machines', done => {
+          request
+          .get('/user/machines')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send(getMachinesSetting)
+          .end((err,res) => {          
+            res.should.have.status(200);
+            res.should.to.be.json;         
+            ////console.log(res.body);
+            res.body.machines.length.should.equal(1);  
+            done();
+          });
+        });
+      });
+      describe('Fail case', () => {
+        describe('token', () => {
+          it('lack of access-token', done => {
+            request
+            .get('/user/machines')
+            .set('Accept', 'application/json')
+            .send(getMachinesSetting)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40100);          
+              done();
+            });
+          });
+          it('token fail', done => {
+            request
+            .get('/user/machines')
+            .set('x-access-token', userSetting.token+'0123456')
+            .set('Accept', 'application/json')
+            .send(getMachinesSetting)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40101);          
+              done();
+            });
+          });
+          it('token expired', done => {
+            request
+            .get('/user/machines')
+            .set('x-access-token', userSetting.expired)
+            .set('Accept', 'application/json')
+            .send(getMachinesSetting)
+            .end((err,res) => {
+              // //console.log(res.body);
+              res.should.have.status(401);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40102);          
+              done();
+            });
+          });          
         });
       });
     });
