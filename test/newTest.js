@@ -2289,32 +2289,78 @@ describe('Api server testing', () => {
   });
   describe('User', () => {
     describe('Signin', () => {
-      it('Normal', done => {
-        request
-        .get('/user/signin')
-        .set('x-username', userSetting.itriId)
-        .set('x-password', userSetting.password)
-        .set('Accept', 'application/json')        
-        .end((err,res) => {
-          ////console.log(res.body);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          res.body.should.have.property('type',1);          
-          done();
+      describe('Success case', () => {
+        it('Normal', done => {
+          request
+          .get('/user/signin')
+          .set('x-username', userSetting.itriId)
+          .set('x-password', userSetting.password)
+          .set('Accept', 'application/json')        
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.should.have.property('type',1);          
+            done();
+          });
+        });
+        it('Admin', done => {
+          request
+          .get('/user/signin')
+          .set('x-username', adminSetting.itriId)
+          .set('x-password', adminSetting.password)
+          .set('Accept', 'application/json')        
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.should.have.property('type',2);          
+            done();
+          });
         });
       });
-      it('Admin', done => {
-        request
-        .get('/user/signin')
-        .set('x-username', adminSetting.itriId)
-        .set('x-password', adminSetting.password)
-        .set('Accept', 'application/json')        
-        .end((err,res) => {
-          ////console.log(res.body);
-          res.should.have.status(200);
-          res.should.to.be.json;
-          res.body.should.have.property('type',2);          
-          done();
+      describe('Fail case', () => {
+        describe('lack of parameter', () => {
+          it(`lack itriId`, done => {       
+            request
+            .get('/user/signin')              
+            .set('x-password', userSetting.password)              
+            .set('Accept', 'application/json')              
+            .end((err,res) => {              
+              res.should.have.status(400);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40001);          
+              done();
+            });     
+          });
+          it(`lack password`, done => {       
+            request
+            .get('/user/signin')
+            .set('x-username', userSetting.itriId)              
+            .set('Accept', 'application/json')              
+            .end((err,res) => {              
+              res.should.have.status(400);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40001);          
+              done();
+            });     
+          });
+        });
+        describe('wrong format', () => {
+          it(`wrong format - username`, done => {
+            request
+            .get('/user/signin')
+            .set('x-username', userSetting.itriId+'@#$%^^^@$@')
+            .set('x-password', userSetting.password)
+            .set('Accept', 'application/json')        
+            .end((err,res) => {
+              ////console.log(res.body);
+              res.should.have.status(400);
+              res.should.to.be.json;
+              checkErrorMsg(res.body, 40002);           
+              done();
+            });
+          });
         });
       });
     });
@@ -2323,51 +2369,273 @@ describe('Api server testing', () => {
         amount: availableResSetting.amount,
         resId: availableResSetting.resId
       };
+      const failTestRemindSetting = {
+        amount: 'Flowey'
+      };
       const calendarSetting ={
         amount: availableResSetting.amount,
         resId: availableResSetting.resId 
       };
-      it('Get resources', done => {
-        request
-        .get('/user/resources')
-        .set('x-access-token', userSetting.token)
-        .set('Accept', 'application/json')        
-        .end((err,res) => {
-          ////console.log(`length:${res.body.length}`);         
-          res.should.have.status(200);
-          res.should.to.be.json;          
-          const getObj = res.body.find(obj => obj.id === availableResSetting.id);          
-          ////console.log(getObj);
-          checkObj(availableResFromApi, getObj);
-          done();
+      const failTestCalendarSetting = {
+        amount: 'Asriel'
+      };
+      describe('Success case', () => {
+        it('Get resources', done => {
+          request
+          .get('/user/resources')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')        
+          .end((err,res) => {
+            ////console.log(`length:${res.body.length}`);         
+            res.should.have.status(200);
+            res.should.to.be.json;          
+            const getObj = res.body.find(obj => obj.id === availableResSetting.id);          
+            ////console.log(getObj);
+            checkObj(availableResFromApi, getObj);
+            done();
+          });
+        });
+        it('Get resources remind', done => {
+          request
+          .get('/user/resource/remind')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send(remindSetting)
+          .end((err,res) => {
+            ////console.log(res.body);
+            res.should.have.status(200);
+            res.should.to.be.json;
+            res.body.should.equal('44');
+            done();
+          });
+        });
+        it('Get resources calendar', done => {
+          request
+          .get('/user/resource/calendar')
+          .set('x-access-token', userSetting.token)
+          .set('Accept', 'application/json')
+          .send(calendarSetting)
+          .end((err,res) => {          
+            res.should.have.status(200);
+            res.should.to.be.json;
+            ////console.log(`length:${res.body.availableCalendar.length}`);
+            ////console.log(res.body.availableCalendar[0]);
+            done();
+          });
         });
       });
-      it('Get resources remind', done => {
-        request
-        .get('/user/resource/remind')
-        .set('x-access-token', userSetting.token)
-        .set('Accept', 'application/json')
-        .send(remindSetting)
-        .end((err,res) => {
-          ////console.log(res.body);         
-          res.should.have.status(200);
-          res.should.to.be.json;
-          res.body.should.equal('44');
-          done();
+      describe('Fail case', () => {
+        describe('Get resources fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .get('/user/resources')
+              .set('Accept', 'application/json')            
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .get('/user/resources')
+              .set('x-access-token', userSetting.token+'0123456')
+              .set('Accept', 'application/json')            
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .get('/user/resources')
+              .set('x-access-token', userSetting.expired)
+              .set('Accept', 'application/json')            
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });          
+          });
         });
-      });
-      it('Get resources calendar', done => {
-        request
-        .get('/user/resource/calendar')
-        .set('x-access-token', userSetting.token)
-        .set('Accept', 'application/json')
-        .send(calendarSetting)
-        .end((err,res) => {          
-          res.should.have.status(200);
-          res.should.to.be.json;
-          ////console.log(`length:${res.body.availableCalendar.length}`);
-          ////console.log(res.body.availableCalendar[0]);
-          done();
+        describe('Get resources remind fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .get('/user/resource/remind')
+              .set('Accept', 'application/json') 
+              .send(remindSetting)           
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .get('/user/resource/remind')
+              .set('x-access-token', userSetting.token+'0123456')
+              .set('Accept', 'application/json') 
+              .send(remindSetting)           
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .get('/user/resource/remind')
+              .set('x-access-token', userSetting.expired)
+              .set('Accept', 'application/json')
+              .send(remindSetting)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });          
+          });
+          describe('lack of parameter', () => {
+            Object.keys(remindSetting).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const remindSettingLack = Object.assign({}, remindSetting, tmp);        
+                request
+                .get('/user/resource/remind')
+                .set('x-access-token', userSetting.token)
+                .set('Accept', 'application/json')
+                .send(remindSettingLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestRemindSetting).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestRemindSetting[key];
+                const newRemindSetting = Object.assign({}, remindSetting, tmp);        
+                request
+                .get('/user/resource/remind')
+                .set('x-access-token', userSetting.token)
+                .set('Accept', 'application/json')
+                .send(newRemindSetting)
+                .end((err,res) => {
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
+        });
+        describe('Get resources calendar fail', () => {
+          describe('token', () => {
+            it('lack of access-token', done => {
+              request
+              .get('/user/resource/calendar')
+              .set('Accept', 'application/json') 
+              .send(calendarSetting)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40100);          
+                done();
+              });
+            });
+            it('token fail', done => {
+              request
+              .get('/user/resource/calendar')
+              .set('x-access-token', userSetting.token+'0123456')
+              .set('Accept', 'application/json') 
+              .send(calendarSetting)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40101);          
+                done();
+              });
+            });
+            it('token expired', done => {
+              request
+              .get('/user/resource/calendar')
+              .set('x-access-token', userSetting.expired)
+              .set('Accept', 'application/json')
+              .send(calendarSetting)
+              .end((err,res) => {
+                // //console.log(res.body);
+                res.should.have.status(401);
+                res.should.to.be.json;
+                checkErrorMsg(res.body, 40102);          
+                done();
+              });
+            });          
+          });
+          describe('lack of parameter', () => {
+            Object.keys(calendarSetting).map( key => {
+              it(`lack ${key}`, done => {
+                const tmp = {};
+                tmp[key] = null;
+                const calendarSettingLack = Object.assign({}, calendarSetting, tmp);        
+                request
+                .get('/user/resource/calendar')
+                .set('x-access-token', userSetting.token)
+                .set('Accept', 'application/json')
+                .send(calendarSettingLack)
+                .end((err,res) => {              
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40001);          
+                  done();
+                });     
+              });
+            });
+          });
+          describe('wrong format', () => {
+            Object.keys(failTestCalendarSetting).map( key => {
+              it(`wrong format - ${key}`, done => {
+                const tmp = {};
+                tmp[key] = failTestCalendarSetting[key];
+                const newCalendarSetting = Object.assign({}, calendarSetting, tmp);        
+                request
+                .get('/user/resource/calendar')
+                .set('x-access-token', userSetting.token)
+                .set('Accept', 'application/json')
+                .send(newCalendarSetting)
+                .end((err,res) => {
+                  res.should.have.status(400);
+                  res.should.to.be.json;
+                  checkErrorMsg(res.body, 40002);          
+                  done();
+                });     
+              });
+            });
+          });
         });
       });
     });
