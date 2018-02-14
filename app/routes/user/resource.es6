@@ -4,7 +4,7 @@ import validator from 'validator';
 import db from '../../db/db';
 import CdError from '../../util/CdError';
 import asyncWrap from '../../util/asyncWrap';
-import { checkPoint, getAvailableDays, checkAvailableResource } from '../../util/Checker';
+import { checkPoint, getAvailableDays, checkAvailableResource, checkAmount } from '../../util/Checker';
 import { sequelize, usageLog as UsageLog, availableRes as AvailableRes, transaction as Transaction } from '../../models/index';
 
 momentDurationFormat(moment);
@@ -34,9 +34,7 @@ resourceAPI.remind = asyncWrap(async (req, res, next) => {
   if (!resId) throw new CdError(400, 'resId not input', 40001);
   const resource = await checkResourceExist(resId);   
   
-  if (!amount) throw new CdError(400, 'Amount not input', 40001);    
-  if (!validator.isNumeric(`${amount}`)) throw new CdError(400, 'Amount is not a number', 40002);    
-
+  await checkAmount(amount);
   await checkAvailableResource(user.id, resId, amount);
   
   const availableDays = await getAvailableDays(user.id, resource, amount);
@@ -54,8 +52,7 @@ resourceAPI.getCalendar = asyncWrap(async (req, res, next) => {
   if (!resId) throw new CdError(400, 'resId not input', 40001);
   const resource = await checkResourceExist(resId);   
   
-  if (!amount) throw new CdError(400, 'Amount not input', 40001);    
-  if (!validator.isNumeric(`${amount}`)) throw new CdError(400, 'Amount is not a number', 40002);    
+  await checkAmount(amount);    
   const checkAvailable = await checkAvailableResource(user.id, resId, amount);
 
   if (!checkAvailable) {
