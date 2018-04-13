@@ -182,7 +182,7 @@ machineAPI.deleteMachine = asyncWrap(async (req, res, next) => {
     await db.getMachineAllOccupiedSchedule(machineId);
   // 取消或刪除所有機器上的schedule
   currentScheduleOnMachine.map(serverJob.deleteASchedule);
-  await machine.updateAttributes({ statusId: 4 });
+  await machine.updateAttributes({ statusId: 4, deletedAt: moment().format() });
 
   res.json(machine);
 });
