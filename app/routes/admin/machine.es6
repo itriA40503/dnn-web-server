@@ -120,7 +120,7 @@ machineAPI.modifyMachine = asyncWrap(async (req, res, next) => {
     updateAttr.resId = resId;
   }  
 
-  await checkAmount(gpuAmount);
+  updateAttr.gpuAmount = await checkAmount(gpuAmount);
   
   if (description) {
     updateAttr.description = description;
