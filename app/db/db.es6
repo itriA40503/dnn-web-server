@@ -163,7 +163,9 @@ db.getExistMachineById = (id) => {
 };
 
 db.getMachineByLabel = (label) => {
-  return Machine.scope('normal',
+  return Machine.scope(
+    'normal',
+    'thoseExist',
     { method: ['byLabel', label] }
   ).findOne();
 };
